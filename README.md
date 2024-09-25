@@ -1,36 +1,84 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# BARK Blinks
+
+BARK Blinks is a user-friendly interface for the Blinks As A Service application, enabling users to easily create, send, and manage SPL tokens, transactions, NFTs, gifts, and airdrops on the Solana blockchain.
+
+## Features
+
+- Create and manage SPL tokens
+- Mint and transfer NFTs
+- Set up and execute airdrops
+- User-friendly dashboard for managing all Solana blockchain assets
+- Secure wallet integration
+- Responsive design for both desktop and mobile use
+
+## Technologies Used
+
+- Next.js 14+ (App Router)
+- React 18+
+- TypeScript
+- Tailwind CSS
+- Shadcn/ui components
+- Solana Web3.js
+- Solana Wallet Adapter
 
 ## Getting Started
 
-First, run the development server:
+### Prerequisites
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+- Node.js 18.x or later
+- npm or yarn
+- A Solana wallet (e.g., Phantom, Solflare)
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+### Installation
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+1. Clone the repository:
+   ```
+   git clone https://github.com/barkprotocol/bark-blinks-dapp.git
+   cd bark-blinks-dapp
+   ```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+2. Install dependencies:
+   ```
+   npm install
+   # or
+   yarn install
+   ```
 
-## Learn More
+3. Set up environment variables:
+   Create a `.env.local` file in the root directory and add the following:
+   ```
+   NEXT_PUBLIC_SOLANA_RPC_HOST=https://api.mainnet-beta.solana.com
+   ```
 
-To learn more about Next.js, take a look at the following resources:
+4. Run the development server:
+   ```
+   npm run dev
+   # or
+   yarn dev
+   ```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+5. Open [http://localhost:3000](http://localhost:3000) in your browser to see the application.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## Project Structure
 
-## Deploy on Vercel
+- `/app`: Next.js 13 app directory
+  - `/dashboard`: Main dashboard page
+  - `/create-merch-blink`: Page for creating merchandise blinks
+  - `/create-shipping-nft`: Page for creating shipping NFTs
+- `/components`: Reusable React components
+- `/lib`: Utility functions and helpers
+- `/styles`: Global styles and Tailwind CSS configuration
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## Contributing
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+We welcome contributions to BARK Blinks! Please follow these steps to contribute:
+
+1. Fork the repository
+2. Create a new branch: `git checkout -b feature/your-feature-name`
+3. Make your changes and commit them: `git commit -m 'Add some feature'`
+4. Push to the branch: `git push origin feature/your-feature-name`
+5. Submit a pull request
+
+## License
+
+The MIT License. See the [LICENSE](LICENSE) file for details.

@@ -14,8 +14,8 @@ const geistMono = localFont({
 });
 
 export const metadata: Metadata = {
-  title: "BARK - BLINKS",
-  description: "Solana actions & Blinks Dapp",
+  title: "BARK BLINKS",
+  description: "Solana Actions & Blinks dApp",
 };
 
 export default function RootLayout({

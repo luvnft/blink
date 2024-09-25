@@ -1,28 +1,29 @@
 'use client'
 
 import { useState } from 'react'
-import { useConnection, useWallet } from '@solana/wallet-adapter-react'
-import { PublicKey, Transaction, SystemProgram, LAMPORTS_PER_SOL } from '@solana/web3.js'
-import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from "@/components/ui/card"
+import { useRouter } from 'next/navigation'
 import { Button } from "@/components/ui/button"
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
+import { SolanaWalletProvider } from '@/components/providers/solana-wallet-provider'
+import { ConnectWalletButton } from '@/components/ui/connect-wallet-button'
+import { useWallet } from '@solana/wallet-adapter-react'
 import { toast } from "@/components/ui/use-toast"
-import { SolanaQRCode } from "@/components/qr-code"
-import { Loader2, Send, QrCode } from "lucide-react"
+import { Loader2, DollarSign, CreditCard, Wallet } from 'lucide-react'
+import SolanaPay from './solana-pay'
+import Checkout from './checkout'
 
-export default function Home() {
-  const [recipient, setRecipient] = useState('')
+export default function PaymentsPage() {
   const [amount, setAmount] = useState('')
-  const [isSubmitting, setIsSubmitting] = useState(false)
-  const [showQR, setShowQR] = useState(false)
+  const [isLoading, setIsLoading] = useState(false)
+  const [showCheckout, setShowCheckout] = useState(false)
+  const router = useRouter()
+  const { connected } = useWallet()
 
-  const { connection } = useConnection()
-  const { publicKey, sendTransaction } = useWallet()
-
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handlePayment = async (e: React.FormEvent) => {
     e.preventDefault()
-    if (!publicKey || !connection) {
+    if (!connected) {
       toast({
         title: "Wallet not connected",
         description: "Please connect your wallet to make a payment.",
@@ -30,137 +31,78 @@ export default function Home() {
       })
       return
     }
-
-    setIsSubmitting(true)
-
+    setIsLoading(true)
     try {
-      const recipientPubKey = new PublicKey(recipient)
-      const lamports = parseFloat(amount) * LAMPORTS_PER_SOL
-
-      const transaction = new Transaction().add(
-        SystemProgram.transfer({
-          fromPubkey: publicKey,
-          toPubkey: recipientPubKey,
-          lamports,
-        })
-      )
-
-      const {
-        context: { slot: minContextSlot },
-        value: { blockhash, lastValidBlockHeight }
-      } = await connection.getLatestBlockhashAndContext()
-
-      const signature = await sendTransaction(transaction, connection, { minContextSlot })
-
-      const confirmation = await connection.confirmTransaction({
-        blockhash,
-        lastValidBlockHeight,
-        signature
-      })
-
-      if (confirmation.value.err) {
-        throw new Error('Transaction failed')
-      }
-
-      toast({
-        title: "Payment sent successfully",
-        description: `${amount} SOL sent to ${recipient}`,
-      })
-
-      setRecipient('')
-      setAmount('')
+      // Simulating a delay for payment processing
+      await new Promise(resolve => setTimeout(resolve, 2000))
+      setShowCheckout(true)
     } catch (error) {
-      console.error('Error:', error)
+      console.error('Error processing payment:', error)
       toast({
-        title: "Payment failed",
+        title: "Payment Failed",
         description: "There was an error processing your payment. Please try again.",
         variant: "destructive",
       })
     } finally {
-      setIsSubmitting(false)
+      setIsLoading(false)
     }
   }
 
   return (
-    <main className="min-h-screen bg-gray-100 flex items-center justify-center p-4">
-      <Card className="w-full max-w-md bg-white shadow-xl">
-        <CardHeader className="text-center">
-          <CardTitle className="text-2xl font-bold">BARK Payments</CardTitle>
-          <CardDescription>Send and receive payments on the Solana blockchain</CardDescription>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          <form onSubmit={handleSubmit} className="space-y-4">
-            <div className="space-y-2">
-              <Label htmlFor="recipient">Recipient Address</Label>
-              <Input
-                id="recipient"
-                placeholder="Enter Solana address"
-                value={recipient}
-                onChange={(e) => setRecipient(e.target.value)}
-                required
-                className="bg-gray-50"
-              />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="amount">Amount (SOL)</Label>
-              <Input
-                id="amount"
-                type="number"
-                step="0.000000001"
-                min="0"
-                placeholder="Enter amount in SOL"
-                value={amount}
-                onChange={(e) => setAmount(e.target.value)}
-                required
-                className="bg-gray-50"
-              />
-            </div>
-            <Button 
-              type="submit" 
-              className="w-full bg-primary hover:bg-primary/90" 
-              disabled={isSubmitting || !publicKey}
-            >
-              {isSubmitting ? (
-                <>
-                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  Sending...
-                </>
-              ) : (
-                <>
-                  <Send className="mr-2 h-4 w-4" />
-                  Send Payment
-                </>
-              )}
-            </Button>
-          </form>
-          
-          <div className="pt-4 border-t border-gray-200">
-            <Button 
-              variant="outline" 
-              onClick={() => setShowQR(!showQR)} 
-              className="w-full"
-            >
-              <QrCode className="mr-2 h-4 w-4" />
-              {showQR ? "Hide" : "Show"} QR Code
-            </Button>
-          </div>
-
-          {showQR && (
-            <div className="mt-4 bg-white p-4 rounded-lg shadow-inner">
-              <SolanaQRCode
-                url={`solana:${publicKey?.toBase58()}`}
-                size={300}
-                color="black"
-                background="white"
-                className="mx-auto"
-              />
-            </div>
-          )}
-        </CardContent>
-        <CardFooter className="flex justify-center text-sm text-muted-foreground">
-          <span>Powered by Solana</span>
-        </CardFooter>
-      </Card>
-    </main>
+    <SolanaWalletProvider>
+      <div className="container mx-auto px-4 py-8">
+        <Card className="max-w-md mx-auto">
+          <CardHeader>
+            <CardTitle className="flex items-center">
+              <CreditCard className="mr-2 h-6 w-6 text-[#D0BFB4]" />
+              Make a Payment
+            </CardTitle>
+            <CardDescription>Enter the amount and choose your payment method</CardDescription>
+          </CardHeader>
+          <CardContent>
+            {!showCheckout ? (
+              <form onSubmit={handlePayment} className="space-y-4">
+                <div>
+                  <Label htmlFor="amount">Amount (USDC)</Label>
+                  <div className="relative mt-1 rounded-md shadow-sm">
+                    <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
+                      <DollarSign className="h-5 w-5 text-[#D0BFB4]" aria-hidden="true" />
+                    </div>
+                    <Input
+                      type="number"
+                      name="amount"
+                      id="amount"
+                      className="block w-full rounded-md pl-10 pr-12"
+                      placeholder="0.00"
+                      value={amount}
+                      onChange={(e) => setAmount(e.target.value)}
+                      required
+                    />
+                  </div>
+                </div>
+                <Button type="submit" className="w-full" disabled={isLoading}>
+                  {isLoading ? (
+                    <>
+                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                      Processing...
+                    </>
+                  ) : (
+                    <>
+                      <Wallet className="mr-2 h-4 w-4" />
+                      Proceed to Payment
+                    </>
+                  )}
+                </Button>
+              </form>
+            ) : (
+              <Checkout amount={parseFloat(amount)} />
+            )}
+          </CardContent>
+        </Card>
+        <div className="mt-8">
+          <SolanaPay />
+        </div>
+      </div>
+    </SolanaWalletProvider>
   )
 }
