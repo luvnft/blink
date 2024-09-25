@@ -68,9 +68,7 @@
     --chart-4: 280 65% 60%;
     --chart-5: 340 75% 55%;
   }
-}
 
-@layer base {
   * {
     @apply border-border;
   }
@@ -84,47 +82,53 @@
   }
 
   h1 {
-    @apply text-4xl sm:text-5xl md:text-6xl lg:text-7xl;
+    @apply text-3xl sm:text-4xl md:text-5xl lg:text-6xl; /* Adjusted for mobile */
   }
 
   h2 {
-    @apply text-3xl sm:text-4xl md:text-5xl;
+    @apply text-2xl sm:text-3xl md:text-4xl lg:text-5xl; /* Mobile-friendly scaling */
   }
 
   h3 {
-    @apply text-2xl sm:text-3xl md:text-4xl;
+    @apply text-xl sm:text-2xl md:text-3xl lg:text-4xl;
   }
 
   h4 {
-    @apply text-xl sm:text-2xl md:text-3xl;
+    @apply text-lg sm:text-xl md:text-2xl lg:text-3xl;
   }
 
   h5 {
-    @apply text-lg sm:text-xl md:text-2xl;
+    @apply text-base sm:text-lg md:text-xl lg:text-2xl;
   }
 
   h6 {
-    @apply text-base sm:text-lg md:text-xl;
+    @apply text-sm sm:text-base md:text-lg lg:text-xl;
   }
 
   p {
-    @apply text-base sm:text-lg;
+    @apply text-sm sm:text-base md:text-lg; /* Smaller paragraphs on mobile */
+  }
+
+  .container {
+    @apply mx-auto px-4 sm:px-6 md:px-8 lg:px-10; /* Responsive padding */
   }
 }
 
 /* Custom utility classes for fonts */
 .font-syne {
-  font-family: var(--font-syne);
+  font-family: var(--font-syne), 'Oswald', sans-serif;
 }
 
 .font-poppins {
-  font-family: var(--font-poppins);
+  font-family: var(--font-poppins), 'Poppins', sans-serif;
 }
 
 @layer base {
+  /* Ensure that border styling is consistent across all screen sizes */
   * {
     @apply border-border;
   }
+  /* Ensure the body background and text colors are responsive */
   body {
     @apply bg-background text-foreground;
   }

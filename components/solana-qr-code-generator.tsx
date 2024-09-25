@@ -28,10 +28,19 @@ export default function SolanaQRGenerator() {
       return
     }
 
-    if (!amount || !recipient) {
+    if (!amount || isNaN(Number(amount)) || Number(amount) <= 0) {
       toast({
-        title: "Missing information",
-        description: "Please enter both amount and recipient address.",
+        title: "Invalid amount",
+        description: "Please enter a valid positive number for the amount.",
+        variant: "destructive",
+      })
+      return
+    }
+
+    if (!recipient || !PublicKey.isOnCurve(new PublicKey(recipient))) {
+      toast({
+        title: "Invalid recipient address",
+        description: "Please enter a valid Solana address for the recipient.",
         variant: "destructive",
       })
       return
@@ -67,7 +76,7 @@ export default function SolanaQRGenerator() {
       console.error('Error generating QR code:', error)
       toast({
         title: "QR Code Generation Failed",
-        description: "There was an error generating the QR code. Please check your inputs and try again.",
+        description: error instanceof Error ? error.message : "An unknown error occurred. Please try again.",
         variant: "destructive",
       })
     } finally {
@@ -94,6 +103,10 @@ export default function SolanaQRGenerator() {
               placeholder="Enter amount in SOL"
               value={amount}
               onChange={(e) => setAmount(e.target.value)}
+              disabled={isLoading}
+              aria-label="Amount in SOL"
+              min="0"
+              step="0.000000001"
             />
           </div>
           <div>
@@ -104,6 +117,8 @@ export default function SolanaQRGenerator() {
               placeholder="Enter recipient's Solana address"
               value={recipient}
               onChange={(e) => setRecipient(e.target.value)}
+              disabled={isLoading}
+              aria-label="Recipient's Solana address"
             />
           </div>
           <Button onClick={generateQR} disabled={isLoading} className="w-full">
@@ -119,7 +134,7 @@ export default function SolanaQRGenerator() {
               </>
             )}
           </Button>
-          <div ref={qrRef} className="mt-4 flex justify-center"></div>
+          <div ref={qrRef} className="mt-4 flex justify-center" aria-live="polite" aria-atomic="true"></div>
         </div>
       </CardContent>
     </Card>

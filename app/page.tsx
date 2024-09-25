@@ -14,7 +14,7 @@ import {
   AccordionTrigger,
 } from "@/components/ui/accordion"
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"
-import { Zap, Send, BarChart2, ArrowRight, ExternalLink, Mail, Sparkles, Menu, Loader2 } from 'lucide-react'
+import { Zap, Send, BarChart2, ArrowRight, ExternalLink, Mail, Sparkles, Menu, Loader2, Twitter, Instagram, MessageCircle, FileText, Shield } from 'lucide-react'
 import { SolanaWalletProvider } from '@/components/providers/solana-wallet-provider'
 import { ConnectWalletButton } from '@/components/ui/connect-wallet-button'
 import { useWallet } from '@solana/wallet-adapter-react'
@@ -88,14 +88,73 @@ const MobileMenu: React.FC = () => (
     </SheetTrigger>
     <SheetContent side="right" className="w-[300px] sm:w-[400px]">
       <nav className="flex flex-col space-y-4">
-        <a href="#features" className="text-lg hover:text-[#D0BFB4] transition-colors">Features</a>
-        <a href="#how-it-works" className="text-lg hover:text-[#D0BFB4] transition-colors">How It Works</a>
-        <a href="#faq" className="text-lg hover:text-[#D0BFB4] transition-colors">FAQ</a>
+        <Link href="#features" className="text-lg hover:text-[#D0BFB4] transition-colors">
+          Features
+        </Link>
+        <Link href="#how-it-works" className="text-lg hover:text-[#D0BFB4] transition-colors">
+          How It Works
+        </Link>
+        <Link href="#faq" className="text-lg hover:text-[#D0BFB4] transition-colors">
+          FAQ
+        </Link>
         <ConnectWalletButton />
       </nav>
     </SheetContent>
   </Sheet>
 )
+
+const Footer: React.FC = () => {
+  return (
+    <footer className="bg-white shadow-sm mt-20">
+      <div className="container mx-auto px-4 py-8 flex flex-col items-center">
+        <div className="flex items-center space-x-2 mb-6">
+          <Image
+            src="https://ucarecdn.com/f242e5dc-8813-47b4-af80-6e6dd43945a9/barkicon.png"
+            alt="BARK BLINK logo"
+            width={40}
+            height={40}
+            className="rounded-full"
+          />
+          <span className="font-bold text-2xl text-gray-900">BARK BLINK</span>
+        </div>
+        
+        <div className="flex space-x-4 mb-4">
+          <Link href="/terms" className="text-sm text-gray-700 hover:text-[#D0BFB4] transition-colors">
+            Terms of Use
+          </Link>
+          <Link href="/privacy" className="text-sm text-gray-700 hover:text-[#D0BFB4] transition-colors">
+            Privacy Policy
+          </Link>
+        </div>
+        
+        <div className="mb-6">
+          <h3 className="text-lg font-semibold text-gray-900 mb-4 text-center">Follow Us</h3>
+          <div className="flex space-x-6">
+            <a href="https://medium.com/@barkblink" target="_blank" rel="noopener noreferrer" aria-label="Medium" className="hover:transform hover:scale-110 transition-transform">
+              <FileText className="w-6 h-6 text-gray-600 hover:text-[#D0BFB4] transition-colors" />
+            </a>
+            <a href="https://t.me/barkblink" target="_blank" rel="noopener noreferrer" aria-label="Telegram" className="hover:transform hover:scale-110 transition-transform">
+              <MessageCircle className="w-6 h-6 text-gray-600 hover:text-[#D0BFB4] transition-colors" />
+            </a>
+            <a href="https://twitter.com/barkblink" target="_blank" rel="noopener noreferrer" aria-label="Twitter" className="hover:transform hover:scale-110 transition-transform">
+              <Twitter className="w-6 h-6 text-gray-600 hover:text-[#D0BFB4] transition-colors" />
+            </a>
+            <a href="https://instagram.com/barkblink" target="_blank" rel="noopener noreferrer" aria-label="Instagram" className="hover:transform hover:scale-110 transition-transform">
+              <Instagram className="w-6 h-6 text-gray-600 hover:text-[#D0BFB4] transition-colors" />
+            </a>
+            <a href="https://discord.gg/barkblink" target="_blank" rel="noopener noreferrer" aria-label="Discord" className="hover:transform hover:scale-110 transition-transform">
+              <Shield className="w-6 h-6 text-gray-600 hover:text-[#D0BFB4] transition-colors" />
+            </a>
+          </div>
+        </div>
+        
+        <p className="text-sm text-gray-500">
+          © {new Date().getFullYear()} BARK BLINK. All rights reserved.
+        </p>
+      </div>
+    </footer>
+  )
+}
 
 export default function Home() {
   const [email, setEmail] = useState('')
@@ -118,7 +177,9 @@ export default function Home() {
     { 
       title: "Track Blinks", 
       description: "Monitor your Blink collection and transaction history in real-time.", 
-      icon: <BarChart2 className="h-6 w-6 sm:h-8 sm:w-8 text-[#D0BFB4]" /> 
+      icon: <BarChart2 className="h-6 w-6 sm:h-8 sm:w-8 text-[#D0B
+
+FB4]" /> 
     },
     { 
       title: "Customize Blinks", 
@@ -317,27 +378,7 @@ export default function Home() {
           </section>
         </main>
 
-        <footer className="bg-white shadow-sm mt-20">
-          <div className="container mx-auto px-4 py-8 flex flex-col md:flex-row justify-between items-center">
-            <div className="flex items-center space-x-2 mb-4 md:mb-0">
-              <Image
-                src="https://ucarecdn.com/f242e5dc-8813-47b4-af80-6e6dd43945a9/barkicon.png"
-                alt="BARK BLINK logo"
-                width={30}
-                height={30}
-                className="rounded-full"
-              />
-              <span className="font-bold text-xl text-gray-900">BARK</span>
-            </div>
-            <nav className="flex flex-wrap justify-center md:justify-end gap-4 sm:gap-6">
-              <a href="#" className="text-sm sm:text-base text-gray-700 hover:text-[#D0BFB4] transition-colors">Learn</a>
-              <a href="#" className="text-sm sm:text-base text-gray-700 hover:text-[#D0BFB4] transition-colors">Examples</a>
-              <a href="#" className="text-sm sm:text-base text-gray-700 hover:text-[#D0BFB4] transition-colors">BARK Community</a>
-              <a href="#" className="text-sm sm:text-base text-gray-700 hover:text-[#D0BFB4] transition-colors">Privacy Policy</a>
-              <a href="#" className="text-sm sm:text-base text-gray-700 hover:text-[#D0BFB4] transition-colors">Terms of Service</a>
-            </nav>
-          </div>
-        </footer>
+        <Footer />
       </div>
     </SolanaWalletProvider>
   )
