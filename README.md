@@ -50,19 +50,22 @@ Blinkboard is designed to be user-friendly and intuitive, allowing both newcomer
 ## Screenshots
 
 ### Hero Section
-![Hero Section](./github/assets/hero.png)
+![Hero Section](.github/assets/hero.png)
 
 ### Features
-![Features Section](./github/assets/features.png)
+![Features Section](.github/assets/features.png)
 
 ### How It Works
-![How It Works Section](./github/assets/how-it-works.png)
-
-### FAQ
-![FAQ Section](./github/assets/faq.png)
+![How It Works Section](.github/assets/how-it-works.png)
 
 ### Call to Action
 ![Call to Action Section](./github/assets/cta.png)
+
+### FAQ
+![FAQ Section](.github/assets/faq.png)
+
+### Newsletter
+![Newsletter Section](./github/assets/newsletter.png)
 
 ## Getting Started
 
