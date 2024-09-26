@@ -59,13 +59,13 @@ Blinkboard is designed to be user-friendly and intuitive, allowing both newcomer
 ![How It Works Section](.github/assets/how-it-works.png)
 
 ### Call to Action
-![Call to Action Section](./github/assets/cta.png)
+![Call to Action Section](.github/assets/cta.png)
 
 ### FAQ
 ![FAQ Section](.github/assets/faq.png)
 
 ### Newsletter
-![Newsletter Section](./github/assets/newsletter.png)
+![Newsletter Section](.github/assets/newsletter.png)
 
 ## Getting Started
 
