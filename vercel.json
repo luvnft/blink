@@ -16,7 +16,7 @@
       "NEXT_PUBLIC_SUPABASE_URL": "@next-public-supabase-url",
       "NEXT_PUBLIC_SUPABASE_ANON_KEY": "@next-public-supabase-anon-key",
       "POSTGRES_URL": "@postgres-url",
-      "BASE_URL": "https://blinks-web-ui.vercel.app",
+      "BASE_URL": "https://bark-blinks.vercel.app",
       "AUTH_SECRET": "@auth-secret",
       "SOLANA_NETWORK": "devnet",
       "SOLANA_MAINNET_RPC": "https://api.mainnet-beta.solana.com",

@@ -1,48 +1,81 @@
 import { NextResponse } from 'next/server'
-import { Connection, PublicKey, Keypair, Transaction, SystemProgram, sendAndConfirmTransaction } from '@solana/web3.js'
-import { Token, TOKEN_PROGRAM_ID } from '@solana/spl-token'
-
-const SOLANA_RPC_ENDPOINT = process.env.NEXT_PUBLIC_RPC_ENDPOINT || 'https://api.mainnet-beta.solana.com'
+import * as web3 from '@solana/web3.js'
+import * as token from '@solana/spl-token'
+import { Metaplex, keypairIdentity, bundlrStorage } from '@metaplex-foundation/js'
+import { env } from '@/lib/env'
 
 export async function POST(req: Request) {
   try {
-    const { name, symbol, uri, decimals } = await req.json()
-    const connection = new Connection(SOLANA_RPC_ENDPOINT, 'confirmed')
+    const { name, description, image, recipient, attributes } = await req.json()
 
-    // In a real-world scenario, you would use the user's wallet to sign transactions
-    // For this example, we're using a dummy keypair
-    const payer = Keypair.generate()
-
-    // Fund the payer account (this step is for demonstration purposes only)
-    const airdropSignature = await connection.requestAirdrop(payer.publicKey, 1000000000)
-    await connection.confirmTransaction(airdropSignature)
-
-    const mintAccount = await Token.createMint(
-      connection,
-      payer,
-      payer.publicKey,
-      null,
-      decimals,
-      TOKEN_PROGRAM_ID
-    )
-
-    // Create metadata for the Blink (this is a simplified version)
-    const metadata = {
-      name,
-      symbol,
-      uri,
+    // Validate input
+    if (!name || !description || !image || !recipient) {
+      return NextResponse.json({ error: 'Missing required fields' }, { status: 400 })
     }
 
-    // In a real implementation, you would store this metadata on-chain or in a decentralized storage solution
+    // Connect to Solana network
+    const connection = new web3.Connection(env.NEXT_PUBLIC_RPC_ENDPOINT, 'confirmed')
+
+    // Create a new account for the Blink
+    const blinkAccount = web3.Keypair.generate()
+
+    // Set up Metaplex
+    const metaplex = Metaplex.make(connection)
+      .use(keypairIdentity(blinkAccount))
+      .use(bundlrStorage())
+
+    // Upload metadata
+    const { uri } = await metaplex.nfts().uploadMetadata({
+      name,
+      description,
+      image,
+      attributes,
+    })
+
+    // Create mint account
+    const mint = await token.createMint(
+      connection,
+      blinkAccount,
+      blinkAccount.publicKey,
+      null,
+      0
+    )
+
+    // Create associated token account for recipient
+    const recipientPublicKey = new web3.PublicKey(recipient)
+    const associatedTokenAccount = await token.getOrCreateAssociatedTokenAccount(
+      connection,
+      blinkAccount,
+      mint,
+      recipientPublicKey
+    )
+
+    // Mint 1 token to the recipient
+    await token.mintTo(
+      connection,
+      blinkAccount,
+      mint,
+      associatedTokenAccount.address,
+      blinkAccount,
+      1
+    )
+
+    // Create NFT using Metaplex
+    const { nft } = await metaplex.nfts().create({
+      uri,
+      name,
+      sellerFeeBasisPoints: 0,
+      mintAddress: mint,
+    })
 
     return NextResponse.json({ 
-      success: true, 
       message: 'Blink created successfully',
-      mintAddress: mintAccount.publicKey.toBase58(),
-      metadata
+      blinkAddress: nft.address.toString(),
+      metadataUri: uri,
+      mint: mint.toString(),
     })
   } catch (error) {
     console.error('Error creating Blink:', error)
-    return NextResponse.json({ success: false, message: 'Failed to create Blink' }, { status: 500 })
+    return NextResponse.json({ error: 'Failed to create Blink', details: error.message }, { status: 500 })
   }
 }

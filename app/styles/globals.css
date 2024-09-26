@@ -1,6 +1,79 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+ 
+@layer base {
+  :root {
+    --background: 0 0% 100%;
+    --foreground: 0 0% 3.9%;
+
+    --card: 0 0% 100%;
+    --card-foreground: 0 0% 3.9%;
+ 
+    --popover: 0 0% 100%;
+    --popover-foreground: 0 0% 3.9%;
+ 
+    --primary: 24 9% 71%;
+    --primary-foreground: 0 0% 98%;
+ 
+    --secondary: 0 0% 96.1%;
+    --secondary-foreground: 0 0% 9%;
+ 
+    --muted: 0 0% 96.1%;
+    --muted-foreground: 0 0% 45.1%;
+ 
+    --accent: 0 0% 96.1%;
+    --accent-foreground: 0 0% 9%;
+ 
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 0 0% 98%;
+
+    --border: 0 0% 89.8%;
+    --input: 0 0% 89.8%;
+    --ring: 0 0% 3.9%;
+ 
+    --radius: 0.5rem;
+  }
+ 
+  .dark {
+    --background: 0 0% 3.9%;
+    --foreground: 0 0% 98%;
+ 
+    --card: 0 0% 3.9%;
+    --card-foreground: 0 0% 98%;
+ 
+    --popover: 0 0% 3.9%;
+    --popover-foreground: 0 0% 98%;
+ 
+    --primary: 24 9% 71%;
+    --primary-foreground: 0 0% 9%;
+ 
+    --secondary: 0 0% 14.9%;
+    --secondary-foreground: 0 0% 98%;
+ 
+    --muted: 0 0% 14.9%;
+    --muted-foreground: 0 0% 63.9%;
+ 
+    --accent: 0 0% 14.9%;
+    --accent-foreground: 0 0% 98%;
+ 
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 0 0% 98%;
+ 
+    --border: 0 0% 14.9%;
+    --input: 0 0% 14.9%;
+    --ring: 0 0% 83.1%;
+  }
+}
+ 
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+}
 
 @keyframes blink-animation {
   0% { opacity: 1; }
@@ -13,108 +86,11 @@
   color: #D0BFB4; /* Sand color */
 }
 
-@layer base {
-  :root {
-    --background: 0 0% 100%;
-    --foreground: 0 0% 3.9%;
-    --card: 0 0% 100%;
-    --card-foreground: 0 0% 3.9%;
-    --popover: 0 0% 100%;
-    --popover-foreground: 0 0% 3.9%;
-    --primary: 0 0% 9%;
-    --primary-foreground: 0 0% 98%;
-    --secondary: 0 0% 96.1%;
-    --secondary-foreground: 0 0% 9%;
-    --muted: 0 0% 96.1%;
-    --muted-foreground: 0 0% 45.1%;
-    --accent: 0 0% 96.1%;
-    --accent-foreground: 0 0% 9%;
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 0 0% 98%;
-    --border: 0 0% 89.8%;
-    --input: 0 0% 89.8%;
-    --ring: 0 0% 3.9%;
-    --chart-1: 12 76% 61%;
-    --chart-2: 173 58% 39%;
-    --chart-3: 197 37% 24%;
-    --chart-4: 43 74% 66%;
-    --chart-5: 27 87% 67%;
-    --radius: 0.5rem;
-  }
-
-  .dark {
-    --background: 0 0% 3.9%;
-    --foreground: 0 0% 98%;
-    --card: 0 0% 3.9%;
-    --card-foreground: 0 0% 98%;
-    --popover: 0 0% 3.9%;
-    --popover-foreground: 0 0% 98%;
-    --primary: 0 0% 98%;
-    --primary-foreground: 0 0% 9%;
-    --secondary: 0 0% 14.9%;
-    --secondary-foreground: 0 0% 98%;
-    --muted: 0 0% 14.9%;
-    --muted-foreground: 0 0% 63.9%;
-    --accent: 0 0% 14.9%;
-    --accent-foreground: 0 0% 98%;
-    --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 0 0% 98%;
-    --border: 0 0% 14.9%;
-    --input: 0 0% 14.9%;
-    --ring: 0 0% 83.1%;
-    --chart-1: 220 70% 50%;
-    --chart-2: 160 60% 45%;
-    --chart-3: 30 80% 55%;
-    --chart-4: 280 65% 60%;
-    --chart-5: 340 75% 55%;
-  }
-
-  * {
-    @apply border-border;
-  }
-
-  body {
-    @apply bg-background text-foreground font-sans;
-  }
-
-  h1, h2, h3, h4, h5, h6 {
-    @apply font-syne font-bold;
-  }
-
-  h1 {
-    @apply text-3xl sm:text-4xl md:text-5xl lg:text-6xl; /* Adjusted for mobile */
-  }
-
-  h2 {
-    @apply text-2xl sm:text-3xl md:text-4xl lg:text-5xl; /* Mobile-friendly scaling */
-  }
-
-  h3 {
-    @apply text-xl sm:text-2xl md:text-3xl lg:text-4xl;
-  }
-
-  h4 {
-    @apply text-lg sm:text-xl md:text-2xl lg:text-3xl;
-  }
-
-  h5 {
-    @apply text-base sm:text-lg md:text-xl lg:text-2xl;
-  }
-
-  h6 {
-    @apply text-sm sm:text-base md:text-lg lg:text-xl;
-  }
-
-  p {
-    @apply text-sm sm:text-base md:text-lg; /* Smaller paragraphs on mobile */
-  }
-
-  .container {
-    @apply mx-auto px-4 sm:px-6 md:px-8 lg:px-10; /* Responsive padding */
-  }
+/* Custom utility classes for fonts */
+.font-inter {
+  font-family: var(--font-inter), sans-serif;
 }
 
-/* Custom utility classes for fonts */
 .font-syne {
   font-family: var(--font-syne), 'Oswald', sans-serif;
 }
@@ -123,13 +99,100 @@
   font-family: var(--font-poppins), 'Poppins', sans-serif;
 }
 
-@layer base {
-  /* Ensure that border styling is consistent across all screen sizes */
-  * {
-    @apply border-border;
-  }
-  /* Ensure the body background and text colors are responsive */
-  body {
-    @apply bg-background text-foreground;
-  }
+.custom-heading {
+  @apply font-inter font-bold;
+}
+
+.custom-paragraph {
+  @apply font-poppins;
+}
+
+/* Typography */
+h1, h2, h3, h4, h5, h6 {
+  @apply font-inter font-bold;
+}
+
+h1 {
+  @apply text-3xl sm:text-4xl md:text-5xl lg:text-6xl;
+}
+
+h2 {
+  @apply text-2xl sm:text-3xl md:text-4xl lg:text-5xl;
+}
+
+h3 {
+  @apply text-xl sm:text-2xl md:text-3xl lg:text-4xl;
+}
+
+h4 {
+  @apply text-lg sm:text-xl md:text-2xl lg:text-3xl;
+}
+
+h5 {
+  @apply text-base sm:text-lg md:text-xl lg:text-2xl;
+}
+
+h6 {
+  @apply text-sm sm:text-base md:text-lg lg:text-xl;
+}
+
+p {
+  @apply text-sm sm:text-base md:text-lg;
+}
+
+/* Container */
+.container {
+  @apply mx-auto px-4 sm:px-6 md:px-8 lg:px-10;
+}
+
+/* Custom shadows */
+.shadow-soft {
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+}
+
+/* Custom card styles */
+.card {
+  @apply bg-card text-card-foreground rounded-lg border shadow-soft;
+}
+
+.card-hover {
+  @apply transition-all duration-300 ease-in-out hover:shadow-lg hover:-translate-y-1;
+}
+
+/* Button styles */
+.btn {
+  @apply inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:opacity-50 disabled:pointer-events-none ring-offset-background;
+}
+
+.btn-primary {
+  @apply bg-primary text-primary-foreground hover:bg-primary/90;
+}
+
+.btn-secondary {
+  @apply bg-secondary text-secondary-foreground hover:bg-secondary/80;
+}
+
+.btn-outline {
+  @apply border border-input hover:bg-accent hover:text-accent-foreground;
+}
+
+.btn-ghost {
+  @apply hover:bg-accent hover:text-accent-foreground;
+}
+
+.btn-link {
+  @apply underline-offset-4 hover:underline text-primary;
+}
+
+/* Existing styles */
+.gradient-text {
+  @apply text-transparent bg-clip-text bg-gradient-to-r from-sand-400 to-sand-600;
+}
+
+.input {
+  @apply w-full px-3 py-2 border border-sand-300 rounded-md focus:outline-none focus:ring-2 focus:ring-sand-400 focus:border-transparent;
+}
+
+.label {
+  @apply block text-sm font-medium text-gray-700 mb-1;
 }

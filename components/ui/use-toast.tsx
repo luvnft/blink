@@ -3,6 +3,8 @@
 import { useState, useCallback, useEffect } from 'react'
 import { createPortal } from 'react-dom'
 import { X } from 'lucide-react'
+import { cva, type VariantProps } from 'class-variance-authority'
+import { cn } from '@/lib/utils'
 
 export type ToastType = 'success' | 'error' | 'info' | 'warning'
 
@@ -18,6 +20,23 @@ interface UseToastReturn {
   addToast: (message: string, type: ToastType, duration?: number) => void
   removeToast: (id: number) => void
 }
+
+const toastVariants = cva(
+  "fixed top-4 right-4 z-50 w-full max-w-sm rounded-lg shadow-lg p-4 text-white font-syne transition-opacity duration-300",
+  {
+    variants: {
+      type: {
+        success: "bg-green-500",
+        error: "bg-red-500",
+        info: "bg-blue-500",
+        warning: "bg-yellow-500",
+      },
+    },
+    defaultVariants: {
+      type: "info",
+    },
+  }
+)
 
 export function useToast(): UseToastReturn {
   const [toasts, setToasts] = useState<Toast[]>([])
@@ -40,20 +59,38 @@ export function useToast(): UseToastReturn {
   return { toasts, addToast, removeToast }
 }
 
-function ToastComponent({ toast, onClose }: { toast: Toast; onClose: () => void }) {
-  const bgColor = {
-    success: 'bg-green-500',
-    error: 'bg-red-500',
-    info: 'bg-blue-500',
-    warning: 'bg-yellow-500',
-  }[toast.type]
+interface ToastComponentProps extends VariantProps<typeof toastVariants> {
+  toast: Toast
+  onClose: () => void
+}
+
+function ToastComponent({ toast, onClose, type }: ToastComponentProps) {
+  const [isVisible, setIsVisible] = useState(true)
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setIsVisible(false)
+    }, toast.duration ? toast.duration - 300 : 4700)
+
+    return () => clearTimeout(timer)
+  }, [toast.duration])
 
   return (
-    <div className={`${bgColor} text-white p-4 rounded-md shadow-md mb-2 flex justify-between items-center`}>
-      <p className="font-syne">{toast.message}</p>
-      <button onClick={onClose} className="ml-4 text-white hover:text-gray-200">
-        <X size={18} />
-      </button>
+    <div 
+      className={cn(toastVariants({ type: toast.type }), isVisible ? 'opacity-100' : 'opacity-0')}
+      role="alert"
+      aria-live="assertive"
+    >
+      <div className="flex justify-between items-center">
+        <p>{toast.message}</p>
+        <button 
+          onClick={onClose} 
+          className="ml-4 text-white hover:text-gray-200 focus:outline-none focus:ring-2 focus:ring-white rounded-full p-1"
+          aria-label="Close notification"
+        >
+          <X size={18} />
+        </button>
+      </div>
     </div>
   )
 }
@@ -63,6 +100,7 @@ export function ToastContainer({ toasts, removeToast }: { toasts: Toast[]; remov
 
   useEffect(() => {
     setIsMounted(true)
+    return () => setIsMounted(false)
   }, [])
 
   if (!isMounted) {
@@ -70,9 +108,14 @@ export function ToastContainer({ toasts, removeToast }: { toasts: Toast[]; remov
   }
 
   return createPortal(
-    <div className="fixed top-4 right-4 z-50 space-y-2">
+    <div className="fixed top-4 right-4 z-50 space-y-2 w-full max-w-sm">
       {toasts.map((toast) => (
-        <ToastComponent key={toast.id} toast={toast} onClose={() => removeToast(toast.id)} />
+        <ToastComponent 
+          key={toast.id} 
+          toast={toast} 
+          onClose={() => removeToast(toast.id)} 
+          type={toast.type}
+        />
       ))}
     </div>,
     document.body

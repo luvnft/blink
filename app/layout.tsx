@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import localFont from "next/font/local";
+import { Inter, Syne, Poppins } from "next/font/google";
 import "./styles/globals.css";
 
 const geistSans = localFont({
@@ -7,10 +8,30 @@ const geistSans = localFont({
   variable: "--font-geist-sans",
   weight: "100 900",
 });
+
 const geistMono = localFont({
   src: "./fonts/GeistMonoVF.woff",
   variable: "--font-geist-mono",
   weight: "100 900",
+});
+
+const inter = Inter({
+  subsets: ['latin'],
+  display: 'swap',
+  variable: '--font-inter',
+});
+
+const syne = Syne({
+  subsets: ['latin'],
+  display: 'swap',
+  variable: '--font-syne',
+});
+
+const poppins = Poppins({
+  weight: ['300', '400', '600'],
+  subsets: ['latin'],
+  display: 'swap',
+  variable: '--font-poppins',
 });
 
 export const metadata: Metadata = {
@@ -26,9 +47,11 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+        className={`${geistSans.variable} ${geistMono.variable} ${inter.variable} ${syne.variable} ${poppins.variable} antialiased font-sans bg-gradient-to-b from-sand-50 to-white min-h-screen`}
       >
-        {children}
+        <div className="bg-white bg-opacity-80 backdrop-blur-sm min-h-screen">
+          {children}
+        </div>
       </body>
     </html>
   );

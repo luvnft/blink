@@ -1,19 +1,72 @@
-# BARK BLINK
+# BARK - BLINKS Web UI
 
-![BARK BLINK Logo](https://ucarecdn.com/f242e5dc-8813-47b4-af80-6e6dd43945a9/barkicon.png)
+Welcome to the BARK - BLINKS Web UI project! This repository contains the frontend code for the BARK Protocol's Blinks As A Service platform, built using Next.js, React, and Tailwind CSS.
 
-BARK BLINK is a Blinks As A Service Application for creating and managing Solana Blinks. It provides an intuitive interface for users to interact with the Solana blockchain, create digital assets, and manage their Blink collection.
+## Table of Contents
+
+- [Overview](#overview)
+- [Features](#features)
+- [Blinkboard](#blinkboard)
+- [Screenshots](#screenshots)
+- [Getting Started](#getting-started)
+- [Project Structure](#project-structure)
+- [Technologies Used](#technologies-used)
+- [Contributing](#contributing)
+- [License](#license)
+- [Contact](#contact)
+
+## Overview
+
+BARK - BLINKS is a cutting-edge platform that leverages the power of the Solana blockchain to create, manage, and trade digital assets called Blinks. This web interface provides users with an intuitive and seamless experience to interact with the BARK Protocol, enabling them to participate in the future of digital interactions and asset management.
 
 ## Features
 
-- Create Solana Blinks: Instantly create digital assets or moments on the blockchain.
-- Send Blinks: Effortlessly transfer your Blinks to other users on the Solana network.
-- Track Blinks: Monitor your Blink collection and transaction history in real-time.
-- Customize Blinks: Personalize your Blinks with unique attributes and metadata.
-- Swap Tokens: Exchange different types of tokens directly within the application.
-- SPL Token Creation: Create your own SPL tokens on the Solana blockchain.
+- Create and customize Solana Blinks with unique attributes
+- Manage your Blink collection in a user-friendly dashboard
+- Trade Blinks on supported marketplaces
+- Integrated token swapping for efficient asset management
+- Secure wallet connection for safe transactions
+- Real-time updates and notifications
+- Comprehensive analytics and portfolio tracking
+- Social sharing capabilities for Blinks
+
+## Blinkboard (under construction)
+
+Blinkboard is the central dashboard of the BARK - BLINKS platform. It provides users with a comprehensive overview and management interface for their Blinks and related activities.
+
+Key features of Blinkboard include:
+
+- Real-time portfolio tracking and valuation
+- Blink creation and customization tools
+- Transaction history and detailed analytics
+- Marketplace integration for trading Blinks
+- Staking and reward management
+- User profile and settings customization
+- Activity feed and social interactions
+- Notification center for important updates
+
+Blinkboard is designed to be user-friendly and intuitive, allowing both newcomers and experienced users to easily navigate and utilize the full potential of the BARK Protocol.
+
+## Screenshots
+
+### Hero Section
+![Hero Section](./github/assets/hero.png)
+
+### Features
+![Features Section](./github/assets/features.png)
+
+### How It Works
+![How It Works Section](./github/assets/how-it-works.png)
+
+### FAQ
+![FAQ Section](./github/assets/faq.png)
+
+### Call to Action
+![Call to Action Section](./github/assets/cta.png)
 
 ## Getting Started
+
+To get started with the BARK - BLINKS Web UI, follow these steps:
 
 ### Prerequisites
 
@@ -65,15 +118,25 @@ BARK BLINK is a Blinks As A Service Application for creating and managing Solana
 5. Create SPL tokens and manage your token portfolio.
 6. Swap tokens using the integrated decentralized exchange functionality.
 
-## API Routes
+## Prisma
+
+1. Set the DATABASE_URL in the .env file to point to your existing database. If your database has no tables yet, read https://pris.ly/d/getting-started
+2. Set the provider of the datasource block in schema.prisma to match your database: postgresql, mysql, sqlite, sqlserver, mongodb or cockroachdb.
+3. Run npx prisma db pull to turn your database schema into a Prisma schema.
+4. Run npx prisma generate to generate the Prisma Client. You can then start querying your database.
+5. Tip: Explore how you can extend the ORM with scalable connection pooling, global caching, and real-time database events. Read: https://pris.ly/cli/beyond-orm
+
+More information in our documentation: https://pris.ly/d/getting-started
+
+## API Routes (under constructions)
 
 The application includes several API routes for interacting with the Solana blockchain:
 
-- `/api/create-blink`: Create a new Solana Blink
-- `/api/send-blink`: Transfer a Blink to another user
-- `/api/get-user-blinks`: Retrieve a user's Blink collection
-- `/api/create-spl-token`: Create a new SPL token
-- `/api/swap-tokens`: Perform a token swap
+- `/api/v1/create-blink`: Create a new Solana Blink
+- `/api/v1/send-blink`: Transfer a Blink to another user
+- `/api/v1/get-user-blinks`: Retrieve a user's Blink collection
+- `/api/v1/create-spl-token`: Create a new SPL token
+- `/api/v1/swap-tokens`: Perform a token swap
 
 For detailed information on how to use these API routes, please refer to the API documentation.
 

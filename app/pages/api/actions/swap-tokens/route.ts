@@ -1,53 +1,51 @@
 import { NextResponse } from 'next/server'
-import { Connection, PublicKey, Keypair, Transaction } from '@solana/web3.js'
-import { Token, TOKEN_PROGRAM_ID } from '@solana/spl-token'
-import { Program, AnchorProvider } from '@coral-xyz/anchor'
+import { Connection, PublicKey } from '@solana/web3.js'
+import { env } from '@/lib/env'
 
-const SOLANA_RPC_ENDPOINT = process.env.NEXT_PUBLIC_RPC_ENDPOINT || 'https://api.mainnet-beta.solana.com'
-const SWAP_PROGRAM_ID = new PublicKey('SwaPpA9LAaLfeLi3a68M4DjnLqgtticKg6CnyNwgAC8')
+const JUPITER_QUOTE_API = 'https://quote-api.jup.ag/v6/quote'
+const JUPITER_SWAP_API = 'https://quote-api.jup.ag/v6/swap'
 
-// This is a simplified version. In a real-world scenario, you'd need to implement the actual swap logic
-// using a decentralized exchange program like Serum or Raydium.
 export async function POST(req: Request) {
   try {
-    const { fromToken, toToken, amount } = await req.json()
-    const connection = new Connection(SOLANA_RPC_ENDPOINT, 'confirmed')
+    const { inputMint, outputMint, amount, userPublicKey } = await req.json()
 
-    // In a real-world scenario, you would use the user's wallet to sign transactions
-    // For this example, we're using a dummy keypair
-    const payer = Keypair.generate()
+    if (!inputMint || !outputMint || !amount || !userPublicKey) {
+      return NextResponse.json({ error: 'Missing required fields' }, { status: 400 })
+    }
 
-    // Create a dummy provider
-    const provider = new AnchorProvider(connection, payer, AnchorProvider.defaultOptions())
+    // Step 1: Get quote from Jupiter
+    const quoteResponse = await fetch(`${JUPITER_QUOTE_API}?inputMint=${inputMint}&outputMint=${outputMint}&amount=${amount}&slippageBps=50`)
+    if (!quoteResponse.ok) {
+      throw new Error('Failed to get quote from Jupiter')
+    }
+    const quoteData = await quoteResponse.json()
 
-    // Load the swap program
-    const program = await Program.at(SWAP_PROGRAM_ID, provider)
+    // Step 2: Get swap transaction
+    const swapResponse = await fetch(JUPITER_SWAP_API, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        quoteResponse: quoteData,
+        userPublicKey: userPublicKey,
+        wrapUnwrapSOL: true
+      })
+    })
+    if (!swapResponse.ok) {
+      throw new Error('Failed to get swap transaction from Jupiter')
+    }
+    const swapData = await swapResponse.json()
 
-    // Create a dummy transaction for demonstration purposes
-    const transaction = new Transaction().add(
-      program.instruction.swap(
-        new PublicKey(fromToken),
-        new PublicKey(toToken),
-        amount,
-        {
-          accounts: {
-            user: payer.publicKey,
-            // Add other necessary accounts here
-          },
-        }
-      )
-    )
-
-    // In a real implementation, this transaction would be sent to the client to be signed
-    // and then broadcast to the network
-
-    return NextResponse.json({ 
-      success: true, 
-      message: 'Swap transaction created successfully',
-      transaction: transaction.serialize({ requireAllSignatures: false }).toString('base64')
+    // Step 3: Return the swap transaction
+    return NextResponse.json({
+      swapTransaction: swapData.swapTransaction,
+      inputAmount: quoteData.inputAmount,
+      outputAmount: quoteData.outputAmount,
+      price: quoteData.price
     })
   } catch (error) {
-    console.error('Error creating swap transaction:', error)
-    return NextResponse.json({ success: false, message: 'Failed to create swap transaction' }, { status: 500 })
+    console.error('Error in Jupiter swap:', error)
+    return NextResponse.json({ error: 'Failed to create swap transaction', details: error.message }, { status: 500 })
   }
 }
