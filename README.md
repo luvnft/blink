@@ -1,12 +1,13 @@
-# BARK - BLINKS Web UI
+# BARK - BLINK As A Service Monorepo
 
-Welcome to the BARK - BLINKS Web UI project! This repository contains the frontend code for the BARK Protocol's Blinks As A Service platform, built using Next.js, React, and Tailwind CSS.
+Welcome to the BARK - BLINKS project! This repository contains the frontend code for the BARK Protocol's Blinks As A Service platform, built using Next.js, React, and Tailwind CSS.
 
 ## Table of Contents
 
 - [Overview](#overview)
 - [Features](#features)
-- [Blinkboard](#blinkboard)
+- [Blinkboard (Dashboard)](#blinkboard)
+- [Web Interface and Logic](#web-interface-and-logic)
 - [Screenshots](#screenshots)
 - [Getting Started](#getting-started)
 - [Project Structure](#project-structure)
@@ -17,7 +18,7 @@ Welcome to the BARK - BLINKS Web UI project! This repository contains the fronte
 
 ## Overview
 
-BARK - BLINKS is a cutting-edge platform that leverages the power of the Solana blockchain to create, manage, and trade digital assets called Blinks. This web interface provides users with an intuitive and seamless experience to interact with the BARK Protocol, enabling them to participate in the future of digital interactions and asset management.
+BARK Blink is a streamlined decentralized application (dApp) for managing token interactions on the Solana blockchain to create, manage, and trade digital assets called Blinks. This web interface provides users with an intuitive and seamless experience to interact with the BARK Protocol. Blink As A Service platform enables users to easily create, transfer, and manage SPL tokens, NFTs, airdrops, and on-chain transactions with a simple, user-friendly interface. Built for seamless interaction with Solana’s infrastructure, BARK Blink simplifies the process of sending digital assets, performing airdrops, enabling them to participate in the future of digital interactions and asset management, and managing wallet-to-wallet transactions.
 
 ## Features
 
@@ -30,22 +31,34 @@ BARK - BLINKS is a cutting-edge platform that leverages the power of the Solana 
 - Comprehensive analytics and portfolio tracking
 - Social sharing capabilities for Blinks
 
-## Blinkboard (under construction)
+## Blinkboard (Dashboard)
 
-Blinkboard is the central dashboard of the BARK - BLINKS platform. It provides users with a comprehensive overview and management interface for their Blinks and related activities.
+Blinkboard is the central hub of the BARK - BLINKS platform. It provides users with a comprehensive overview and management interface for their Blinks and related activities.
 
 Key features of Blinkboard include:
 
-- Real-time portfolio tracking and valuation
-- Blink creation and customization tools
-- Transaction history and detailed analytics
-- Marketplace integration for trading Blinks
-- Staking and reward management
-- User profile and settings customization
-- Activity feed and social interactions
-- Notification center for important updates
+- Real-time portfolio tracking and valuation of Blinks
+- Blink creation and customization tools for unique NFTs
+- Detailed transaction history and comprehensive analytics
+- Integrated marketplace support for trading Blinks
+- Staking and reward management for maximizing value
+- Personalized user profile and settings customization
+- Real-time activity feed and social interactions
+- Notification center for important updates and changes
 
-Blinkboard is designed to be user-friendly and intuitive, allowing both newcomers and experienced users to easily navigate and utilize the full potential of the BARK Protocol.
+The Blinkboard dashboard is designed to be intuitive and easy to use, offering both casual users and advanced traders a seamless experience with their digital assets.
+
+## Web Interface
+
+The Web Interface of BARK - BLINKS is built using Next.js and React for dynamic and responsive user interactions. Tailwind CSS powers the design for rapid and modern UI development. Key logic and functionalities include:
+
+- **Wallet Integration:** Supports various Solana wallets (Phantom, Solflare, Backpack) through `@solana/wallet-adapter-react` for secure and fast transactions.
+- **API Communication:** The web interface communicates with BARK’s backend via REST APIs for Blink creation, transfer, and marketplace interactions.
+- **On-Chain Operations:** The frontend interacts with Solana programs via `@solana/web3.js` to create SPL tokens, mint NFTs, perform transfers, and swap tokens.
+- **State Management:** Utilizes React hooks and context to manage wallet connections, user sessions, and real-time updates across the Blinkboard.
+- **Analytics & Notifications:** Provides real-time updates on portfolio value, staking rewards, and a history of all transactions in the system.
+
+The interface also includes integrated support for **Prisma** to handle database interactions, which makes tracking Blink metadata and user portfolios efficient and secure.
 
 ## Screenshots
 
@@ -77,36 +90,35 @@ To get started with the BARK - BLINKS Web UI, follow these steps:
 - pnpm or yarn
 - Solana CLI (for local development)
 
-### Installation
+### Web DApp Installation
 
 1. Clone the repository:
-   ```
+   ```bash
    git clone https://github.com/barkprotocol/blinks-as-a-service-dapp.git
-   cd blinks-as-a-service-dapp
    ```
 
 2. Install dependencies:
-   ```
+   ```bash
    pnpm install
    ```
    or
-   ```
+   ```bash
    yarn install
    ```
 
 3. Set up environment variables:
    Create a `.env.local` file in the root directory and add the following variables:
-   ```
+   ```bash
    NEXT_PUBLIC_RPC_ENDPOINT=your_solana_rpc_endpoint
    NEXT_PUBLIC_NETWORK=mainnet-beta
    ```
 
 4. Run the development server:
-   ```
+   ```bash
    pnpm run dev
    ```
    or
-   ```
+   ```bash
    yarn dev
    ```
 
@@ -123,15 +135,13 @@ To get started with the BARK - BLINKS Web UI, follow these steps:
 
 ## Prisma
 
-1. Set the DATABASE_URL in the .env file to point to your existing database. If your database has no tables yet, read https://pris.ly/d/getting-started
-2. Set the provider of the datasource block in schema.prisma to match your database: postgresql, mysql, sqlite, sqlserver, mongodb or cockroachdb.
-3. Run npx prisma db pull to turn your database schema into a Prisma schema.
-4. Run npx prisma generate to generate the Prisma Client. You can then start querying your database.
-5. Tip: Explore how you can extend the ORM with scalable connection pooling, global caching, and real-time database events. Read: https://pris.ly/cli/beyond-orm
+To use this updated schema:
 
-More information in our documentation: https://pris.ly/d/getting-started
+1. Replace the contents of your `schema.prisma` file with the latest schema.
+2. Run `npx prisma generate` to update the Prisma client.
+3. Run `npx prisma db push` to apply these changes to your development database (or use migrations for production environments).
 
-## API Routes (under constructions)
+## API Routes (under construction)
 
 The application includes several API routes for interacting with the Solana blockchain:
 
@@ -170,3 +180,4 @@ This project is licensed under the MIT License. See the [LICENSE](LICENSE) file 
 - [@solana/web3.js](https://github.com/solana-labs/solana-web3.js)
 - [@solana/spl-token](https://github.com/solana-labs/solana-program-library/tree/master/token)
 - [Anchor Framework](https://www.anchor-lang.com/)
+```

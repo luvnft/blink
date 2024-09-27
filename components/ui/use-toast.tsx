@@ -22,7 +22,7 @@ interface UseToastReturn {
 }
 
 const toastVariants = cva(
-  "fixed top-4 right-4 z-50 w-full max-w-sm rounded-lg shadow-lg p-4 text-white font-syne transition-opacity duration-300",
+  "fixed top-4 right-4 z-50 w-full max-w-sm rounded-lg shadow-lg p-4 text-white font-syne transition-all duration-300",
   {
     variants: {
       type: {
@@ -77,15 +77,19 @@ function ToastComponent({ toast, onClose, type }: ToastComponentProps) {
 
   return (
     <div 
-      className={cn(toastVariants({ type: toast.type }), isVisible ? 'opacity-100' : 'opacity-0')}
+      className={cn(
+        toastVariants({ type: toast.type }),
+        isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-2',
+        'transform transition-all duration-300 ease-in-out'
+      )}
       role="alert"
       aria-live="assertive"
     >
       <div className="flex justify-between items-center">
-        <p>{toast.message}</p>
+        <p className="pr-2">{toast.message}</p>
         <button 
           onClick={onClose} 
-          className="ml-4 text-white hover:text-gray-200 focus:outline-none focus:ring-2 focus:ring-white rounded-full p-1"
+          className="ml-4 text-white hover:text-gray-200 focus:outline-none focus:ring-2 focus:ring-white rounded-full p-1 transition-colors duration-200"
           aria-label="Close notification"
         >
           <X size={18} />
@@ -119,5 +123,16 @@ export function ToastContainer({ toasts, removeToast }: { toasts: Toast[]; remov
       ))}
     </div>,
     document.body
+  )
+}
+
+export function ToastProvider({ children }: { children: React.ReactNode }) {
+  const { toasts, addToast, removeToast } = useToast()
+
+  return (
+    <>
+      {children}
+      <ToastContainer toasts={toasts} removeToast={removeToast} />
+    </>
   )
 }

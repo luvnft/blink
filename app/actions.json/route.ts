@@ -31,7 +31,7 @@ export const GET = async () => {
         apiPath: "/api/v1/nfts/{id}",
       },
       {
-        pathPattern: "/nfts/create",
+        pathPattern: "/nft/create",
         apiPath: "/api/v1/nfts/create",
       },
       {

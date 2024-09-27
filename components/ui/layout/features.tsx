@@ -31,12 +31,13 @@ const FeatureCard: React.FC<FeatureCardProps> = ({ title, description, icon, act
         <p className="font-poppins font-light text-sm text-gray-700">{description}</p>
       </CardContent>
       <CardFooter className="p-4 pt-0">
-        <Link href={link} passHref>
+        <Link href={link} passHref className="w-full">
           <Button 
-            className="w-full text-sm bg-sand-400 text-white hover:bg-sand-500 transition-colors duration-300 rounded-md py-2 px-4 flex items-center justify-center border border-sand-500"
+            variant="outline"
+            className="w-full text-sm bg-white text-sand-500 hover:bg-sand-50 transition-colors duration-300 rounded-md py-2 px-4 flex items-center justify-between border border-sand-500"
           >
-            {action}
-            <ArrowRight className="ml-2 h-4 w-4" />
+            <span>{action}</span>
+            <ArrowRight className="h-4 w-4" />
           </Button>
         </Link>
       </CardFooter>
@@ -51,14 +52,14 @@ export const Features: React.FC = () => {
       description: "Instantly mint and customize Solana Blinks, representing unique digital assets or memorable moments on the blockchain.", 
       icon: <Zap className="h-5 w-5 text-[#D0BFB4]" />,
       action: "Start Creating",
-      link: "/blinks/create"
+      link: "/blinks/create-blinks"
     },
     { 
       title: "Send Blinks",
       description: "Seamlessly transfer your Blinks to friends, family, or fellow collectors on the Solana network.", 
       icon: <Send className="h-5 w-5 text-[#D0BFB4]" />,
       action: "Send Now",
-      link: "/blinks/send" 
+      link: "/blinks/send-a-gift" 
     },
     { 
       title: "Micro Payments", 

@@ -1,9 +1,6 @@
 // This is your Prisma schema file,
 // learn more about it in the docs: https://pris.ly/d/prisma-schema
 
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -11,35 +8,410 @@ generator client {
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
 }
 
 model User {
+  id                String         @id @default(cuid())
+  name              String?
+  email             String         @unique
+  emailVerified     DateTime?
+  image             String?
+  account           Account?
+  walletAddress     String         @unique
+  role              UserRole       @default(USER)
+  createdAt         DateTime       @default(now())
+  updatedAt         DateTime       @updatedAt
+  lastLogin         DateTime?
+  twoFactorEnabled  Boolean        @default(false)
+  twoFactorSecret   String?
+  passwordHash      String
+  blinks            Blink[]
+  nfts              NFT[]
+  sentTxs           Transaction[]  @relation("SenderTransactions")
+  receivedTxs       Transaction[]  @relation("ReceiverTransactions")
+  collections       Collection[]
+  marketplaceListings MarketplaceListing[]
+  orders            Order[]
+  reviews           Review[]
+  notifications     Notification[]
+  followers         Follow[]       @relation("Following")
+  following         Follow[]       @relation("Followers")
+  createdCrowdfundings Crowdfunding[] @relation("CreatedCrowdfundings")
+  contributedCrowdfundings Crowdfunding[] @relation("ContributedCrowdfundings")
+  sentGifts         Gift[]         @relation("SentGifts")
+  receivedGifts     Gift[]         @relation("ReceivedGifts")
+  memos             Memo[]
+  posts             Post[]
+  subscriptions     Subscription[]
+  profile           Profile?
+  bids              Bid[]
+}
+
+model Account {
   id        String   @id @default(cuid())
-  name      String?
-  email     String   @unique
-  image     String?
+  userId    String   @unique
+  user      User     @relation(fields: [userId], references: [id])
+  balance   Float
+  currency  String
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
 
+model Post {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  title     String   @db.VarChar(255)
+  content   String?
+  published Boolean  @default(false)
+  author    User     @relation(fields: [authorId], references: [id])
+  authorId  String
+}
+
+model Profile {
+  id     String  @id @default(cuid())
+  bio    String?
+  user   User    @relation(fields: [userId], references: [id])
+  userId String  @unique
+}
+
+enum UserRole {
+  USER
+  CREATOR
+  ADMIN
+  MODERATOR
+  VERIFIED
+}
+
 model Blink {
-  id          String   @id @default(cuid())
-  name        String
-  description String
-  owner       String
-  mintAddress String   @unique
-  metadata    Json
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  id            String     @id @default(cuid())
+  name          String
+  description   String
+  owner         User       @relation(fields: [ownerId], references: [id])
+  ownerId       String
+  mintAddress   String     @unique
+  metadata      Json
+  rarity        BlinkRarity
+  collection    Collection? @relation(fields: [collectionId], references: [id])
+  collectionId  String?
+  createdAt     DateTime   @default(now())
+  updatedAt     DateTime   @updatedAt
+  transactions  Transaction[]
+  listings      MarketplaceListing[]
+  attributes    BlinkAttribute[]
+  royaltyPercentage Float  @default(0)
+  isLocked      Boolean    @default(false)
+  unlockDate    DateTime?
+  edition       Int?
+  maxEdition    Int?
+  gifts         Gift[]
+  memos         Memo[]
+  reviews       Review[]
+}
+
+enum BlinkRarity {
+  COMMON
+  UNCOMMON
+  RARE
+  EPIC
+  LEGENDARY
+  MYTHIC
+  UNIQUE
+}
+
+model BlinkAttribute {
+  id        String   @id @default(cuid())
+  blink     Blink    @relation(fields: [blinkId], references: [id])
+  blinkId   String
+  traitType String
+  value     String
+  rarity    Float?
 }
 
 model NFT {
+  id            String   @id @default(cuid())
+  name          String
+  description   String
+  image         String
+  owner         User     @relation(fields: [ownerId], references: [id])
+  ownerId       String
+  mintAddress   String   @unique
+  metadata      Json
+  collection    Collection? @relation(fields: [collectionId], references: [id])
+  collectionId  String?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+  transactions  Transaction[]
+  listings      MarketplaceListing[]
+  royaltyPercentage Float  @default(0)
+  isLocked      Boolean    @default(false)
+  unlockDate    DateTime?
+  reviews       Review[]
+}
+
+model Transaction {
+  id        String   @id @default(cuid())
+  type      TransactionType
+  from      User     @relation("SenderTransactions", fields: [fromId], references: [id])
+  fromId    String
+  to        User     @relation("ReceiverTransactions", fields: [toId], references: [id])
+  toId      String
+  amount    Float
+  currency  String
+  status    TransactionStatus
+  txHash    String   @unique
+  blink     Blink?   @relation(fields: [blinkId], references: [id])
+  blinkId   String?
+  nft       NFT?     @relation(fields: [nftId], references: [id])
+  nftId     String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  fee       Float?
+  gasUsed   Float?
+  blockNumber Int?
+  confirmations Int   @default(0)
+  metadata  Json?
+}
+
+enum TransactionType {
+  MINT
+  TRANSFER
+  BURN
+  MARKETPLACE_SALE
+  AUCTION_SALE
+  ROYALTY_PAYMENT
+  CROWDFUNDING_CONTRIBUTION
+  GIFT
+}
+
+enum TransactionStatus {
+  PENDING
+  COMPLETED
+  FAILED
+  CANCELLED
+  PROCESSING
+}
+
+model Collection {
   id          String   @id @default(cuid())
   name        String
   description String
-  image       String
-  owner       String
-  mintAddress String   @unique
-  metadata    Json
+  creator     User     @relation(fields: [creatorId], references: [id])
+  creatorId   String
+  blinks      Blink[]
+  nfts        NFT[]
   createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  coverImage  String?
+  isVerified  Boolean  @default(false)
+}
+
+model MarketplaceListing {
+  id        String   @id @default(cuid())
+  seller    User     @relation(fields: [sellerId], references: [id])
+  sellerId  String
+  blink     Blink?   @relation(fields: [blinkId], references: [id])
+  blinkId   String?
+  nft       NFT?     @relation(fields: [nftId], references: [id])
+  nftId     String?
+  price     Float
+  currency  String
+  status    ListingStatus
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  expiresAt DateTime?
+  isAuction Boolean  @default(false)
+  startingPrice Float?
+  reservePrice Float?
+  bids      Bid[]
+}
+
+enum ListingStatus {
+  ACTIVE
+  SOLD
+  CANCELLED
+  EXPIRED
+}
+
+model Bid {
+  id        String   @id @default(cuid())
+  bidder    User     @relation(fields: [bidderId], references: [id])
+  bidderId  String
+  listing   MarketplaceListing @relation(fields: [listingId], references: [id])
+  listingId String
+  amount    Float
+  createdAt DateTime @default(now())
+  status    BidStatus
+}
+
+enum BidStatus {
+  ACTIVE
+  ACCEPTED
+  OUTBID
+  CANCELLED
+}
+
+model Order {
+  id            String   @id @default(cuid())
+  user          User     @relation(fields: [userId], references: [id])
+  userId        String
+  status        OrderStatus
+  total         Float
+  currency      String
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+  items         OrderItem[]
+  shippingAddress String?
+  trackingNumber String?
+}
+
+model OrderItem {
+  id        String   @id @default(cuid())
+  order     Order    @relation(fields: [orderId], references: [id])
+  orderId   String
+  blinkId   String?
+  nftId     String?
+  quantity  Int
+  price     Float
+  currency  String
+}
+
+enum OrderStatus {
+  PENDING
+  PROCESSING
+  COMPLETED
+  CANCELLED
+  REFUNDED
+  SHIPPED
+}
+
+model Review {
+  id        String   @id @default(cuid())
+  user      User     @relation(fields: [userId], references: [id])
+  userId    String
+  blink     Blink?   @relation(fields: [blinkId], references: [id])
+  blinkId   String?
+  nft       NFT?     @relation(fields: [nftId], references: [id])
+  nftId     String?
+  rating    Int
+  comment   String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  isVerified Boolean @default(false)
+}
+
+model Notification {
+  id        String   @id @default(cuid())
+  user      User     @relation(fields: [userId], references: [id])
+  userId    String
+  type      NotificationType
+  message   String
+  read      Boolean  @default(false)
+  createdAt DateTime @default(now())
+  metadata  Json?
+}
+
+enum NotificationType {
+  TRANSACTION
+  LISTING
+  ORDER
+  SYSTEM
+  BID
+  AUCTION_END
+  GIFT
+  FOLLOW
+  MENTION
+}
+
+model Follow {
+  id          String   @id @default(cuid())
+  follower    User     @relation("Following", fields: [followerId], references: [id])
+  followerId  String
+  following   User     @relation("Followers", fields: [followingId], references: [id])
+  followingId String
+  createdAt   DateTime @default(now())
+
+  @@unique([followerId, followingId])
+}
+
+model Crowdfunding {
+  id          String   @id @default(cuid())
+  title       String
+  description String
+  creator     User     @relation("CreatedCrowdfundings", fields: [creatorId], references: [id])
+  creatorId   String
+  goal        Float
+  currentAmount Float  @default(0)
+  currency    String
+  startDate   DateTime
+  endDate     DateTime
+  status      CrowdfundingStatus
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  contributors User[]  @relation("ContributedCrowdfundings")
+}
+
+enum CrowdfundingStatus {
+  ACTIVE
+  SUCCESSFUL
+  FAILED
+  CANCELLED
+}
+
+model Gift {
+  id        String   @id @default(cuid())
+  sender    User     @relation("SentGifts", fields: [senderId], references: [id])
+  senderId  String
+  receiver  User     @relation("ReceivedGifts", fields: [receiverId], references: [id])
+  receiverId String
+  blink     Blink    @relation(fields: [blinkId], references: [id])
+  blinkId   String
+  message   String?
+  createdAt DateTime @default(now())
+  claimedAt DateTime?
+  status    GiftStatus
+}
+
+enum GiftStatus {
+  PENDING
+  CLAIMED
+  EXPIRED
+}
+
+model Memo {
+  id        String   @id @default(cuid())
+  user      User     @relation(fields: [userId], references: [id])
+  userId    String
+  blink     Blink    @relation(fields: [blinkId], references: [id])
+  blinkId   String
+  content   String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Subscription {
+  id        String   @id @default(cuid())
+  user      User     @relation(fields: [userId], references: [id])
+  userId    String
+  plan      SubscriptionPlan
+  startDate DateTime
+  endDate   DateTime?
+  status    SubscriptionStatus
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+enum SubscriptionPlan {
+  FREE
+  BASIC
+  PRO
+  ENTERPRISE
+}
+
+enum SubscriptionStatus {
+  ACTIVE
+  CANCELLED
+  EXPIRED
+  PENDING
 }

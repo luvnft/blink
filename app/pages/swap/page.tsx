@@ -15,6 +15,7 @@ import { Slider } from "@/components/ui/slider"
 import { Switch } from "@/components/ui/switch"
 import { Label } from "@/components/ui/label"
 import Image from 'next/image'
+import { constants } from 'buffer'
 
 interface TokenSwapProps {
   onError: (error: string) => void

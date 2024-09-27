@@ -1,5 +1,6 @@
 {
   "compilerOptions": {
+    "target": "es6",
     "lib": ["dom", "dom.iterable", "esnext"],
     "baseUrl": ".",
     "allowJs": true,
@@ -15,6 +16,7 @@
     "incremental": true,
     "forceConsistentCasingInFileNames": true,
     "useDefineForClassFields": true,
+    "allowSyntheticDefaultImports": true,
     "plugins": [
       {
         "name": "next"
@@ -23,7 +25,10 @@
     "paths": {
       "@/*": ["./*"],
       "@components/*": ["./components/*"],
-      "@styles/*": ["./styles/*"]
+      "@styles/*": ["./styles/*"],
+      "@lib/*": ["./lib/*"],
+      "@utils/*": ["./utils/*"],
+      "@hooks/*": ["./hooks/*"]
     }
   },
   "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"],

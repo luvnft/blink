@@ -1,5 +1,6 @@
 'use client'
 
+import React from 'react'
 import { useRouter } from 'next/navigation'
 import { useWallet } from '@solana/wallet-adapter-react'
 import { useToast } from "@/components/ui/use-toast"
@@ -14,12 +15,12 @@ import { FAQ } from '@/components/ui/layout/faq'
 import { Newsletter } from '@/components/ui/layout/newsletter'
 import Footer from "@/components/ui/layout/footer"
 
-export default function Home() {
+const Home: React.FC = () => {
   const router = useRouter()
   const { connected } = useWallet()
   const { toast } = useToast()
 
-  const handleLaunchApp = () => {
+  const handleLaunchApp = React.useCallback(() => {
     if (connected) {
       router.push('/blinkboard')
     } else {
@@ -29,11 +30,11 @@ export default function Home() {
         variant: "destructive",
       })
     }
-  }
+  }, [connected, router, toast])
 
   return (
     <SolanaWalletProvider>
-      <div className="min-h-screen font-poppins bg-gray-50 text-gray-900">
+      <div className="min-h-screen font-poppins bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-gray-100">
         <Header />
         <main className="container mx-auto px-4 py-8">
           <Hero onLaunchApp={handleLaunchApp} />
@@ -49,3 +50,5 @@ export default function Home() {
     </SolanaWalletProvider>
   )
 }
+
+export default Home
