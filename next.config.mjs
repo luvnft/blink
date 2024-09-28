@@ -25,11 +25,9 @@ const nextConfig = {
     SHYFT_API_KEY: process.env.SHYFT_API_KEY,
     STRIPE_SECRET_KEY: process.env.STRIPE_SECRET_KEY,
     STRIPE_WEBHOOK_SECRET: process.env.STRIPE_WEBHOOK_SECRET,
-    BARK_BLINK_POSTGRES_URL: process.env.BARK_BLINK_POSTGRES_URL,
-    BARK_BLINK_STRIPE_SECRET_KEY: process.env.BARK_BLINK_STRIPE_SECRET_KEY,
-    BARK_BLINK_STRIPE_WEBHOOK_SECRET: process.env.BARK_BLINK_STRIPE_WEBHOOK_SECRET,
-    BARK_BLINK_BASE_URL: process.env.BARK_BLINK_BASE_URL,
-    BARK_BLINK_AUTH_SECRET: process.env.BARK_BLINK_AUTH_SECRET,
+    ACCESS_KEY_ID: process.env.ACCESS_KEY_ID,
+    ACCESS_KEY_PASSWORD: process.env.ACCESS_KEY_PASSWORD,
+    JWT_SECRET: process.env.JWT_SECRET,
   },
 
   images: {
@@ -38,6 +36,45 @@ const nextConfig = {
       'ucarecdn.com',
       'unsplash.com',
     ],
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: '**.public.blob.vercel-storage.com',
+      },
+    ],
+  },
+
+  // Improved error handling and logging
+  onError: (error, req, res) => {
+    console.error('Next.js Error:', error);
+    res.statusCode = 500;
+    res.end('Internal Server Error');
+  },
+
+  // Enable source maps in production for better error tracking
+  productionBrowserSourceMaps: true,
+
+  // Optimize loading of ES modules
+  experimental: {
+    optimizeCss: true,
+    optimizePackageImports: ['@mui/material', '@mui/icons-material', 'lodash'],
+  },
+
+  // Configure webpack for better performance
+  webpack: (config, { dev, isServer }) => {
+    // Optimize CSS
+    if (!dev && !isServer) {
+      config.optimization.splitChunks.cacheGroups.styles = {
+        name: 'styles',
+        test: /\.(css|scss)$/,
+        chunks: 'all',
+        enforce: true,
+      };
+    }
+
+    // Add any other custom webpack configurations here
+
+    return config;
   },
 };
 

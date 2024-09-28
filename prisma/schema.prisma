@@ -8,7 +8,18 @@ generator client {
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
-  directUrl = env("DIRECT_URL")
+}
+
+model Host {
+  id         Int        @id @default(autoincrement())
+  email      String     @unique
+  username   String     @unique
+  publicKey  String     @unique
+  isPaid     Boolean    @default(false)
+  freeTrials Int        @default(5)
+  apiKey     String?    @unique
+  bounties   Bounties[]
+  @@unique([publicKey, email])
 }
 
 model User {
@@ -18,7 +29,6 @@ model User {
   emailVerified     DateTime?
   image             String?
   account           Account?
-  walletAddress     String         @unique
   role              UserRole       @default(USER)
   createdAt         DateTime       @default(now())
   updatedAt         DateTime       @updatedAt
@@ -46,12 +56,16 @@ model User {
   subscriptions     Subscription[]
   profile           Profile?
   bids              Bid[]
+  liquidityProvided LiquidityProvider[]
+  swaps             SwapTransaction[]
 }
 
 model Account {
   id        String   @id @default(cuid())
   userId    String   @unique
   user      User     @relation(fields: [userId], references: [id])
+  avatar    String   @unique
+  walletAddress    String   @unique
   balance   Float
   currency  String
   createdAt DateTime @default(now())
@@ -379,6 +393,38 @@ enum GiftStatus {
   EXPIRED
 }
 
+model Bounties {
+  id          String              @id @default(uuid())
+  name        String              @unique
+  amount      Int
+  imageUrl    String
+  isVerified  Boolean             @default(false)
+  type        String
+  submissions BountySubmissions[]
+  description String
+  createdAt   DateTime            @default(now())
+  isActive    Boolean             @default(false)
+  interval    DateTime
+  hostId      Int
+  hostRel     Host                @relation(fields: [hostId], references: [id])
+  questions   String[]
+  types       String[]
+  winners     String[]            @default([])
+  prizes      Float[]             @default([])
+  escrow_id   Int?
+}
+
+model BountySubmissions {
+  id           Int      @id @default(autoincrement())
+  bountyId     String
+  candidPubKey String
+  question     String[]
+  answers      String[]
+  bountyRel    Bounties @relation(fields: [bountyId], references: [id])
+
+  @@unique([bountyId, candidPubKey])
+}
+
 model Memo {
   id        String   @id @default(cuid())
   user      User     @relation(fields: [userId], references: [id])
@@ -414,4 +460,56 @@ enum SubscriptionStatus {
   CANCELLED
   EXPIRED
   PENDING
+}
+
+model LiquidityPool {
+  id            String   @id @default(cuid())
+  name          String
+  totalLiquidity Float
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+  tokens        PoolToken[]
+  providers     LiquidityProvider[]
+  swaps         SwapTransaction[]
+}
+
+model PoolToken {
+  id            String   @id @default(cuid())
+  poolId        String
+  pool          LiquidityPool @relation(fields: [poolId], references: [id])
+  tokenAddress  String
+  balance       Float
+  weight        Float
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  @@unique([poolId, tokenAddress])
+}
+
+model LiquidityProvider {
+  id            String   @id @default(cuid())
+  userId        String
+  user          User     @relation(fields: [userId], references: [id])
+  poolId        String
+  pool          LiquidityPool @relation(fields: [poolId], references: [id])
+  amount        Float
+  sharePercentage Float
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  @@unique([userId, poolId])
+}
+
+model SwapTransaction {
+  i            String   @id @default(cuid())
+  poolId        String
+  pool          LiquidityPool @relation(fields: [poolId], references: [id])
+  userId        String
+  user          User     @relation(fields: [userId], references: [id])
+  tokenInAddress String
+  tokenOutAddress String
+  amountIn      Float
+  amountOut     Float
+  fee           Float
+  createdAt     DateTime @default(now())
 }

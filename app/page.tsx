@@ -22,7 +22,7 @@ const Home: React.FC = () => {
 
   const handleLaunchApp = React.useCallback(() => {
     if (connected) {
-      router.push('/blinkboard')
+      router.push('/components/signup/')
     } else {
       toast({
         title: "Wallet not connected",
