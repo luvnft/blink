@@ -1,5 +1,6 @@
 'use client'
 
+import React from 'react'
 import { useWallet } from '@solana/wallet-adapter-react'
 import { useWalletModal } from '@solana/wallet-adapter-react-ui'
 import { Button } from "@/components/ui/button"
@@ -9,15 +10,19 @@ export const ConnectWalletButton: React.FC = () => {
   const { wallet, connect, disconnect, connecting, connected } = useWallet()
   const { setVisible } = useWalletModal()
 
-  const handleClick = () => {
+  const handleClick = React.useCallback(async () => {
     if (connected) {
-      disconnect()
+      await disconnect()
     } else if (wallet) {
-      connect().catch(() => {})
+      try {
+        await connect()
+      } catch (error) {
+        console.error('Failed to connect:', error)
+      }
     } else {
       setVisible(true)
     }
-  }
+  }, [connected, wallet, connect, disconnect, setVisible])
 
   return (
     <Button 

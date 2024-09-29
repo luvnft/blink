@@ -3,6 +3,7 @@ import type { Metadata } from "next"
 import localFont from "next/font/local"
 import { Inter, Syne, Poppins } from "next/font/google"
 import { ToastProvider } from '@/components/ui/toast'
+import { SolanaWalletProvider } from '@/components/providers/solana-wallet-provider'
 import "./styles/globals.css"
 
 const geistSans = localFont({
@@ -52,9 +53,11 @@ export default function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} ${inter.variable} ${syne.variable} ${poppins.variable} antialiased font-sans bg-gradient-to-b from-sand-50 to-white min-h-screen`}
       >
         <div className="bg-white bg-opacity-80 backdrop-blur-sm min-h-screen">
-          <ToastProvider>
-            {children}
-          </ToastProvider>
+          <SolanaWalletProvider>
+            <ToastProvider>
+              {children}
+            </ToastProvider>
+          </SolanaWalletProvider>
         </div>
       </body>
     </html>
