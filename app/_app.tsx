@@ -17,7 +17,7 @@ function BarkBlinkApp({ Component, pageProps: { session, ...pageProps } }: AppPr
   return (
     <React.Fragment>
       <Head>
-        <title>BARK BLINK</title>
+        <title>BARK | BLINK</title>
         <meta name="description" content="Transform your digital experience with BARK BLINK" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="icon" href="/favicon.ico" />

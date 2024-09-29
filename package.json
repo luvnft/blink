@@ -1,5 +1,5 @@
 {
-  "name": "bark-blink-as-a-service-dapp",
+  "name": "blink-as-a-service-dapp",
   "description": "BARK Blink is a streamlined decentralized application (dApp) for managing token interactions on the Solana blockchain. This service enables users to easily create, transfer, and manage SPL tokens, NFTs, airdrops, and on-chain transactions with a simple, user-friendly interface. Built for seamless interaction with Solana’s infrastructure, BARK Blink simplifies the process of sending digital assets, performing airdrops, and managing wallet-to-wallet transactions.",
   "author": "BARK Protocol",
   "version": "0.1.1",

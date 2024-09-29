@@ -1,394 +1,274 @@
 'use client'
 
-import { useState, useEffect } from 'react'
-import Image from "next/legacy/image"
-import Link from "next/link"
-import { useRouter } from 'next/navigation'
+import { useState } from 'react'
+import { useWallet } from '@solana/wallet-adapter-react'
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Input } from "@/components/ui/input"
-import { Badge } from "@/components/ui/badge"
-import {
-  Accordion,
-  AccordionContent,
-  AccordionItem,
-  AccordionTrigger,
-} from "@/components/ui/accordion"
-import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"
-import { Zap, Send, BarChart2, ArrowRight, ExternalLink, Mail, Sparkles, Menu, Loader2, Gift, Coins, ShoppingBag, Landmark } from 'lucide-react'
-import { SolanaWalletProvider } from '@/components/providers/solana-wallet-provider'
+import { Label } from "@/components/ui/label"
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
+import { BarChart2, Zap, Send, Gift, Coins, ShoppingBag, Landmark, Plus, Search, Heart, CreditCard, GiftIcon, Users } from 'lucide-react'
 import { ConnectWalletButton } from '@/components/ui/connect-wallet-button'
-import { useWallet } from '@solana/wallet-adapter-react'
-import { toast } from "@/components/ui/use-toast"
-import { Footer } from "@/components/ui/layout/footer"
+import { Progress } from "@/components/ui/progress"
 
-// Add font imports
-import { Syne, Poppins } from 'next/font/google'
-
-const syne = Syne({ subsets: ['latin'], variable: '--font-syne' })
-const poppins = Poppins({ 
-  weight: ['300', '400', '600'],
-  subsets: ['latin'],
-  variable: '--font-poppins'
-})
-
-interface FeatureCardProps {
-  title: string;
-  description: string;
-  icon: React.ReactNode;
+interface Blink {
+  id: string
+  name: string
+  description: string
+  image: string
 }
 
-interface HowItWorksStepProps {
-  number: number;
-  title: string;
-  description: string;
+interface CrowdfundingProject {
+  id: string
+  name: string
+  description: string
+  goal: number
+  raised: number
+  backers: number
 }
 
-const BlinkingText: React.FC = () => {
-  const [isVisible, setIsVisible] = useState(true)
+export default function Blinkboard() {
+  const { connected, publicKey } = useWallet()
+  const [blinks, setBlinks] = useState<Blink[]>([
+    { id: '1', name: 'Cosmic Blink', description: 'A mesmerizing cosmic-themed Blink', image: '/placeholder.svg?height=100&width=100' },
+    { id: '2', name: 'Nature Blink', description: 'A serene nature-inspired Blink', image: '/placeholder.svg?height=100&width=100' },
+    { id: '3', name: 'Tech Blink', description: 'A futuristic tech-themed Blink', image: '/placeholder.svg?height=100&width=100' },
+  ])
+  const [crowdfundingProjects, setCrowdfundingProjects] = useState<CrowdfundingProject[]>([
+    { id: '1', name: 'Community Garden', description: 'Fund a local community garden project', goal: 5000, raised: 2500, backers: 50 },
+    { id: '2', name: 'Tech Education', description: 'Provide tech education for underprivileged youth', goal: 10000, raised: 7500, backers: 150 },
+  ])
 
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setIsVisible((prev) => !prev)
-    }, 500)
-    return () => clearInterval(interval)
-  }, [])
-
-  return (
-    <span 
-      className={`font-medium text-[#D0BFB4] ${isVisible ? 'opacity-100' : 'opacity-0'} transition-opacity duration-300`}
-      aria-hidden="true"
-    >
-      BLINK
-    </span>
-  )
-}
-
-const FeatureCard: React.FC<FeatureCardProps> = ({ title, description, icon }) => (
-  <Card className="bg-white hover:shadow-lg transition-shadow transform hover:-translate-y-1">
-    <CardHeader>
-      <div className="flex items-center space-x-2">
-        {icon}
-        <CardTitle className={`${syne.variable} font-syne text-xl sm:text-2xl font-semibold text-gray-900`}>{title}</CardTitle>
-      </div>
-    </CardHeader>
-    <CardContent>
-      <p className={`${poppins.variable} font-poppins font-light text-sm sm:text-base text-gray-700`}>{description}</p>
-    </CardContent>
-  </Card>
-)
-
-const HowItWorksStep: React.FC<HowItWorksStepProps> = ({ number, title, description }) => (
-  <div className="flex items-start space-x-4 group">
-    <div className="flex-shrink-0 w-8 h-8 bg-[#D0BFB4] text-gray-900 rounded-full flex items-center justify-center font-bold group-hover:bg-[#C0AFA4] transition-colors">
-      {number}
-    </div>
-    <div>
-      <h3 className={`${syne.variable} font-syne text-lg sm:text-xl font-semibold mb-2 group-hover:text-[#D0BFB4] transition-colors`}>{title}</h3>
-      <p className={`${poppins.variable} font-poppins font-light text-sm sm:text-base text-gray-700`}>{description}</p>
-    </div>
-  </div>
-)
-
-const MobileMenu: React.FC = () => (
-  <Sheet>
-    <SheetTrigger asChild>
-      <Button variant="outline" size="icon" className="md:hidden">
-        <Menu className="h-6 w-6" />
-        <span className="sr-only">Open menu</span>
-      </Button>
-    </SheetTrigger>
-    <SheetContent side="right" className="w-[300px] sm:w-[400px]">
-      <nav className={`${poppins.variable} font-poppins flex flex-col space-y-4`}>
-        <Link href="#features" className="text-lg hover:text-[#D0BFB4] transition-colors">Features</Link>
-        <Link href="#how-it-works" className="text-lg hover:text-[#D0BFB4] transition-colors">How It Works</Link>
-        <Link href="#faq" className="text-lg hover:text-[#D0BFB4] transition-colors">FAQ</Link>
+  if (!connected) {
+    return (
+      <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100">
+        <h1 className="text-3xl font-bold mb-6">Connect Your Wallet to Access Blinkboard</h1>
         <ConnectWalletButton />
-      </nav>
-    </SheetContent>
-  </Sheet>
-)
-
-export default function Home() {
-  const [email, setEmail] = useState('')
-  const [isSubscribing, setIsSubscribing] = useState(false)
-  const router = useRouter()
-  const { connected } = useWallet()
-
-  const features: FeatureCardProps[] = [
-    { 
-      title: "Create Blinks", 
-      description: "Instantly mint and customize Solana Blinks, representing unique digital assets or memorable moments on the blockchain. Unleash your creativity and bring your ideas to life!", 
-      icon: <Zap className="h-6 w-6 sm:h-8 sm:w-8 text-[#D0BFB4]" /> 
-    },
-    { 
-      title: "Send Blinks", 
-      description: "Seamlessly transfer your Blinks to friends, family, or fellow collectors on the Solana network. Share experiences and value with just a few clicks!", 
-      icon: <Send className="h-6 w-6 sm:h-8 sm:w-8 text-[#D0BFB4]" /> 
-    },
-    { 
-      title: "Track Blinks", 
-      description: "Keep a close eye on your growing Blink collection and transaction history in real-time. Our intuitive dashboard provides insights at your fingertips!", 
-      icon: <BarChart2 className="h-6 w-6 sm:h-8 sm:w-8 text-[#D0BFB4]" /> 
-    },
-    { 
-      title: "Customize Blinks", 
-      description: "Make your Blinks truly unique by adding custom attributes, metadata, and visual elements. Stand out in the digital realm with your personalized creations!", 
-      icon: <Sparkles className="h-6 w-6 sm:h-8 sm:w-8 text-[#D0BFB4]" /> 
-    },
-    { 
-      title: "Gifts", 
-      description: "Surprise loved ones with special Blinks as thoughtful, digital gifts. Create lasting memories and share the joy of blockchain technology!", 
-      icon: <Gift className="h-6 w-6 sm:h-8 sm:w-8 text-[#D0BFB4]" /> 
-    },
-    { 
-      title: "Swap", 
-      description: "Effortlessly exchange various tokens using our integrated swap feature. Enjoy competitive rates and seamless transactions within the BARK ecosystem!", 
-      icon: <Coins className="h-6 w-6 sm:h-8 sm:w-8 text-[#D0BFB4]" /> 
-    },
-    { 
-      title: "Commerce", 
-      description: "Bridge the digital and physical worlds by creating and selling merchandise tied to unique Blinks. Expand your brand and engage with your audience in innovative ways!", 
-      icon: <ShoppingBag className="h-6 w-6 sm:h-8 sm:w-8 text-[#D0BFB4]" /> 
-    },
-    { 
-      title: "Staking", 
-      description: "Earn rewards by staking your BARK tokens. Participate in the network's security and governance while growing your assets over time.", 
-      icon: <Landmark className="h-6 w-6 sm:h-8 sm:w-8 text-[#D0BFB4]" /> 
-    }
-  ]
-
-  const howItWorksSteps: HowItWorksStepProps[] = [
-    {
-      number: 1,
-      title: "Connect Your Wallet",
-      description: "Link your Solana wallet to BARK BLINK to get started."
-    },
-    {
-      number: 2,
-      title: "Create Your Blink",
-      description: "Use our intuitive interface to create and customize your Solana Blink."
-    },
-    {
-      number: 3,
-      title: "Share or Trade",
-      description: "Send your Blink to friends or trade it on supported marketplaces."
-    },
-    {
-      number: 4,
-      title: "Manage Your Collection",
-      description: "Track and manage your Blinks in your personal BlinkBoard."
-    }
-  ]
-
-  const handleSubscribe = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault()
-    setIsSubscribing(true)
-    try {
-      const response = await fetch('/api/v1/subscribe', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ email }),
-      })
-
-      if (!response.ok) {
-        throw new Error('Subscription failed')
-      }
-
-      toast({
-        title: "Subscribed successfully!",
-        description: "Thank you for subscribing to our newsletter.",
-      })
-      setEmail('')
-    } catch (error) {
-      toast({
-        title: "Subscription failed",
-        description: "An error occurred while subscribing. Please try again.",
-        variant: "destructive",
-      })
-    } finally {
-      setIsSubscribing(false)
-    }
-  }
-
-  const handleLaunchApp = () => {
-    if (connected) {
-      router.push('/blinkboard')
-    } else {
-      toast({
-        title: "Wallet not connected",
-        description: "Please connect your wallet to launch the app.",
-        variant: "destructive",
-      })
-    }
+      </div>
+    )
   }
 
   return (
-    <SolanaWalletProvider>
-      <div className={`${syne.variable} ${poppins.variable} min-h-screen font-poppins bg-gray-50 text-gray-900`}>
-        <header className="bg-white shadow-sm sticky top-0 z-10">
-          <div className="container mx-auto px-4 py-4 flex justify-between items-center">
-            <div className="flex items-center space-x-2">
-              <Image
-                src="https://ucarecdn.com/f242e5dc-8813-47b4-af80-6e6dd43945a9/barkicon.png"
-                alt="BARK BLINK logo"
-                width={40}
-                height={40}
-                className="rounded-full"
-              />
-              <span className="font-syne font-bold text-xl sm:text-2xl text-gray-900">
-                BARK <span className="sr-only">BLINK</span>
-                <BlinkingText />
-              </span>
-            </div>
-            <nav className="hidden md:flex items-center space-x-6">
-              <Link href="#features" className="text-gray-700 hover:text-[#D0BFB4] transition-colors">Features</Link>
-              <Link href="#how-it-works" className="text-gray-700 hover:text-[#D0BFB4] transition-colors">How It Works</Link>
-              <Link href="#faq" className="text-gray-700 hover:text-[#D0BFB4] transition-colors">FAQ</Link>
-              <ConnectWalletButton />
-            </nav>
-            <MobileMenu />
-          </div>
-        </header>
+    <div className="min-h-screen bg-gray-100 p-4 sm:p-6 lg:p-8">
+      <header className="mb-8">
+        <h1 className="text-3xl font-bold">Welcome to Your Blinkboard</h1>
+        <p className="text-gray-600">Manage your Blinks and explore BARK BLINK features</p>
+      </header>
 
-        <main className="container mx-auto px-4 py-8">
-          <section className="text-center mb-20 min-h-[calc(100vh-80px)] flex flex-col justify-center relative">
-            <div 
-              className="absolute inset-0 bg-cover bg-center z-0" 
-              style={{
-                backgroundImage: "url('https://ucarecdn.com/1d0d9d6e-8b3e-4f5e-8b0e-5f9b9e3b9b9e/hero-background.jpg')",
-                opacity: 0.1
-              }}
-            />
-            <div className="relative z-10">
-              <Badge className="inline-block mb-4 text-lg font-light bg-transparent border border-[#D0BFB4] text-[#D0BFB4]">
-                Revolutionizing Digital Assets
-              </Badge>
-              <h1 className="font-syne text-4xl sm:text-5xl lg:text-6xl font-extrabold mb-6 text-gray-900 leading-tight">
-                Welcome to BARK BLINK
-              </h1>
-              <p className="font-light text-xl sm:text-2xl mb-10 text-gray-700 max-w-3xl mx-auto">
-                Unleash the power of Solana with our innovative Blink As A Service platform. 
-                Create, manage, and trade unique digital assets with ease.
-              </p>
-              <div className="flex flex-col sm:flex-row justify-center space-y-4 sm:space-y-0 sm:space-x-4">
-                <Button 
-                  className="w-full sm:w-auto bg-[#D0BFB4] text-gray-900 hover:bg-[#C0AFA4] transition-colors text-lg px-8 py-3 rounded-full"
-                  onClick={handleLaunchApp}
-                >
-                  Launch Blinkboard
-                  <ArrowRight className="ml-2 h-5 w-5" />
-                </Button>
-                <Button variant="outline" className="w-full sm:w-auto border-[#D0BFB4] text-gray-900 hover:bg-[#D0BFB4] hover:text-white transition-colors text-lg px-8 py-3 rounded-full">
-                  View Docs
-                  <ExternalLink className="ml-2 h-5 w-5" />
-                </Button>
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <Card className="col-span-1 md:col-span-2">
+          <CardHeader>
+            <CardTitle>Your Blinks</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="flex justify-between items-center mb-4">
+              <div className="relative">
+                <Search className="absolute left-2 top-1/2 transform -translate-y-1/2 text-gray-400" />
+                <Input className="pl-8" placeholder="Search Blinks" />
+              </div>
+              <Button>
+                <Plus className="mr-2 h-4 w-4" /> Create Blink
+              </Button>
+            </div>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+              {blinks.map((blink) => (
+                <Card key={blink.id}>
+                  <CardContent className="p-4">
+                    <img src={blink.image} alt={blink.name} className="w-full h-32 object-cover rounded-md mb-2" />
+                    <h3 className="font-semibold">{blink.name}</h3>
+                    <p className="text-sm text-gray-600">{blink.description}</p>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader>
+            <CardTitle>Account Overview</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="flex items-center mb-4">
+              <Avatar className="h-16 w-16 mr-4">
+                <AvatarImage src="/placeholder.svg?height=64&width=64" alt="Profile" />
+                <AvatarFallback>PK</AvatarFallback>
+              </Avatar>
+              <div>
+                <p className="font-semibold">Connected Wallet</p>
+                <p className="text-sm text-gray-600">{publicKey?.toBase58().slice(0, 8)}...{publicKey?.toBase58().slice(-8)}</p>
               </div>
             </div>
-          </section>
-
-          <section id="features" className="mb-20">
-            <h2 className="font-syne text-3xl sm:text-4xl font-bold mb-10 text-center text-gray-900">Features</h2>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
-              {features.map((feature, index) => (
-                <FeatureCard key={index} {...feature} />
-              ))}
+            <div className="space-y-2">
+              <p><strong>Total Blinks:</strong> {blinks.length}</p>
+              <p><strong>BARK Balance:</strong> 1000 BARK</p>
             </div>
-          </section>
-
-          <section id="how-it-works" className="mb-20">
-            <h2 className="font-syne text-3xl sm:text-4xl font-bold mb-10 text-center text-gray-900">How It Works</h2>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-8">
-              {howItWorksSteps.map((step, index) => (
-                <HowItWorksStep key={index} {...step} />
-              ))}
-            </div>
-          </section>
-
-          <section id="faq" className="mb-20 max-w-3xl mx-auto">
-            <h2 className="font-syne text-3xl sm:text-4xl font-bold mb-10 text-center text-gray-900">Frequently Asked Questions</h2>
-            <Accordion type="single" collapsible className="w-full">
-              <AccordionItem value="item-1">
-                <AccordionTrigger>What is a BARK Blink?</AccordionTrigger>
-                <AccordionContent>
-                 Using Solana Actions, you can turn any transaction into a blockchain link that can be shared anywhere on the internet — no third party application required. Request a payment in a text message. Vote on governance in a chatroom. Buy an NFT on social media. It's all possible with BARK Blinks.
-                </AccordionContent>
-              </AccordionItem>
-              <AccordionItem value="item-2">
-                <AccordionTrigger>How do I create a Blink?</AccordionTrigger>
-                <AccordionContent>
-                  To create a Blink, you need to connect your Solana wallet to BARK BLINK. Once connected, you can use our intuitive interface to create and customize your Blinks. Our platform guides you through the process, making it easy even for blockchain beginners.
-                </AccordionContent>
-              </AccordionItem>
-              <AccordionItem value="item-3">
-                <AccordionTrigger>Are compressed NFTs tradeable?</AccordionTrigger>
-                <AccordionContent>
-                  Yes, Compressed NFTs (CNFT) are tradeable on the Solana network. You can send them to other users or trade them on supported marketplaces. CNFTs offer the benefits of traditional NFTs with improved efficiency and lower costs.
-                </AccordionContent>
-              </AccordionItem>
-              <AccordionItem value="item-4">
-                <AccordionTrigger>What are Merchant Blinks?</AccordionTrigger>
-                <AccordionContent>
-                  BARK's Commerce Blinks are special Blinks that represent physical merchandise. They can be created by sellers and purchased by buyers, who can then redeem them for physical goods. This bridges the gap between digital assets and real-world items, opening up exciting possibilities for e-commerce and collectibles.
-                </AccordionContent>
-              </AccordionItem>
-              <AccordionItem value="item-5">
-                <AccordionTrigger>How does token swapping work?</AccordionTrigger>
-                <AccordionContent>
-                  Our integrated token swap feature allows you to exchange different types of tokens directly within the BARK - Blinks As A Service platform. We use decentralized exchanges to ensure the best rates and liquidity. This means you can easily manage your portfolio and take advantage of market opportunities without leaving the BARK ecosystem.
-                </AccordionContent>
-              </AccordionItem>
-            </Accordion>
-          </section>
-
-          <section id="newsletter" className="mb-20 py-12 sm:py-16 bg-[#D0BFB4] rounded-lg">
-            <div className="max-w-4xl mx-auto px-4">
-              <h2 className="font-syne text-3xl sm:text-4xl font-bold mb-6 text-center text-gray-900">Stay in the Loop</h2>
-              <p className="font-light text-lg sm:text-xl mb-8 text-center text-gray-800">Get the latest updates, news, and exclusive offers directly in your inbox.</p>
-              <form onSubmit={handleSubscribe} className="flex flex-col sm:flex-row gap-4 max-w-xl mx-auto">
-                <Input
-                  type="email"
-                  placeholder="Enter your email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  required
-                  className="flex-grow bg-white"
-                />
-                <Button 
-                  type="submit" 
-                  className="bg-gray-900 text-white hover:bg-gray-800 transition-colors rounded-full"
-                  disabled={isSubscribing}
-                >
-                  {isSubscribing ? (
-                    <Loader2 className="h-4 w-4 animate-spin" />
-                  ) : (
-                    <>
-                      Subscribe
-                      <Mail className="ml-2 h-4 w-4" />
-                    </>
-                  )}
-                </Button>
-              </form>
-            </div>
-          </section>
-
-          <section id="cta" className="mb-20 text-center">
-            <h2 className="font-syne text-3xl sm:text-4xl font-bold mb-6 text-gray-900">Ready to Start Blinking?</h2>
-            <p className="font-light text-lg sm:text-xl mb-8 text-gray-700">Join the BARK community and start creating your Blinks today!</p>
-            <Button 
-              className="bg-[#D0BFB4] text-gray-900 hover:bg-[#C0AFA4] transition-colors text-lg px-8 py-4 rounded-full"
-              onClick={handleLaunchApp}
-            >
-              Launch Blinkboard
-              <ArrowRight className="ml-2 h-5 w-5" />
-            </Button>
-          </section>
-        </main>
-
-        <Footer />
+          </CardContent>
+        </Card>
       </div>
-    </SolanaWalletProvider>
+
+      <Tabs defaultValue="create" className="mt-8">
+        <TabsList className="grid grid-cols-5 gap-4 bg-transparent">
+          <TabsTrigger value="create" className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">Create</TabsTrigger>
+          <TabsTrigger value="send" className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">Send</TabsTrigger>
+          <TabsTrigger value="use" className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">Use</TabsTrigger>
+          <TabsTrigger value="swap" className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">Swap</TabsTrigger>
+          <TabsTrigger value="stake" className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">Stake</TabsTrigger>
+        </TabsList>
+        <TabsContent value="create" className="mt-4">
+          <Card>
+            <CardHeader>
+              <CardTitle>Create a New Blink</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <form className="space-y-4">
+                <div>
+                  <Label htmlFor="blinkName">Blink Name</Label>
+                  <Input id="blinkName" placeholder="Enter Blink name" />
+                </div>
+                <div>
+                  <Label htmlFor="blinkDescription">Description</Label>
+                  <Input id="blinkDescription" placeholder="Describe your Blink" />
+                </div>
+                <Button type="submit">Create Blink</Button>
+              </form>
+            </CardContent>
+          </Card>
+        </TabsContent>
+        <TabsContent value="send" className="mt-4">
+          <Card>
+            <CardHeader>
+              <CardTitle>Send a Blink</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <form className="space-y-4">
+                <div>
+                  <Label htmlFor="recipient">Recipient Address</Label>
+                  <Input id="recipient" placeholder="Enter recipient's Solana address" />
+                </div>
+                <div>
+                  <Label htmlFor="blinkToSend">Select Blink to Send</Label>
+                  <select id="blinkToSend" className="w-full p-2 border rounded">
+                    {blinks.map((blink) => (
+                      <option key={blink.id} value={blink.id}>{blink.name}</option>
+                    ))}
+                  </select>
+                </div>
+                <Button type="submit">Send Blink</Button>
+              </form>
+            </CardContent>
+          </Card>
+        </TabsContent>
+        <TabsContent value="use" className="mt-4">
+          <Card>
+            <CardHeader>
+              <CardTitle>Use Your Blinks</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                <Card>
+                  <CardContent className="flex flex-col items-center justify-center p-6">
+                    <Heart className="h-12 w-12 text-[#D0BFB4] mb-2" />
+                    <h3 className="font-semibold text-center mb-2">Donation</h3>
+                    <Button size="sm">Donate Blink</Button>
+                  </CardContent>
+                </Card>
+                <Card>
+                  <CardContent className="flex flex-col items-center justify-center p-6">
+                    <CreditCard className="h-12 w-12 text-[#D0BFB4] mb-2" />
+                    <h3 className="font-semibold text-center mb-2">Payment</h3>
+                    <Button size="sm">Pay with Blink</Button>
+                  </CardContent>
+                </Card>
+                <Card>
+                  <CardContent className="flex flex-col items-center justify-center p-6">
+                    <GiftIcon className="h-12 w-12 text-[#D0BFB4] mb-2" />
+                    <h3 className="font-semibold text-center mb-2">Gift</h3>
+                    <Button size="sm">Gift Blink</Button>
+                  </CardContent>
+                </Card>
+              </div>
+            </CardContent>
+          </Card>
+        </TabsContent>
+        <TabsContent value="swap" className="mt-4">
+          <Card>
+            <CardHeader>
+              <CardTitle>Swap Tokens</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <p>Token swapping feature coming soon!</p>
+            </CardContent>
+          </Card>
+        </TabsContent>
+        <TabsContent value="stake" className="mt-4">
+          <Card>
+            <CardHeader>
+              <CardTitle>Stake BARK Tokens</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <p>Staking feature coming soon!</p>
+            </CardContent>
+          </Card>
+        </TabsContent>
+      </Tabs>
+
+      <div className="mt-8">
+        <h2 className="text-2xl font-bold mb-4">Crowdfunding Projects</h2>
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+          {crowdfundingProjects.map((project) => (
+            <Card key={project.id}>
+              <CardHeader>
+                <CardTitle>{project.name}</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <p className="text-sm text-gray-600 mb-4">{project.description}</p>
+                <div className="space-y-2">
+                  <div className="flex justify-between text-sm">
+                    <span>Progress</span>
+                    <span>{Math.round((project.raised / project.goal) * 100)}%</span>
+                  </div>
+                  <Progress value={(project.raised / project.goal) * 100} className="w-full" />
+                  <div className="flex justify-between text-sm">
+                    <span>{project.raised} BARK raised</span>
+                    <span>{project.goal} BARK goal</span>
+                  </div>
+                  <p className="text-sm">{project.backers} backers</p>
+                </div>
+                <Button className="w-full mt-4">Support Project</Button>
+              </CardContent>
+            </Card>
+          ))}
+        </div>
+      </div>
+
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mt-8">
+        <Card>
+          <CardContent className="flex flex-col items-center justify-center p-6">
+            <BarChart2 className="h-12 w-12 text-[#D0BFB4] mb-2" />
+            <h3 className="font-semibold text-center">Analytics</h3>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardContent className="flex flex-col items-center justify-center p-6">
+            <Gift className="h-12 w-12 text-[#D0BFB4] mb-2" />
+            <h3 className="font-semibold text-center">Gifts</h3>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardContent className="flex flex-col items-center justify-center p-6">
+            <ShoppingBag className="h-12 w-12 text-[#D0BFB4] mb-2" />
+            <h3 className="font-semibold text-center">Marketplace</h3>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardContent className="flex flex-col items-center justify-center p-6">
+            <Landmark className="h-12 w-12 text-[#D0BFB4] mb-2" />
+            <h3 className="font-semibold text-center">Governance</h3>
+          </CardContent>
+        </Card>
+      </div>
+    </div>
   )
 }
