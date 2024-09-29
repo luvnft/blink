@@ -14,7 +14,7 @@ import { Skeleton } from "@/components/ui/skeleton"
 import { Slider } from "@/components/ui/slider"
 import { Switch } from "@/components/ui/switch"
 import { Label } from "@/components/ui/label"
-import Image from 'next/image'
+import Image from "next/legacy/image"
 import { constants } from 'buffer'
 
 interface TokenSwapProps {

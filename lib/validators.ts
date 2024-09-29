@@ -2,6 +2,7 @@ import { PublicKey } from '@solana/web3.js';
 import { z } from 'zod';
 import { isValidSignature } from '@solana/web3.js';
 import { supabase } from './supabase-client';
+import bs58 from 'bs58';
 
 // 1. Ensure wallet address format is valid
 export const isValidWalletAddress = (address: string): boolean => {
@@ -27,7 +28,7 @@ export const isValidEmail = (email: string): boolean => {
 
 // 3. Check password strength
 export const isStrongPassword = (password: string): boolean => {
-  const minLength = 8;
+  const minLength = 12; // Increased from 8 to 12 for better security
   const hasUpperCase = /[A-Z]/.test(password);
   const hasLowerCase = /[a-z]/.test(password);
   const hasNumbers = /\d/.test(password);
@@ -50,10 +51,10 @@ export const verifyTransactionSignature = async (
 ): Promise<boolean> => {
   try {
     const publicKeyObj = new PublicKey(publicKey);
-    const signatureBuffer = Buffer.from(signature, 'base64');
+    const signatureBuffer = bs58.decode(signature);
     const messageBuffer = Buffer.from(message);
 
-    return isValidSignature(messageBuffer, signatureBuffer, publicKeyObj);
+    return await PublicKey.isOnCurve(publicKeyObj.toBuffer()) && isValidSignature(messageBuffer, signatureBuffer, publicKeyObj);
   } catch (error) {
     console.error('Error verifying signature:', error);
     return false;
@@ -63,16 +64,28 @@ export const verifyTransactionSignature = async (
 // 5. Validate NFT metadata format
 export const isValidNFTMetadata = (metadata: any): boolean => {
   const schema = z.object({
-    name: z.string(),
-    symbol: z.string(),
+    name: z.string().min(1),
+    symbol: z.string().min(1),
     description: z.string(),
     image: z.string().url(),
+    external_url: z.string().url().optional(),
     attributes: z.array(
       z.object({
         trait_type: z.string(),
         value: z.union([z.string(), z.number()]),
       })
     ),
+    properties: z.object({
+      files: z.array(z.object({
+        uri: z.string().url(),
+        type: z.string(),
+      })),
+      category: z.string(),
+      creators: z.array(z.object({
+        address: z.string(),
+        share: z.number().min(0).max(100),
+      })),
+    }),
   });
 
   try {
@@ -151,6 +164,18 @@ export const isValidReviewRating = (rating: number): boolean => {
   return rating >= 1 && rating <= 5 && Number.isInteger(rating);
 };
 
+// 9. Validate Blink content
+export const isValidBlinkContent = (content: string): boolean => {
+  const minLength = 10;
+  const maxLength = 280;
+  return content.length >= minLength && content.length <= maxLength;
+};
+
+// 10. Validate transaction amount
+export const isValidTransactionAmount = (amount: number): boolean => {
+  return amount > 0 && Number.isFinite(amount);
+};
+
 // Helper function to validate all fields of a user input
 export const validateUserInput = (input: any): { isValid: boolean; errors: string[] } => {
   const errors: string[] = [];
@@ -209,6 +234,10 @@ export const validateOrderInput = async (input: any): Promise<{ isValid: boolean
     }
   }
 
+  if (!isValidTransactionAmount(input.totalAmount)) {
+    errors.push('Invalid transaction amount');
+  }
+
   return {
     isValid: errors.length === 0,
     errors,
@@ -221,6 +250,28 @@ export const validateReviewInput = (input: any): { isValid: boolean; errors: str
 
   if (!isValidReviewRating(input.rating)) {
     errors.push('Invalid review rating');
+  }
+
+  if (input.content && !isValidBlinkContent(input.content)) {
+    errors.push('Invalid review content length');
+  }
+
+  return {
+    isValid: errors.length === 0,
+    errors,
+  };
+};
+
+// Helper function to validate a Blink input
+export const validateBlinkInput = (input: any): { isValid: boolean; errors: string[] } => {
+  const errors: string[] = [];
+
+  if (!isValidBlinkContent(input.content)) {
+    errors.push('Invalid Blink content length');
+  }
+
+  if (!isValidWalletAddress(input.creatorAddress)) {
+    errors.push('Invalid creator wallet address');
   }
 
   return {

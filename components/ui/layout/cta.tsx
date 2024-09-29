@@ -1,5 +1,5 @@
 import React from 'react'
-import Image from 'next/image'
+import Image from "next/legacy/image"
 import { Button } from "@/components/ui/button"
 import { ArrowRight } from 'lucide-react'
 import { motion } from 'framer-motion'

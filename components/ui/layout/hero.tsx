@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { ArrowRight, ExternalLink, Zap, Paintbrush, Code, Building2 } from 'lucide-react'
 import { motion } from "framer-motion"
-import Image from 'next/image'
+import Image from "next/legacy/image"
 
 interface HeroProps {
   onLaunchApp: () => void

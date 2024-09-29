@@ -125,5 +125,5 @@ export default function UserAccountForm() {
         </Button>
       </CardFooter>
     </Card>
-  )
+  );
 }

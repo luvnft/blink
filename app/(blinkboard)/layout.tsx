@@ -2,7 +2,7 @@
 
 import { ReactNode, useState, useEffect } from 'react'
 import Link from 'next/link'
-import Image from 'next/image'
+import Image from "next/legacy/image"
 import { useRouter, usePathname } from 'next/navigation'
 import { Button } from "@/components/ui/button"
 import { ConnectWalletButton } from '@/components/ui/connect-wallet-button'

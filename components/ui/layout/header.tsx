@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import Link from "next/link"
-import Image from "next/image"
+import Image from "next/legacy/image"
 import { Button } from "@/components/ui/button"
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"
 import { Menu, X, Sun, Moon } from 'lucide-react'

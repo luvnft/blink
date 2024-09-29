@@ -33,7 +33,7 @@ export async function GET(req: Request) {
     })
 
     // Calculate total balance in SOL. USDC, BARK
-    const solBalance = await connection.getBalance(userPublicKey) / web3.LAMPORTS_PER_SOL
+    const solBalance = (await connection.getBalance(userPublicKey)) / web3.LAMPORTS_PER_SOL
 
     // Get total value of all tokens (simplified, in a real scenario you'd need to fetch current prices)
     const tokenBalance = tokenAccounts.value.reduce((total, account) => {

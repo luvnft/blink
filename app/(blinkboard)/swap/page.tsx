@@ -10,7 +10,7 @@ import { Slider } from "@/components/ui/slider"
 import { Switch } from "@/components/ui/switch"
 import { ArrowDownUp, ArrowRight, Info, RefreshCw } from 'lucide-react'
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip"
-import Image from 'next/image'
+import Image from "next/legacy/image"
 import { LineChart } from "@/components/ui/charts"
 import { useToast } from "@/components/ui/use-toast"
 

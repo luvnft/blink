@@ -1,4 +1,4 @@
-import prisma from './prisma'
+import prisma from '../prisma'
 import { supabase } from './supabase'
 import { Session } from '@prisma/client'
 import { cacheSet, cacheGet } from './cache'
@@ -157,7 +157,7 @@ export async function cleanExpiredSessions(): Promise<number> {
     // Clear cache for deleted sessions
     // Note: This is a simplified approach. In a production environment,
     // you might want to implement a more efficient cache clearing strategy.
-    const allCacheKeys = await cacheGet<string[]>('all_session_keys') || []
+    const allCacheKeys = (await cacheGet<string[]>('all_session_keys')) || []
     for (const key of allCacheKeys) {
       const session = await cacheGet<Session>(key)
       if (session && session.expiresAt < now) {

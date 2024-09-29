@@ -6,9 +6,9 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql"
-  url      = env("DATABASE_URL")
-  directUrl = env("DIRECT_URL")
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_DATABASE_URL")
 }
 
 model Host {
@@ -20,57 +20,58 @@ model Host {
   freeTrials Int        @default(5)
   apiKey     String?    @unique
   bounties   Bounties[]
+
   @@unique([publicKey, email])
 }
 
 model User {
-  id                String         @id @default(cuid())
-  name              String?
-  email             String         @unique
-  emailVerified     DateTime?
-  image             String?
-  account           Account?
-  role              UserRole       @default(USER)
-  createdAt         DateTime       @default(now())
-  updatedAt         DateTime       @updatedAt
-  lastLogin         DateTime?
-  twoFactorEnabled  Boolean        @default(false)
-  twoFactorSecret   String?
-  passwordHash      String
-  blinks            Blink[]
-  nfts              NFT[]
-  sentTxs           Transaction[]  @relation("SenderTransactions")
-  receivedTxs       Transaction[]  @relation("ReceiverTransactions")
-  collections       Collection[]
-  marketplaceListings MarketplaceListing[]
-  orders            Order[]
-  reviews           Review[]
-  notifications     Notification[]
-  followers         Follow[]       @relation("Following")
-  following         Follow[]       @relation("Followers")
-  createdCrowdfundings Crowdfunding[] @relation("CreatedCrowdfundings")
-  contributedCrowdfundings Crowdfunding[] @relation("ContributedCrowdfundings")
-  sentGifts         Gift[]         @relation("SentGifts")
-  receivedGifts     Gift[]         @relation("ReceivedGifts")
-  memos             Memo[]
-  posts             Post[]
-  subscriptions     Subscription[]
-  profile           Profile?
-  bids              Bid[]
-  liquidityProvided LiquidityProvider[]
-  swaps             SwapTransaction[]
+  id                       String               @id @default(cuid())
+  name                     String?
+  email                    String               @unique
+  emailVerified            DateTime?
+  image                    String?
+  account                  Account?
+  role                     UserRole             @default(USER)
+  createdAt                DateTime             @default(now())
+  updatedAt                DateTime             @updatedAt
+  lastLogin                DateTime?
+  twoFactorEnabled         Boolean              @default(false)
+  twoFactorSecret          String?
+  passwordHash             String
+  blinks                   Blink[]
+  nfts                     NFT[]
+  sentTxs                  Transaction[]        @relation("SenderTransactions")
+  receivedTxs              Transaction[]        @relation("ReceiverTransactions")
+  collections              Collection[]
+  marketplaceListings      MarketplaceListing[]
+  orders                   Order[]
+  reviews                  Review[]
+  notifications            Notification[]
+  followers                Follow[]             @relation("Following")
+  following                Follow[]             @relation("Followers")
+  createdCrowdfundings     Crowdfunding[]       @relation("CreatedCrowdfundings")
+  contributedCrowdfundings Crowdfunding[]       @relation("ContributedCrowdfundings")
+  sentGifts                Gift[]               @relation("SentGifts")
+  receivedGifts            Gift[]               @relation("ReceivedGifts")
+  memos                    Memo[]
+  posts                    Post[]
+  subscriptions            Subscription[]
+  profile                  Profile?
+  bids                     Bid[]
+  liquidityProvided        LiquidityProvider[]
+  swaps                    SwapTransaction[]
 }
 
 model Account {
-  id        String   @id @default(cuid())
-  userId    String   @unique
-  user      User     @relation(fields: [userId], references: [id])
-  avatar    String   @unique
-  walletAddress    String   @unique
-  balance   Float
-  currency  String
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id            String   @id @default(cuid())
+  userId        String   @unique
+  user          User     @relation(fields: [userId], references: [id])
+  avatar        String   @unique
+  walletAddress String   @unique
+  balance       Float
+  currency      String
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
 }
 
 model Post {
@@ -100,29 +101,29 @@ enum UserRole {
 }
 
 model Blink {
-  id            String     @id @default(cuid())
-  name          String
-  description   String
-  owner         User       @relation(fields: [ownerId], references: [id])
-  ownerId       String
-  mintAddress   String     @unique
-  metadata      Json
-  rarity        BlinkRarity
-  collection    Collection? @relation(fields: [collectionId], references: [id])
-  collectionId  String?
-  createdAt     DateTime   @default(now())
-  updatedAt     DateTime   @updatedAt
-  transactions  Transaction[]
-  listings      MarketplaceListing[]
-  attributes    BlinkAttribute[]
-  royaltyPercentage Float  @default(0)
-  isLocked      Boolean    @default(false)
-  unlockDate    DateTime?
-  edition       Int?
-  maxEdition    Int?
-  gifts         Gift[]
-  memos         Memo[]
-  reviews       Review[]
+  id                String               @id @default(cuid())
+  name              String
+  description       String
+  owner             User                 @relation(fields: [ownerId], references: [id])
+  ownerId           String
+  mintAddress       String               @unique
+  metadata          Json
+  rarity            BlinkRarity
+  collection        Collection?          @relation(fields: [collectionId], references: [id])
+  collectionId      String?
+  createdAt         DateTime             @default(now())
+  updatedAt         DateTime             @updatedAt
+  transactions      Transaction[]
+  listings          MarketplaceListing[]
+  attributes        BlinkAttribute[]
+  royaltyPercentage Float                @default(0)
+  isLocked          Boolean              @default(false)
+  unlockDate        DateTime?
+  edition           Int?
+  maxEdition        Int?
+  gifts             Gift[]
+  memos             Memo[]
+  reviews           Review[]
 }
 
 enum BlinkRarity {
@@ -136,8 +137,8 @@ enum BlinkRarity {
 }
 
 model BlinkAttribute {
-  id        String   @id @default(cuid())
-  blink     Blink    @relation(fields: [blinkId], references: [id])
+  id        String @id @default(cuid())
+  blink     Blink  @relation(fields: [blinkId], references: [id])
   blinkId   String
   traitType String
   value     String
@@ -145,48 +146,48 @@ model BlinkAttribute {
 }
 
 model NFT {
-  id            String   @id @default(cuid())
-  name          String
-  description   String
-  image         String
-  owner         User     @relation(fields: [ownerId], references: [id])
-  ownerId       String
-  mintAddress   String   @unique
-  metadata      Json
-  collection    Collection? @relation(fields: [collectionId], references: [id])
-  collectionId  String?
-  createdAt     DateTime @default(now())
-  updatedAt     DateTime @updatedAt
-  transactions  Transaction[]
-  listings      MarketplaceListing[]
-  royaltyPercentage Float  @default(0)
-  isLocked      Boolean    @default(false)
-  unlockDate    DateTime?
-  reviews       Review[]
+  id                String               @id @default(cuid())
+  name              String
+  description       String
+  image             String
+  owner             User                 @relation(fields: [ownerId], references: [id])
+  ownerId           String
+  mintAddress       String               @unique
+  metadata          Json
+  collection        Collection?          @relation(fields: [collectionId], references: [id])
+  collectionId      String?
+  createdAt         DateTime             @default(now())
+  updatedAt         DateTime             @updatedAt
+  transactions      Transaction[]
+  listings          MarketplaceListing[]
+  royaltyPercentage Float                @default(0)
+  isLocked          Boolean              @default(false)
+  unlockDate        DateTime?
+  reviews           Review[]
 }
 
 model Transaction {
-  id        String   @id @default(cuid())
-  type      TransactionType
-  from      User     @relation("SenderTransactions", fields: [fromId], references: [id])
-  fromId    String
-  to        User     @relation("ReceiverTransactions", fields: [toId], references: [id])
-  toId      String
-  amount    Float
-  currency  String
-  status    TransactionStatus
-  txHash    String   @unique
-  blink     Blink?   @relation(fields: [blinkId], references: [id])
-  blinkId   String?
-  nft       NFT?     @relation(fields: [nftId], references: [id])
-  nftId     String?
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  fee       Float?
-  gasUsed   Float?
-  blockNumber Int?
-  confirmations Int   @default(0)
-  metadata  Json?
+  id            String            @id @default(cuid())
+  type          TransactionType
+  from          User              @relation("SenderTransactions", fields: [fromId], references: [id])
+  fromId        String
+  to            User              @relation("ReceiverTransactions", fields: [toId], references: [id])
+  toId          String
+  amount        Float
+  currency      String
+  status        TransactionStatus
+  txHash        String            @unique
+  blink         Blink?            @relation(fields: [blinkId], references: [id])
+  blinkId       String?
+  nft           NFT?              @relation(fields: [nftId], references: [id])
+  nftId         String?
+  createdAt     DateTime          @default(now())
+  updatedAt     DateTime          @updatedAt
+  fee           Float?
+  gasUsed       Float?
+  blockNumber   Int?
+  confirmations Int               @default(0)
+  metadata      Json?
 }
 
 enum TransactionType {
@@ -223,23 +224,23 @@ model Collection {
 }
 
 model MarketplaceListing {
-  id        String   @id @default(cuid())
-  seller    User     @relation(fields: [sellerId], references: [id])
-  sellerId  String
-  blink     Blink?   @relation(fields: [blinkId], references: [id])
-  blinkId   String?
-  nft       NFT?     @relation(fields: [nftId], references: [id])
-  nftId     String?
-  price     Float
-  currency  String
-  status    ListingStatus
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  expiresAt DateTime?
-  isAuction Boolean  @default(false)
+  id            String        @id @default(cuid())
+  seller        User          @relation(fields: [sellerId], references: [id])
+  sellerId      String
+  blink         Blink?        @relation(fields: [blinkId], references: [id])
+  blinkId       String?
+  nft           NFT?          @relation(fields: [nftId], references: [id])
+  nftId         String?
+  price         Float
+  currency      String
+  status        ListingStatus
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
+  expiresAt     DateTime?
+  isAuction     Boolean       @default(false)
   startingPrice Float?
-  reservePrice Float?
-  bids      Bid[]
+  reservePrice  Float?
+  bids          Bid[]
 }
 
 enum ListingStatus {
@@ -250,13 +251,13 @@ enum ListingStatus {
 }
 
 model Bid {
-  id        String   @id @default(cuid())
-  bidder    User     @relation(fields: [bidderId], references: [id])
+  id        String             @id @default(cuid())
+  bidder    User               @relation(fields: [bidderId], references: [id])
   bidderId  String
   listing   MarketplaceListing @relation(fields: [listingId], references: [id])
   listingId String
   amount    Float
-  createdAt DateTime @default(now())
+  createdAt DateTime           @default(now())
   status    BidStatus
 }
 
@@ -268,28 +269,28 @@ enum BidStatus {
 }
 
 model Order {
-  id            String   @id @default(cuid())
-  user          User     @relation(fields: [userId], references: [id])
-  userId        String
-  status        OrderStatus
-  total         Float
-  currency      String
-  createdAt     DateTime @default(now())
-  updatedAt     DateTime @updatedAt
-  items         OrderItem[]
+  id              String      @id @default(cuid())
+  user            User        @relation(fields: [userId], references: [id])
+  userId          String
+  status          OrderStatus
+  total           Float
+  currency        String
+  createdAt       DateTime    @default(now())
+  updatedAt       DateTime    @updatedAt
+  items           OrderItem[]
   shippingAddress String?
-  trackingNumber String?
+  trackingNumber  String?
 }
 
 model OrderItem {
-  id        String   @id @default(cuid())
-  order     Order    @relation(fields: [orderId], references: [id])
-  orderId   String
-  blinkId   String?
-  nftId     String?
-  quantity  Int
-  price     Float
-  currency  String
+  id       String  @id @default(cuid())
+  order    Order   @relation(fields: [orderId], references: [id])
+  orderId  String
+  blinkId  String?
+  nftId    String?
+  quantity Int
+  price    Float
+  currency String
 }
 
 enum OrderStatus {
@@ -302,28 +303,28 @@ enum OrderStatus {
 }
 
 model Review {
-  id        String   @id @default(cuid())
-  user      User     @relation(fields: [userId], references: [id])
-  userId    String
-  blink     Blink?   @relation(fields: [blinkId], references: [id])
-  blinkId   String?
-  nft       NFT?     @relation(fields: [nftId], references: [id])
-  nftId     String?
-  rating    Int
-  comment   String?
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  isVerified Boolean @default(false)
+  id         String   @id @default(cuid())
+  user       User     @relation(fields: [userId], references: [id])
+  userId     String
+  blink      Blink?   @relation(fields: [blinkId], references: [id])
+  blinkId    String?
+  nft        NFT?     @relation(fields: [nftId], references: [id])
+  nftId      String?
+  rating     Int
+  comment    String?
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+  isVerified Boolean  @default(false)
 }
 
 model Notification {
-  id        String   @id @default(cuid())
-  user      User     @relation(fields: [userId], references: [id])
+  id        String           @id @default(cuid())
+  user      User             @relation(fields: [userId], references: [id])
   userId    String
   type      NotificationType
   message   String
-  read      Boolean  @default(false)
-  createdAt DateTime @default(now())
+  read      Boolean          @default(false)
+  createdAt DateTime         @default(now())
   metadata  Json?
 }
 
@@ -351,20 +352,20 @@ model Follow {
 }
 
 model Crowdfunding {
-  id          String   @id @default(cuid())
-  title       String
-  description String
-  creator     User     @relation("CreatedCrowdfundings", fields: [creatorId], references: [id])
-  creatorId   String
-  goal        Float
-  currentAmount Float  @default(0)
-  currency    String
-  startDate   DateTime
-  endDate     DateTime
-  status      CrowdfundingStatus
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-  contributors User[]  @relation("ContributedCrowdfundings")
+  id            String             @id @default(cuid())
+  title         String
+  description   String
+  creator       User               @relation("CreatedCrowdfundings", fields: [creatorId], references: [id])
+  creatorId     String
+  goal          Float
+  currentAmount Float              @default(0)
+  currency      String
+  startDate     DateTime
+  endDate       DateTime
+  status        CrowdfundingStatus
+  createdAt     DateTime           @default(now())
+  updatedAt     DateTime           @updatedAt
+  contributors  User[]             @relation("ContributedCrowdfundings")
 }
 
 enum CrowdfundingStatus {
@@ -375,17 +376,17 @@ enum CrowdfundingStatus {
 }
 
 model Gift {
-  id        String   @id @default(cuid())
-  sender    User     @relation("SentGifts", fields: [senderId], references: [id])
-  senderId  String
-  receiver  User     @relation("ReceivedGifts", fields: [receiverId], references: [id])
+  id         String     @id @default(cuid())
+  sender     User       @relation("SentGifts", fields: [senderId], references: [id])
+  senderId   String
+  receiver   User       @relation("ReceivedGifts", fields: [receiverId], references: [id])
   receiverId String
-  blink     Blink    @relation(fields: [blinkId], references: [id])
-  blinkId   String
-  message   String?
-  createdAt DateTime @default(now())
-  claimedAt DateTime?
-  status    GiftStatus
+  blink      Blink      @relation(fields: [blinkId], references: [id])
+  blinkId    String
+  message    String?
+  createdAt  DateTime   @default(now())
+  claimedAt  DateTime?
+  status     GiftStatus
 }
 
 enum GiftStatus {
@@ -438,15 +439,15 @@ model Memo {
 }
 
 model Subscription {
-  id        String   @id @default(cuid())
-  user      User     @relation(fields: [userId], references: [id])
+  id        String             @id @default(cuid())
+  user      User               @relation(fields: [userId], references: [id])
   userId    String
   plan      SubscriptionPlan
   startDate DateTime
   endDate   DateTime?
   status    SubscriptionStatus
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  createdAt DateTime           @default(now())
+  updatedAt DateTime           @updatedAt
 }
 
 enum SubscriptionPlan {
@@ -464,53 +465,53 @@ enum SubscriptionStatus {
 }
 
 model LiquidityPool {
-  id            String   @id @default(cuid())
-  name          String
+  id             String              @id @default(cuid())
+  name           String
   totalLiquidity Float
-  createdAt     DateTime @default(now())
-  updatedAt     DateTime @updatedAt
-  tokens        PoolToken[]
-  providers     LiquidityProvider[]
-  swaps         SwapTransaction[]
+  createdAt      DateTime            @default(now())
+  updatedAt      DateTime            @updatedAt
+  tokens         PoolToken[]
+  providers      LiquidityProvider[]
+  swaps          SwapTransaction[]
 }
 
 model PoolToken {
-  id            String   @id @default(cuid())
-  poolId        String
-  pool          LiquidityPool @relation(fields: [poolId], references: [id])
-  tokenAddress  String
-  balance       Float
-  weight        Float
-  createdAt     DateTime @default(now())
-  updatedAt     DateTime @updatedAt
+  id           String        @id @default(cuid())
+  poolId       String
+  pool         LiquidityPool @relation(fields: [poolId], references: [id])
+  tokenAddress String
+  balance      Float
+  weight       Float
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
 
   @@unique([poolId, tokenAddress])
 }
 
 model LiquidityProvider {
-  id            String   @id @default(cuid())
-  userId        String
-  user          User     @relation(fields: [userId], references: [id])
-  poolId        String
-  pool          LiquidityPool @relation(fields: [poolId], references: [id])
-  amount        Float
+  id              String        @id @default(cuid())
+  userId          String
+  user            User          @relation(fields: [userId], references: [id])
+  poolId          String
+  pool            LiquidityPool @relation(fields: [poolId], references: [id])
+  amount          Float
   sharePercentage Float
-  createdAt     DateTime @default(now())
-  updatedAt     DateTime @updatedAt
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
 
   @@unique([userId, poolId])
 }
 
 model SwapTransaction {
-  i            String   @id @default(cuid())
-  poolId        String
-  pool          LiquidityPool @relation(fields: [poolId], references: [id])
-  userId        String
-  user          User     @relation(fields: [userId], references: [id])
-  tokenInAddress String
+  i               String        @id @default(cuid())
+  poolId          String
+  pool            LiquidityPool @relation(fields: [poolId], references: [id])
+  userId          String
+  user            User          @relation(fields: [userId], references: [id])
+  tokenInAddress  String
   tokenOutAddress String
-  amountIn      Float
-  amountOut     Float
-  fee           Float
-  createdAt     DateTime @default(now())
+  amountIn        Float
+  amountOut       Float
+  fee             Float
+  createdAt       DateTime      @default(now())
 }
