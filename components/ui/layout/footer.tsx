@@ -75,7 +75,7 @@ const Footer: React.FC = () => {
         </nav>
         
         <p className="text-sm text-gray-500">
-          © {new Date().getFullYear()} BARK Protocol. All rights reserved.
+          
         </p>
       </div>
     </footer>

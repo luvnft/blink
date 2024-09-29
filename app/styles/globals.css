@@ -1,72 +1,73 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
- 
+
+/* Base Layer with Color Palette */
 @layer base {
   :root {
     --background: 0 0% 100%;
     --foreground: 0 0% 3.9%;
-
+    
     --card: 0 0% 100%;
     --card-foreground: 0 0% 3.9%;
- 
+    
     --popover: 0 0% 100%;
     --popover-foreground: 0 0% 3.9%;
- 
+    
     --primary: 24 9% 71%;
     --primary-foreground: 0 0% 98%;
- 
+    
     --secondary: 0 0% 96.1%;
     --secondary-foreground: 0 0% 9%;
- 
+    
     --muted: 0 0% 96.1%;
     --muted-foreground: 0 0% 45.1%;
- 
+    
     --accent: 0 0% 96.1%;
     --accent-foreground: 0 0% 9%;
- 
+    
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 0 0% 98%;
-
+    
     --border: 0 0% 89.8%;
     --input: 0 0% 89.8%;
     --ring: 0 0% 3.9%;
- 
+    
     --radius: 0.5rem;
   }
- 
+
+  /* Dark Mode Adjustments */
   .dark {
     --background: 0 0% 3.9%;
     --foreground: 0 0% 98%;
- 
+    
     --card: 0 0% 3.9%;
     --card-foreground: 0 0% 98%;
- 
+    
     --popover: 0 0% 3.9%;
     --popover-foreground: 0 0% 98%;
- 
+    
     --primary: 24 9% 71%;
     --primary-foreground: 0 0% 9%;
- 
+    
     --secondary: 0 0% 14.9%;
     --secondary-foreground: 0 0% 98%;
- 
+    
     --muted: 0 0% 14.9%;
     --muted-foreground: 0 0% 63.9%;
- 
+    
     --accent: 0 0% 14.9%;
     --accent-foreground: 0 0% 98%;
- 
+    
     --destructive: 0 62.8% 30.6%;
     --destructive-foreground: 0 0% 98%;
- 
+    
     --border: 0 0% 14.9%;
     --input: 0 0% 14.9%;
     --ring: 0 0% 83.1%;
   }
-}
- 
-@layer base {
+
+  /* Global Styles */
   * {
     @apply border-border;
   }
@@ -75,18 +76,18 @@
   }
 }
 
-@keyframes blink-animation {
-  0% { opacity: 1; }
-  50% { opacity: 0; }
-  100% { opacity: 1; }
+/* New Keyframe Animations */
+@keyframes pulse {
+  0% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.6; transform: scale(0.95); }
+  100% { opacity: 1; transform: scale(1); }
 }
 
-.blink {
-  animation: blink-animation 1s infinite;
-  color: #D0BFB4; /* Sand color */
+.pulse {
+  animation: pulse 2s infinite;
 }
 
-/* Custom utility classes for fonts */
+/* Custom Font Classes */
 .font-inter {
   font-family: var(--font-inter), sans-serif;
 }
@@ -99,67 +100,47 @@
   font-family: var(--font-poppins), 'Poppins', sans-serif;
 }
 
-.custom-heading {
-  @apply font-inter font-bold;
-}
-
-.custom-paragraph {
-  @apply font-poppins;
-}
-
-/* Typography */
+/* Typography Improvements */
 h1, h2, h3, h4, h5, h6 {
   @apply font-inter font-bold;
 }
 
-h1 {
-  @apply text-3xl sm:text-4xl md:text-5xl lg:text-6xl;
-}
+h1 { @apply text-3xl sm:text-4xl md:text-5xl lg:text-6xl; }
+h2 { @apply text-2xl sm:text-3xl md:text-4xl lg:text-5xl; }
+h3 { @apply text-xl sm:text-2xl md:text-3xl lg:text-4xl; }
+h4 { @apply text-lg sm:text-xl md:text-2xl lg:text-3xl; }
+h5 { @apply text-base sm:text-lg md:text-xl lg:text-2xl; }
+h6 { @apply text-sm sm:text-base md:text-lg lg:text-xl; }
 
-h2 {
-  @apply text-2xl sm:text-3xl md:text-4xl lg:text-5xl;
-}
-
-h3 {
-  @apply text-xl sm:text-2xl md:text-3xl lg:text-4xl;
-}
-
-h4 {
-  @apply text-lg sm:text-xl md:text-2xl lg:text-3xl;
-}
-
-h5 {
-  @apply text-base sm:text-lg md:text-xl lg:text-2xl;
-}
-
-h6 {
-  @apply text-sm sm:text-base md:text-lg lg:text-xl;
-}
-
+/* Paragraphs */
 p {
-  @apply text-sm sm:text-base md:text-lg;
+  @apply text-sm sm:text-base md:text-lg leading-relaxed text-muted-foreground;
 }
 
-/* Container */
+/* New Container Styles for Layout Control */
 .container {
-  @apply mx-auto px-4 sm:px-6 md:px-8 lg:px-10;
+  @apply mx-auto px-4 sm:px-6 md:px-8 lg:px-10 max-w-screen-xl;
 }
 
-/* Custom shadows */
+/* New Shadow Utilities for Soft and Elevated Shadow Effects */
 .shadow-soft {
   box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
 }
 
-/* Custom card styles */
+.shadow-elevated {
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+}
+
+/* New Card Styling for Reusable Card Components */
 .card {
-  @apply bg-card text-card-foreground rounded-lg border shadow-soft;
+  @apply bg-card text-card-foreground rounded-lg border shadow-soft p-4 transition-transform duration-300 ease-in-out;
 }
 
 .card-hover {
-  @apply transition-all duration-300 ease-in-out hover:shadow-lg hover:-translate-y-1;
+  @apply transition-all duration-300 ease-in-out hover:shadow-elevated hover:-translate-y-1;
 }
 
-/* Button styles */
+/* Button Styles with Various Intentions */
 .btn {
   @apply inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:opacity-50 disabled:pointer-events-none ring-offset-background;
 }
@@ -184,15 +165,33 @@ p {
   @apply underline-offset-4 hover:underline text-primary;
 }
 
-/* Existing styles */
-.gradient-text {
-  @apply text-transparent bg-clip-text bg-gradient-to-r from-sand-400 to-sand-600;
-}
-
+/* Form Inputs Styling */
 .input {
   @apply w-full px-3 py-2 border border-sand-300 rounded-md focus:outline-none focus:ring-2 focus:ring-sand-400 focus:border-transparent;
 }
 
+/* Labels for Form Elements */
 .label {
   @apply block text-sm font-medium text-gray-700 mb-1;
+}
+
+/* Hover Animation for Interactive Elements */
+.hover-grow {
+  @apply transform transition-transform duration-200 ease-in-out hover:scale-105;
+}
+
+/* Animations for Button Pulsing Effect */
+.btn-pulse {
+  @apply inline-flex items-center justify-center bg-primary text-primary-foreground rounded-md transition-all duration-150 ease-in-out;
+  animation: pulse 1s infinite;
+}
+
+/* Card Hover Effects */
+.card-hover {
+  @apply transition-all duration-300 ease-in-out hover:shadow-elevated hover:-translate-y-1;
+}
+
+/* Hover Effects for Links */
+.link-hover {
+  @apply underline hover:text-primary-foreground transition-colors duration-200;
 }

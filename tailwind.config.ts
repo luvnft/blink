@@ -1,4 +1,4 @@
-import type { Config } from 'tailwindcss'
+import type { Config } from 'tailwindcss';
 
 const config: Config = {
   darkMode: ["class"],
@@ -109,9 +109,12 @@ const config: Config = {
         'accordion-up': 'accordion-up 0.2s ease-out',
         blink: 'blink 1s linear infinite',
       },
+      boxShadow: {
+        elevated: '0 10px 30px -5px rgba(0, 0, 0, 0.2)', // Custom shadow definition
+      },
     },
   },
   plugins: [require("tailwindcss-animate")],
 }
 
-export default config
+export default config;
