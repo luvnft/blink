@@ -20,21 +20,21 @@ const FeatureCard: React.FC<FeatureCardProps> = ({ title, description, icon, act
     transition={{ duration: 0.5 }}
     className="h-full"
   >
-    <Card className="bg-white hover:shadow-lg transition-shadow transform hover:-translate-y-1 flex flex-col h-full border border-gray-200">
+    <Card className="bg-white dark:bg-gray-800 hover:shadow-lg transition-shadow transform hover:-translate-y-1 flex flex-col h-full border border-gray-200 dark:border-gray-700">
       <CardHeader className="p-4">
         <div className="flex items-center space-x-2">
           {icon}
-          <CardTitle className="font-inter text-lg font-semibold text-gray-900">{title}</CardTitle>
+          <CardTitle className="font-inter text-lg font-semibold text-gray-900 dark:text-gray-200">{title}</CardTitle>
         </div>
       </CardHeader>
       <CardContent className="p-4 pt-0 flex-grow">
-        <p className="font-poppins font-light text-sm text-gray-700">{description}</p>
+        <p className="font-poppins font-light text-sm text-gray-700 dark:text-gray-300">{description}</p>
       </CardContent>
       <CardFooter className="p-4 pt-0">
         <Link href={link} passHref className="w-full">
           <Button 
             variant="outline"
-            className="w-full text-sm bg-white text-sand-500 hover:bg-sand-50 transition-colors duration-300 rounded-md py-2 px-4 flex items-center justify-between border border-sand-500"
+            className="w-full text-sm bg-white text-sand-500 hover:bg-sand-50 transition-colors duration-300 rounded-md py-2 px-4 flex items-center justify-between border border-sand-500 dark:bg-gray-700 dark:text-gray-300 dark:border-gray-600 dark:hover:bg-gray-600"
           >
             <span>{action}</span>
             <ArrowRight className="h-4 w-4" />
@@ -115,9 +115,9 @@ export const Features: React.FC = () => {
   return (
     <section id="features" className="py-20">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <h2 className="font-inter text-4xl sm:text-5xl font-bold mb-2 text-center text-gray-900">Blink As A Service</h2>
-        <h3 className="font-poppins text-xl sm:text-2xl font-medium mb-4 text-center text-gray-500">Unleash the Power of Digital Moments</h3>
-        <p className="font-poppins text-base sm:text-lg text-gray-600 mb-12 text-center max-w-3xl mx-auto">
+        <h2 className="font-inter text-4xl sm:text-5xl font-bold mb-2 text-center text-gray-900 dark:text-gray-100">Blink As A Service</h2>
+        <h3 className="font-poppins text-xl sm:text-2xl font-medium mb-4 text-center text-gray-500 dark:text-gray-400">Unleash the Power of Digital Moments</h3>
+        <p className="font-poppins text-base sm:text-lg text-gray-600 dark:text-gray-300 mb-12 text-center max-w-3xl mx-auto">
           Discover the innovative features of BARK Blinks. Create, customize, and share unique digital assets on the Solana blockchain, opening up a world of possibilities for collectors and creators alike.
         </p>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">

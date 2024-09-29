@@ -47,8 +47,8 @@ const Footer: React.FC = () => {
     <footer className="bg-white shadow-sm mt-20">
       <div className="container mx-auto px-4 py-12 flex flex-col items-center">
         <nav aria-label="Social media links" className="mb-8">
-          <h3 className="text-lg font-semibold text-gray-900 mb-4 text-center">Follow Us</h3>
-          <ul className="flex space-x-6">
+          <h3 className="text-2xl font-semibold text-gray-900 mb-4 text-center">Follow Us</h3>
+          <ul className="flex space-x-4">
             {socialLinks.map((link) => (
               <motion.li key={link.label} whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.95 }}>
                 <a 
@@ -65,7 +65,7 @@ const Footer: React.FC = () => {
           </ul>
         </nav>
         
-        <nav aria-label="Legal links" className="flex space-x-4 mb-4">
+        <nav aria-label="Legal links" className="flex space-x-4">
           <Link href="/pages/terms" className="text-sm text-gray-600 hover:text-[#D0BFB4] transition-colors">
             Terms of Use
           </Link>
@@ -73,10 +73,6 @@ const Footer: React.FC = () => {
             Privacy Policy
           </Link>
         </nav>
-        
-        <p className="text-sm text-gray-500">
-          
-        </p>
       </div>
     </footer>
   )

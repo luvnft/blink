@@ -37,10 +37,10 @@ export const Hero: React.FC<HeroProps> = ({ onLaunchApp }) => {
           Transform Your <span className="text-[#D0BFB4]">Digital Experience</span> with BARK BLINK
         </h1>
         <p className="font-poppins text-xl sm:text-2xl mb-10 text-gray-600 dark:text-gray-300 max-w-4xl mx-auto">
-          Harness the potential of Solana to revolutionize how you create, share, and monetize digital content.
+          Unlock the full potential of the Solana blockchain and redefine how you create, share, and monetize digital content.
         </p>
         <p className="text-lg mb-12 text-gray-600 dark:text-gray-400 max-w-3xl mx-auto">
-          Join the future of digital ownership and experience the seamless integration of blockchain technology in your everyday life.
+          Step into the future of digital ownership, seamlessly integrating blockchain technology into your everyday life.
         </p>
         <div className="flex flex-col sm:flex-row justify-center space-y-4 sm:space-y-0 sm:space-x-6 mb-20">
           <Button 
@@ -60,9 +60,9 @@ export const Hero: React.FC<HeroProps> = ({ onLaunchApp }) => {
         </div>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 text-left max-w-5xl mx-auto">
           {[
-            { icon: Paintbrush, title: "Content Creators", description: "Mint unique digital assets, build your brand, and engage with your audience in groundbreaking ways." },
-            { icon: Code, title: "Developers", description: "Integrate our powerful API to build innovative applications on top of the Solana blockchain." },
-            { icon: Building2, title: "Businesses", description: "Create loyalty programs, issue digital certificates, and streamline operations with blockchain technology." }
+            { icon: Paintbrush, title: "For Content Creators", description: "Mint unique digital assets, enhance your brand presence, and engage your audience in innovative ways." },
+            { icon: Code, title: "For Developers", description: "Utilize our powerful API to build cutting-edge applications on the Solana blockchain." },
+            { icon: Building2, title: "For Businesses", description: "Implement loyalty programs, issue digital certificates, and streamline operations through blockchain technology." }
           ].map((item, index) => (
             <motion.div 
               key={index}

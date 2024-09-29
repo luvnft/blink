@@ -10,7 +10,7 @@ interface CTAProps {
 
 export const CTA: React.FC<CTAProps> = ({ onLaunchApp }) => {
   return (
-    <section id="cta" className="mb-20 py-16 sm:py-20 bg-gradient-to-r from-sand-100 to-sand-200 rounded-lg shadow-lg">
+    <section id="cta" className="mb-20 py-16 sm:py-20 bg-gradient-to-r from-sand-300 to-sand-400 rounded-lg shadow-lg">
       <motion.div 
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
@@ -37,11 +37,11 @@ export const CTA: React.FC<CTAProps> = ({ onLaunchApp }) => {
           whileTap={{ scale: 0.95 }}
         >
           <Button 
-            className="bg-[#D0BFB4] text-gray-900 hover:bg-[#C0AFA4] transition-all text-lg px-10 py-6 rounded-full shadow-lg hover:shadow-xl"
+            className="bg-[#C0AFA4] text-gray-900 hover:bg-[#C0AFA5] transition-all text-base px-6 py-3 rounded-full shadow-md hover:shadow-lg"
             onClick={onLaunchApp}
           >
             Create Now
-            <ArrowRight className="ml-2 h-6 w-6" aria-hidden="true" />
+            <ArrowRight className="ml-2 h-4 w-4" aria-hidden="true" />
           </Button>
         </motion.div>
         <p className="mt-6 text-sm text-gray-600">

@@ -3,6 +3,7 @@ import type { Metadata } from "next";
 import localFont from "next/font/local";
 import { Inter, Syne, Poppins } from "next/font/google";
 import { ToastProvider } from '@/components/ui/toast';
+import { ThemeProvider } from 'next-themes';
 import { SolanaWalletProvider } from '@/components/providers/solana-wallet-provider';
 import { InfoBar } from '@/components/ui/layout/info-bar';
 import "./styles/globals.css";
@@ -53,14 +54,19 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} ${inter.variable} ${syne.variable} ${poppins.variable} antialiased font-sans bg-gradient-to-b from-sand-50 to-white min-h-screen`}
       >
-        <div className="bg-white bg-opacity-80 backdrop-blur-sm min-h-screen">
-          <SolanaWalletProvider>
-            <ToastProvider>
-              <InfoBar /> {/* InfoBar added here */}
-              {children}
-            </ToastProvider>
-          </SolanaWalletProvider>
-        </div>
+        <ThemeProvider attribute="class" defaultTheme="light"> {/* Add ThemeProvider */}
+          <div className="bg-white bg-opacity-80 backdrop-blur-sm min-h-screen flex flex-col">
+            <SolanaWalletProvider>
+              <ToastProvider>
+                <InfoBar />
+                <main className="flex-grow">{children}</main>
+                <footer className="text-center py-4 text-sm text-gray-500 dark:text-gray-400">
+                  &copy; {new Date().getFullYear()} BARK Protocol. All rights reserved.
+                </footer>
+              </ToastProvider>
+            </SolanaWalletProvider>
+          </div>
+        </ThemeProvider>
       </body>
     </html>
   );

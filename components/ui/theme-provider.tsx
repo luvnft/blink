@@ -1,36 +1,9 @@
-"use client";
+"use client"
 
-import React, { createContext, useContext, useState, useEffect } from 'react';
+import * as React from "react"
+import { ThemeProvider as NextThemesProvider } from "next-themes"
+import { type ThemeProviderProps } from "next-themes/dist/types"
 
-// Define the type for the theme context
-type ThemeContextType = {
-  // your type definitions here
-};
-
-// Create the context
-const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
-
-// Theme Provider Component
-export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  // Your state and effect logic here
-  const [theme, setTheme] = useState('light');
-
-  useEffect(() => {
-    // Effect to handle theme changes
-  }, [theme]);
-
-  return (
-    <ThemeContext.Provider value={{ /* context value */ }}>
-      {children}
-    </ThemeContext.Provider>
-  );
-};
-
-// Custom hook for consuming the context
-export const useTheme = () => {
-  const context = useContext(ThemeContext);
-  if (context === undefined) {
-    throw new Error("useTheme must be used within a ThemeProvider");
-  }
-  return context;
-};
+export function ThemeProvider({ children, ...props }: ThemeProviderProps) {
+  return <NextThemesProvider {...props}>{children}</NextThemesProvider>
+}
