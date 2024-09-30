@@ -16,7 +16,7 @@ import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, D
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 
-const Home: React.FC = () => {
+const Blinkboard: React.FC = () => {
   const { connected, publicKey } = useWallet()
   const [username, setUsername] = useState('')
   const [isDialogOpen, setIsDialogOpen] = useState(false)
@@ -97,4 +97,4 @@ const Home: React.FC = () => {
   )
 }
 
-export default Home
+export default Blinkboard

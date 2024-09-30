@@ -49,20 +49,21 @@ export const Hero: React.FC<HeroProps> = ({ onLaunchApp }) => {
           Step into the future of digital ownership, seamlessly integrating blockchain technology into your everyday life.
         </p>
         <div className="flex flex-col sm:flex-row justify-center space-y-4 sm:space-y-0 sm:space-x-6 mb-12 sm:mb-16 md:mb-20">
-          <Button 
-            className="w-full sm:w-auto bg-[#D0BFB4] text-foreground hover:bg-[#D0BFB4]/90 transition-colors text-base sm:text-lg px-6 sm:px-8 py-3 sm:py-4 rounded-full shadow-lg hover:shadow-xl transform hover:-translate-y-1"
-            onClick={onLaunchApp}
-          >
-            Launch Blinkboard
-            <ArrowRight className="ml-2 h-4 w-4 sm:h-5 sm:w-5" aria-hidden="true" />
-          </Button>
+          <Link href="/blinkboard">
+            <Button 
+              className="w-full sm:w-auto bg-[#D0BFB4] text-foreground hover:bg-[#D0BFB4]/90 transition-colors text-base sm:text-lg px-6 sm:px-8 py-3 sm:py-4 rounded-full shadow-lg hover:shadow-xl transform hover:-translate-y-1"
+            >
+              Launch Blinkboard
+              <ArrowRight className="ml-2 h-4 w-4 sm:h-5 sm:w-5" aria-hidden="true" />
+            </Button>
+          </Link>
           <Button 
             variant="outline" 
             className="w-full sm:w-auto border-2 border-[#D0BFB4] text-[#D0BFB4] hover:bg-[#D0BFB4] hover:text-foreground transition-colors text-base sm:text-lg px-6 sm:px-8 py-3 sm:py-4 rounded-full shadow-lg hover:shadow-xl transform hover:-translate-y-1"
             asChild
           >
-            <Link href="/use-cases">
-              Explore Use Cases
+            <Link href="https://docs.barkprotocol.net">
+              Read Documentation
               <ExternalLink className="ml-2 h-4 w-4 sm:h-5 sm:w-5" aria-hidden="true" />
             </Link>
           </Button>

@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from 'react'
 import { Button } from "@/components/ui/button"
-import { BlinkCard } from '@/components/blinkboard/blink-card'
+import { BlinkCard } from '@/app/(blinkboard)/components/blink-card'
 import { ChevronLeft, ChevronRight } from 'lucide-react'
 import { motion, AnimatePresence } from 'framer-motion'
 
