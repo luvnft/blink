@@ -4,21 +4,12 @@ import React, { useState, useCallback, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { useWallet } from '@solana/wallet-adapter-react'
 import { useToast } from "@/components/ui/use-toast"
-import { Header } from '@/components/ui/layout/header'
-import { Hero } from '@/components/ui/layout/hero'
-import { Features } from '@/components/ui/layout/features'
-import { Actions } from "@/components/ui/layout/actions"
-import { HowItWorks } from '@/components/ui/layout/how-it-works'
-import { CTA } from '@/components/ui/layout/cta'
-import { FAQ } from '@/components/ui/layout/faq'
-import { Newsletter } from '@/components/ui/layout/newsletter'
-import Footer from "@/components/ui/layout/footer"
 import { Button } from "@/components/ui/button"
-import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 
-const Home: React.FC = () => {
+export const LaunchAppButton: React.FC = () => {
   const router = useRouter()
   const { connected, publicKey } = useWallet()
   const { toast } = useToast()
@@ -88,7 +79,7 @@ const Home: React.FC = () => {
         .then((response) => {
           if (response.ok) {
             localStorage.setItem('barkBlinkUsername', username)
-            router.push('https://auth.blinkboard.app')
+            router.push('https://auth.blinkboard.barkprotocol.net')
           } else {
             throw new Error('Failed to create user')
           }
@@ -115,18 +106,10 @@ const Home: React.FC = () => {
   }, [username, publicKey, router, toast])
 
   return (
-    <div className="min-h-screen font-poppins bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-gray-100">
-      <Header />
-      <main className="container mx-auto px-4 py-8">
-        <Hero onLaunchApp={handleLaunchApp} />
-        <Features />
-        <HowItWorks />
-        <Actions />
-        <CTA onLaunchApp={handleLaunchApp} />
-        <FAQ />
-        <Newsletter />
-      </main>
-      <Footer />
+    <>
+      <Button onClick={handleLaunchApp} disabled={isLoading}>
+        {isLoading ? 'Loading...' : 'Launch App'}
+      </Button>
 
       <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
         <DialogContent className="sm:max-w-[425px]">
@@ -160,8 +143,6 @@ const Home: React.FC = () => {
           </form>
         </DialogContent>
       </Dialog>
-    </div>
+    </>
   )
 }
-
-export default Home

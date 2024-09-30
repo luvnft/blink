@@ -39,8 +39,8 @@ model User {
   receivedGifts            Gift[]               @relation("ReceivedGifts")
   memos                    Memo[]
   posts                    Post[]
-  profile                  Profile?
   subscriptions            Subscription[]
+  profile                  Profile?
   bids                     Bid[]
   liquidityProvided        LiquidityProvider[]
   swaps                    SwapTransaction[]
@@ -50,76 +50,48 @@ model User {
   @@index([roleId])
 }
 
-enum UserStatus {
-  ACTIVE
-  INACTIVE
-  SUSPENDED
-}
-
 model Account {
-  id                String             @id @default(cuid())
-  userId            String             @unique
-  user              User               @relation(fields: [userId], references: [id])
-  walletAddress     String             @unique
-  balance           Decimal            @db.Decimal(18, 9)
-  tokenBalance      Decimal            @db.Decimal(18, 6)
+  id                String          @id @default(cuid())
+  userId            String          @unique
+  user              User            @relation(fields: [userId], references: [id])
+  walletAddress     String          @unique
+  balance           Decimal         @db.Decimal(18, 9) // 9 decimal places for SOL
+  tokenBalance      Decimal         @db.Decimal(18, 6) // 6 decimal places for SPL tokens
   ownedCNFTs        CNFT[]
   ownedNFTs         NFT[]
   ownedBlinks       Blink[]
   transactions      Transaction[]
-  createdAt         DateTime           @default(now())
-  updatedAt         DateTime           @updatedAt
+  createdAt         DateTime        @default(now())
+  updatedAt         DateTime        @updatedAt
   passwordResets    PasswordReset[]
   solanaActions     SolanaAction[]
   blinkExecutions   BlinkExecutionLog[]
   stakedAssets      StakedAsset[]
   rewardsEarned     Reward[]
   achievements      Achievement[]
-  tradingVolume     Decimal            @db.Decimal(18, 2) @default(0)
-  referralCode      String?            @unique
+  tradingVolume     Decimal         @db.Decimal(18, 2) @default(0)
+  referralCode      String?         @unique
   referredBy        String?
   referralRewards   ReferralReward[]
 
   @@index([walletAddress])
 }
 
-model Post {
-  id        String   @id @default(cuid())
-  title     String
-  content   String?
-  published Boolean  @default(false)
-  author    User     @relation(fields: [authorId], references: [id])
-  authorId  String
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  @@index([authorId])
-}
-
-model Profile {
-  id     String  @id @default(cuid())
-  bio    String?
-  user   User    @relation(fields: [userId], references: [id])
-  userId String  @unique
-
-  @@index([userId])
-}
-
 model CNFT {
-  id            String       @id @default(cuid())
+  id            String   @id @default(cuid())
   name          String
   description   String
   image         String
-  owner         Account      @relation(fields: [ownerId], references: [id])
+  owner         Account  @relation(fields: [ownerId], references: [id])
   ownerId       String
-  mintAddress   String       @unique
+  mintAddress   String   @unique
   metadata      Json
-  createdAt     DateTime     @default(now())
-  updatedAt     DateTime     @updatedAt
-  isCompressed  Boolean      @default(true)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+  isCompressed  Boolean  @default(true)
   merkleTree    String?
-  assetId       String?      @unique
-  compressionId String?      @unique
+  assetId       String?  @unique
+  compressionId String?  @unique
   staking       StakedAsset?
 
   @@index([ownerId])
@@ -155,22 +127,22 @@ model NFT {
 }
 
 model NFTAttribute {
-  id     String @id @default(cuid())
-  nft    NFT    @relation(fields: [nftId], references: [id])
-  nftId  String
-  trait  String
-  value  String
-  rarity Float?
+  id      String @id @default(cuid())
+  nft     NFT    @relation(fields: [nftId], references: [id])
+  nftId   String
+  trait   String
+  value   String
+  rarity  Float?
 
   @@unique([nftId, trait])
 }
 
 model NFTRarity {
-  id    String @id @default(cuid())
-  nft   NFT    @relation(fields: [nftId], references: [id])
-  nftId String @unique
-  score Float
-  rank  Int
+  id      String @id @default(cuid())
+  nft     NFT    @relation(fields: [nftId], references: [id])
+  nftId   String @unique
+  score   Float
+  rank    Int
 }
 
 model Blink {
@@ -225,7 +197,7 @@ model BlinkAbility {
   blinkId     String
   name        String
   description String
-  cooldown    Int
+  cooldown    Int    // in seconds
   powerCost   Int
 
   @@unique([blinkId, name])
@@ -262,16 +234,16 @@ model StakedAsset {
   unstakedAt    DateTime?
   rewardsEarned Decimal   @db.Decimal(18, 6) @default(0)
 
-  @@index([accountId])
+  @@check(nftId != null OR cnftId != null OR blinkId != null)
 }
 
 model Reward {
-  id        String     @id @default(cuid())
-  account   Account    @relation(fields: [accountId], references: [id])
+  id        String   @id @default(cuid())
+  account   Account  @relation(fields: [accountId], references: [id])
   accountId String
-  amount    Decimal    @db.Decimal(18, 6)
+  amount    Decimal  @db.Decimal(18, 6)
   type      RewardType
-  createdAt DateTime   @default(now())
+  createdAt DateTime @default(now())
 
   @@index([accountId])
 }
@@ -295,26 +267,26 @@ model Achievement {
 }
 
 model ReferralReward {
-  id         String   @id @default(cuid())
-  referrer   Account  @relation(fields: [referrerId], references: [id])
-  referrerId String
-  amount     Decimal  @db.Decimal(18, 6)
-  createdAt  DateTime @default(now())
+  id           String   @id @default(cuid())
+  referrer     Account  @relation(fields: [referrerId], references: [id])
+  referrerId   String
+  amount       Decimal  @db.Decimal(18, 6)
+  createdAt    DateTime @default(now())
 
   @@index([referrerId])
 }
 
 model Role {
-  id          String       @id @default(cuid())
-  name        String       @unique
+  id          String        @id @default(cuid())
+  name        String        @unique
   users       User[]
   permissions Permission[]
 }
 
 model Permission {
-  id    String @id @default(cuid())
-  name  String @unique
-  roles Role[]
+  id     String @id @default(cuid())
+  name   String @unique
+  roles  Role[]
 }
 
 model PasswordReset {
@@ -351,7 +323,7 @@ model Transaction {
   type          TransactionType
   from          Account           @relation(fields: [fromId], references: [id])
   fromId        String
-  to            String
+  to            String // To address (might not be in our system)
   amount        Decimal           @db.Decimal(18, 9)
   tokenAmount   Decimal?          @db.Decimal(18, 6)
   currency      String
@@ -416,6 +388,7 @@ model MarketplaceListing {
 
   @@index([sellerId])
   @@index([status])
+  @@check(nftId != null OR blinkId != null)
 }
 
 enum ListingStatus {
@@ -492,12 +465,14 @@ model Review {
   nftId      String?
   blink      Blink?   @relation(fields: [blinkId], references: [id])
   blinkId    String?
-  rating     Int
+  rating     Int      @db.SmallInt
   comment    String?
   createdAt  DateTime @default(now())
   updatedAt  DateTime @updatedAt
   isVerified Boolean  @default(false)
 
+  @@check(rating >= 1 && rating <= 5)
+  @@check(nftId != null OR blinkId != null)
   @@index([userId])
 }
 

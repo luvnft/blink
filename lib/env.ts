@@ -1,4 +1,5 @@
 import { z } from 'zod'
+import { PublicKey } from '@solana/web3.js'
 
 const envSchema = z.object({
   // Database
@@ -57,7 +58,13 @@ const envSchema = z.object({
   NEXT_PUBLIC_MAILCHIMP_DATA_CENTER: z.string().min(1),
 })
 
-function validateEnv(): z.infer<typeof envSchema> {
+function validateEnv(): z.infer<typeof envSchema> & {
+  SWAP_PROGRAM_ID: PublicKey;
+  TOKEN_PROGRAM_ID: PublicKey;
+  TOKEN_METADATA_PROGRAM_ID: PublicKey;
+  DONATION_WALLET: PublicKey;
+  MERCHANT_WALLET: PublicKey;
+} {
   try {
     const env = envSchema.parse(process.env)
     

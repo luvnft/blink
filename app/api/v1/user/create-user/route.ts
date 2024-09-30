@@ -1,23 +1,50 @@
-import { NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
 import { rateLimit } from '@/lib/rate-limit';
 import { validatePublicKey } from '@/lib/solana-utils';
 import { validateUsername } from '@/lib/user-utils';
 
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
-const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY!;
+// Initialize Supabase client
+const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+
+if (!supabaseUrl || !supabaseKey) {
+  throw new Error('Missing Supabase environment variables');
+}
+
 const supabase = createClient(supabaseUrl, supabaseKey);
 
-export async function POST(request: Request) {
+// Define the shape of our user data
+interface UserData {
+  id: string;
+  username: string;
+  public_key: string;
+  created_at: string;
+}
+
+export async function POST(request: NextRequest) {
   try {
     // Apply rate limiting
     const identifier = request.headers.get('x-forwarded-for') || 'anonymous';
-    const { success } = await rateLimit(identifier);
+    const { success, remaining, reset } = await rateLimit(identifier);
+
     if (!success) {
-      return NextResponse.json({ error: 'Rate limit exceeded' }, { status: 429 });
+      return NextResponse.json(
+        { error: 'Rate limit exceeded' },
+        {
+          status: 429,
+          headers: {
+            'X-RateLimit-Limit': process.env.RATE_LIMIT_MAX || '100',
+            'X-RateLimit-Remaining': remaining.toString(),
+            'X-RateLimit-Reset': reset.toString(),
+          },
+        }
+      );
     }
 
-    const { username, publicKey } = await request.json();
+    // Parse and validate the request body
+    const body = await request.json();
+    const { username, publicKey } = body;
 
     if (!username || !validateUsername(username)) {
       return NextResponse.json({ error: 'Invalid username' }, { status: 400 });
@@ -60,12 +87,14 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: 'An error occurred while creating the user' }, { status: 500 });
     }
 
+    const userData = data as UserData;
+
     return NextResponse.json({ 
       success: true, 
       user: {
-        id: data.id,
-        username: data.username,
-        createdAt: data.created_at
+        id: userData.id,
+        username: userData.username,
+        createdAt: userData.created_at
       }
     });
   } catch (error) {
