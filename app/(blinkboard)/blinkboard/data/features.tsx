@@ -1,4 +1,3 @@
-// data/features.ts
 import { Zap, Send, BarChart2, Sparkles, Gift, Coins, ShoppingBag, Landmark } from 'lucide-react'
 
 export const features = [
