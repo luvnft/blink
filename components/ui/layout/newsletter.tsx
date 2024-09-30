@@ -1,3 +1,5 @@
+'use client'
+
 import { useState } from 'react'
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -43,15 +45,15 @@ export const Newsletter: React.FC = () => {
   }
 
   return (
-    <section id="newsletter" className="mb-20 py-16 sm:py-20 bg-sand-light">
+    <section id="newsletter" className="mb-20 py-16 sm:py-20">
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}
         >
-          <h2 className="font-inter text-3xl sm:text-4xl font-bold mb-4 text-center text-gray-900 dark:text-gray-100">Stay in the Loop</h2>
-          <p className="font-light text-lg sm:text-xl mb-8 text-center text-gray-700 dark:text-gray-300 max-w-2xl mx-auto">
+          <h2 className="font-inter text-3xl sm:text-4xl font-bold mb-4 text-center text-foreground">Stay in the Loop</h2>
+          <p className="font-light text-lg sm:text-xl mb-8 text-center text-muted-foreground max-w-2xl mx-auto">
             Get the latest updates, news, and exclusive offers directly in your inbox. Join our community today!
           </p>
           <form onSubmit={handleSubscribe} className="flex flex-col sm:flex-row gap-4 max-w-xl mx-auto">
@@ -64,12 +66,12 @@ export const Newsletter: React.FC = () => {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
-                className="w-full bg-white dark:bg-gray-800 border-2 border-gray-300 dark:border-gray-600 focus:border-gray-900 dark:focus:border-gray-100 focus:ring-2 focus:ring-gray-900 dark:focus:ring-gray-100 rounded-full py-3 px-4 text-gray-900 dark:text-gray-100 placeholder-gray-500"
+                className="w-full bg-background border-2 border-input focus:border-[#D0BFB4] focus:ring-2 focus:ring-[#D0BFB4] rounded-full py-3 px-4 text-foreground placeholder-muted-foreground"
               />
             </div>
             <Button 
               type="submit" 
-              className="bg-gray-900 text-white hover:bg-gray-800 dark:bg-gray-600 dark:hover:bg-sand-light transition-colors rounded-full py-3 px-6 font-medium text-base"
+              className="bg-[#D0BFB4] text-foreground hover:bg-[#D0BFB4]/90 transition-colors rounded-full py-3 px-6 font-medium text-base"
               disabled={isSubscribing}
             >
               {isSubscribing ? (

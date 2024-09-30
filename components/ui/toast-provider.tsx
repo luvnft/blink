@@ -30,9 +30,9 @@ export function ToastProvider({ children }: { children: React.ReactNode }) {
               animate={{ opacity: 1, y: 0, scale: 1 }}
               exit={{ opacity: 0, scale: 0.5, transition: { duration: 0.2 } }}
               className={`w-full max-w-sm overflow-hidden rounded-lg shadow-lg ${
-                toast.variant === 'destructive' ? 'bg-red-500' :
-                toast.variant === 'success' ? 'bg-green-500' : 'bg-blue-500'
-              } text-white`}
+                toast.variant === 'destructive' ? 'bg-destructive text-destructive-foreground' :
+                toast.variant === 'success' ? 'bg-green-500 text-white' : 'bg-primary text-primary-foreground'
+              }`}
             >
               <div className="p-4">
                 <div className="flex items-start">
@@ -44,9 +44,9 @@ export function ToastProvider({ children }: { children: React.ReactNode }) {
                   </div>
                   <button
                     onClick={() => dismissToast(toast.id)}
-                    className="ml-4 inline-flex shrink-0 rounded-md p-1.5 text-white hover:bg-white hover:bg-opacity-10 focus:outline-none focus:ring-2 focus:ring-white focus:ring-opacity-50"
+                    className="ml-4 inline-flex shrink-0 rounded-md p-1.5 text-current hover:bg-white hover:bg-opacity-10 focus:outline-none focus:ring-2 focus:ring-white focus:ring-opacity-50"
+                    aria-label="Close"
                   >
-                    <span className="sr-only">Close</span>
                     <X className="h-5 w-5" />
                   </button>
                 </div>

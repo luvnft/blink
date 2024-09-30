@@ -11,7 +11,14 @@ import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/component
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { useTheme } from 'next-themes'
 
-const navItems = [
+interface NavItem {
+  name: string
+  icon: React.ElementType
+  href: string
+  subItems?: NavItem[]
+}
+
+const navItems: NavItem[] = [
   { 
     name: 'Overview', 
     icon: BarChart2, 
@@ -51,7 +58,7 @@ export function Sidebar() {
     }
   }, [toggleCollapse])
 
-  const renderNavItem = useCallback((item: typeof navItems[0], isSubItem = false) => {
+  const renderNavItem = useCallback((item: NavItem, isSubItem = false) => {
     const Icon = item.icon
     const isActive = pathname === item.href || (item.subItems && pathname.startsWith(item.href))
 
@@ -94,7 +101,7 @@ export function Sidebar() {
 
   return (
     <TooltipProvider>
-      <div 
+      <aside 
         className={`bg-white dark:bg-gray-800 h-full flex flex-col transition-all duration-300 ${isCollapsed ? 'w-20' : 'w-64'}`}
         role="navigation"
       >
@@ -141,7 +148,7 @@ export function Sidebar() {
               </Avatar>
               <div className="flex-grow">
                 <p className="text-sm font-medium text-gray-900 dark:text-gray-100">Barker</p>
-                <p className="text-xs text-gray-500 dark:text-gray-400">support@barkprotocol.net</p>
+                <p className="text-xs text-gray-500 dark:text-gray-400">info@barkprotocol.net</p>
               </div>
               <Button
                 variant="ghost"
@@ -154,7 +161,7 @@ export function Sidebar() {
             </div>
           )}
         </div>
-      </div>
+      </aside>
     </TooltipProvider>
   )
 }

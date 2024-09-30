@@ -1,3 +1,5 @@
+'use client'
+
 import React, { useState } from 'react';
 import Link from 'next/link';
 import { Card, CardContent, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
@@ -23,24 +25,24 @@ const ActionCard: React.FC<ActionCardProps> = ({ title, description, icon, actio
     transition={{ duration: 0.5 }}
     className="h-full"
   >
-    <Card className="bg-white dark:bg-gray-800 hover:shadow-md transition-shadow transform hover:-translate-y-1 flex flex-col h-full">
+    <Card className="bg-card hover:shadow-md transition-shadow transform hover:-translate-y-1 flex flex-col h-full">
       <CardHeader className="p-4">
         <div className="flex items-center space-x-2">
           {icon}
-          <CardTitle className="font-inter text-lg font-semibold text-gray-900 dark:text-gray-100">{title}</CardTitle>
+          <CardTitle className="font-inter text-lg font-semibold text-foreground">{title}</CardTitle>
         </div>
       </CardHeader>
       <CardContent className="p-4 pt-0 flex-grow">
-        <p className="font-poppins font-light text-sm text-gray-700 dark:text-gray-300">{description}</p>
-        <p className="font-poppins text-xs text-gray-500 dark:text-gray-400 mt-2">Category: {category}</p>
+        <p className="font-poppins font-light text-sm text-muted-foreground">{description}</p>
+        <p className="font-poppins text-xs text-muted-foreground mt-2">Category: {category}</p>
       </CardContent>
       <CardFooter className="p-4 pt-0">
-        <Link href={link} passHref className="w-full">
-          <Button variant="outline" className="w-full text-sm bg-sand-400 text-white hover:bg-sand-500 transition-colors duration-300 rounded-md py-2 px-4 flex items-center justify-center border border-sand-500">
+        <Button variant="outline" className="w-full text-sm bg-[#D0BFB4] text-foreground hover:bg-[#D0BFB4]/90 transition-colors duration-300 rounded-md py-2 px-4 flex items-center justify-center border border-[#D0BFB4]" asChild>
+          <Link href={link}>
             {action}
             <ArrowRight className="ml-2 h-4 w-4" />
-          </Button>
-        </Link>
+          </Link>
+        </Button>
       </CardFooter>
     </Card>
   </motion.div>
@@ -112,9 +114,9 @@ export const Actions: React.FC = () => {
   return (
     <section id="actions" className="py-20">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <h2 className="font-inter text-4xl sm:text-5xl font-bold mb-2 text-center text-gray-900 dark:text-gray-100">Actions</h2>
-        <h3 className="font-poppins text-xl sm:text-2xl font-medium mb-4 text-center text-gray-500 dark:text-gray-400">Empower Your BARK Experience</h3>
-        <p className="font-poppins text-base sm:text-lg text-gray-600 dark:text-gray-300 mb-12 text-center max-w-3xl mx-auto">
+        <h2 className="font-inter text-4xl sm:text-5xl font-bold mb-2 text-center text-foreground">Actions</h2>
+        <h3 className="font-poppins text-xl sm:text-2xl font-medium mb-4 text-center text-muted-foreground">Empower Your BARK Experience</h3>
+        <p className="font-poppins text-base sm:text-lg text-muted-foreground mb-12 text-center max-w-3xl mx-auto">
           Explore the diverse range of actions you can take with BARKs. From minting, token swapping and staking to governance and analytics, unlock the full potential of the BARK Protocol.
         </p>
         <div className="mb-8 flex flex-col sm:flex-row justify-between items-center space-y-4 sm:space-y-0 sm:space-x-4">
@@ -126,7 +128,7 @@ export const Actions: React.FC = () => {
               onChange={(e) => setSearchTerm(e.target.value)}
               className="pl-10"
             />
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400 dark:text-gray-300" />
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-muted-foreground" />
           </div>
           <div className="flex space-x-2 overflow-x-auto pb-2 sm:pb-0">
             {categories.map(category => (
@@ -149,7 +151,7 @@ export const Actions: React.FC = () => {
           </div>
         </AnimatePresence>
         {filteredActions.length === 0 && (
-          <p className="text-center text-gray-500 dark:text-gray-400 mt-8">No actions found. Try adjusting your search or category filter.</p>
+          <p className="text-center text-muted-foreground mt-8">No actions found. Try adjusting your search or category filter.</p>
         )}
       </div>
     </section>

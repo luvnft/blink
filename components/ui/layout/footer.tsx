@@ -44,10 +44,10 @@ const socialLinks = [
 
 const Footer: React.FC = () => {
   return (
-    <footer className="bg-white shadow-sm mt-20">
+    <footer className="bg-white dark:bg-gray-900 shadow-sm mt-20">
       <div className="container mx-auto px-4 py-12 flex flex-col items-center">
         <nav aria-label="Social media links" className="mb-8">
-          <h3 className="text-2xl font-semibold text-gray-900 mb-4 text-center">Follow Us</h3>
+          <h3 className="text-2xl font-semibold text-gray-900 dark:text-gray-100 mb-4 text-center">Follow Us</h3>
           <ul className="flex space-x-4">
             {socialLinks.map((link) => (
               <motion.li key={link.label} whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.95 }}>
@@ -58,7 +58,7 @@ const Footer: React.FC = () => {
                   aria-label={link.label}
                   className="block"
                 >
-                  <link.icon className="w-6 h-6 text-[#D0BFB4] hover:text-[#C0AFA4] transition-colors" />
+                  <link.icon className="w-6 h-6 text-[#D0BFB4] hover:text-[#C0AFA4] dark:text-[#E0CFC4] dark:hover:text-[#D0BFB4] transition-colors" />
                 </a>
               </motion.li>
             ))}
@@ -66,10 +66,10 @@ const Footer: React.FC = () => {
         </nav>
         
         <nav aria-label="Legal links" className="flex space-x-4">
-          <Link href="/pages/terms" className="text-sm text-gray-600 hover:text-[#D0BFB4] transition-colors">
+          <Link href="/pages/terms" className="text-sm text-gray-600 dark:text-gray-400 hover:text-[#D0BFB4] dark:hover:text-[#E0CFC4] transition-colors">
             Terms of Use
           </Link>
-          <Link href="/pages/privacy" className="text-sm text-gray-600 hover:text-[#D0BFB4] transition-colors">
+          <Link href="/pages/privacy" className="text-sm text-gray-600 dark:text-gray-400 hover:text-[#D0BFB4] dark:hover:text-[#E0CFC4] transition-colors">
             Privacy Policy
           </Link>
         </nav>

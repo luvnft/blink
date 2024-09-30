@@ -1,9 +1,8 @@
-"use client"
+'use client'
 
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Plus, Minus } from 'lucide-react';
-import { useTheme } from 'next-themes';
 
 interface FAQItemProps {
   question: string;
@@ -13,16 +12,13 @@ interface FAQItemProps {
 }
 
 const FAQItem: React.FC<FAQItemProps> = ({ question, answer, isOpen, onToggle }) => {
-  const { resolvedTheme } = useTheme();
-  const isDarkTheme = resolvedTheme === 'dark';
-
   return (
-    <div className={`border-b ${isDarkTheme ? 'border-gray-700' : 'border-gray-200'} last:border-b-0`}>
+    <div className="border-b border-border last:border-b-0">
       <button
-        className={`flex justify-between items-center w-full py-4 text-left focus:outline-none focus:ring-2 focus:ring-[#D0BFB4] focus:ring-opacity-50 rounded-lg transition-all duration-200 ease-in-out ${isDarkTheme ? 'text-gray-200' : 'text-gray-900'}`}
+        className="flex justify-between items-center w-full py-4 text-left focus:outline-none focus:ring-2 focus:ring-[#D0BFB4] focus:ring-opacity-50 rounded-lg transition-all duration-200 ease-in-out text-foreground"
         onClick={onToggle}
       >
-        <span className={`font-medium text-base sm:text-lg pr-4 ${isDarkTheme ? 'text-gray-200' : 'text-gray-900'}`}>{question}</span>
+        <span className="font-medium text-base sm:text-lg pr-4 text-foreground">{question}</span>
         <motion.div
           initial={false}
           animate={{ rotate: isOpen ? 45 : 0 }}
@@ -48,7 +44,7 @@ const FAQItem: React.FC<FAQItemProps> = ({ question, answer, isOpen, onToggle })
             }}
             transition={{ duration: 0.3, ease: [0.04, 0.62, 0.23, 0.98] }}
           >
-            <div className={`pb-4 text-sm sm:text-base leading-relaxed ${isDarkTheme ? 'text-gray-300' : 'text-gray-700'}`}>
+            <div className="pb-4 text-sm sm:text-base leading-relaxed text-muted-foreground">
               {answer}
             </div>
           </motion.div>
@@ -60,8 +56,6 @@ const FAQItem: React.FC<FAQItemProps> = ({ question, answer, isOpen, onToggle })
 
 export const FAQ: React.FC = () => {
   const [openIndex, setOpenIndex] = useState<number | null>(null);
-  const { resolvedTheme } = useTheme();
-  const isDarkTheme = resolvedTheme === 'dark';
 
   const faqItems = [
     {
@@ -87,15 +81,15 @@ export const FAQ: React.FC = () => {
   ];
 
   return (
-    <section id="faq" className={`py-16 sm:py-20 ${isDarkTheme ? 'bg-gray-900' : 'bg-gray-50'}`}>
+    <section id="faq" className="py-16 sm:py-20">
       <div className="w-full max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}
         >
-          <h2 className={`font-inter text-4xl sm:text-5xl font-bold mb-2 text-center ${isDarkTheme ? 'text-gray-200' : 'text-gray-900'}`}>FAQ</h2>
-          <h3 className={`font-poppins text-xl sm:text-2xl font-medium mb-8 text-center ${isDarkTheme ? 'text-gray-400' : 'text-gray-500'}`}>Frequently Asked Questions</h3>
+          <h2 className="font-inter text-4xl sm:text-5xl font-bold mb-2 text-center text-foreground">FAQ</h2>
+          <h3 className="font-poppins text-xl sm:text-2xl font-medium mb-8 text-center text-muted-foreground">Frequently Asked Questions</h3>
           <div className="space-y-4">
             {faqItems.map((item, index) => (
               <FAQItem

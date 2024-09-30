@@ -8,7 +8,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { BarChart, Wallet, Send, ShoppingBag, Users, Plus, Search, ArrowUpRight, ArrowDownRight, Crown, Dog, ChevronLeft, ChevronRight, SortAsc, SortDesc, Bell, Zap, Trophy, PieChart, LineChart, Activity, Sparkles, TrendingUp, ThumbsUp } from 'lucide-react'
-import { BlinkCard } from '@/components/ui/layout/blinkboard/blink-card'
+import { BlinkCard } from '@/components/blinkboard/blink-card'
 import { useToast } from "@/components/ui/use-toast"
 import { Skeleton } from "@/components/ui/skeleton"
 import { motion, AnimatePresence } from "framer-motion"
@@ -56,7 +56,7 @@ const blinkPerformanceData = [
 
 const SAND_COLORS = ['#F4E0C7', '#E6CCB2', '#D8B79E', '#C9A28A', '#BB8E76']
 
-const BlinkCarousel = ({ blinks }) => {
+const BlinkCarousel = ({ any }) => {
   const [currentIndex, setCurrentIndex] = useState(0)
 
   const nextSlide = () => {

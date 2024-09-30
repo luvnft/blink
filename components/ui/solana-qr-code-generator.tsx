@@ -8,7 +8,7 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
-import { toast } from "@/components/ui/use-toast"
+import { useToast } from "@/components/ui/use-toast"
 import { Loader2, QrCode, RefreshCw } from 'lucide-react'
 
 export default function SolanaQRGenerator() {
@@ -17,6 +17,7 @@ export default function SolanaQRGenerator() {
   const [isLoading, setIsLoading] = useState(false)
   const { publicKey } = useWallet()
   const qrRef = useRef<HTMLDivElement>(null)
+  const { toast } = useToast()
 
   const generateQR = useCallback(async () => {
     if (!publicKey) {
@@ -82,21 +83,21 @@ export default function SolanaQRGenerator() {
     } finally {
       setIsLoading(false)
     }
-  }, [amount, recipient, publicKey])
+  }, [amount, recipient, publicKey, toast])
 
   return (
-    <Card className="w-full max-w-md mx-auto">
+    <Card className="w-full max-w-md mx-auto bg-card text-card-foreground">
       <CardHeader>
-        <CardTitle className="flex items-center">
+        <CardTitle className="flex items-center text-2xl font-bold">
           <QrCode className="mr-2 h-6 w-6 text-[#D0BFB4]" />
           Solana Pay QR Generator
         </CardTitle>
-        <CardDescription>Generate a QR code for Solana Pay transactions</CardDescription>
+        <CardDescription className="text-muted-foreground">Generate a QR code for Solana Pay transactions</CardDescription>
       </CardHeader>
       <CardContent>
         <div className="space-y-4">
-          <div>
-            <Label htmlFor="amount">Amount (SOL)</Label>
+          <div className="space-y-2">
+            <Label htmlFor="amount" className="text-sm font-medium">Amount (SOL)</Label>
             <Input
               id="amount"
               type="number"
@@ -107,10 +108,11 @@ export default function SolanaQRGenerator() {
               aria-label="Amount in SOL"
               min="0"
               step="0.000000001"
+              className="bg-background border-input"
             />
           </div>
-          <div>
-            <Label htmlFor="recipient">Recipient Address</Label>
+          <div className="space-y-2">
+            <Label htmlFor="recipient" className="text-sm font-medium">Recipient Address</Label>
             <Input
               id="recipient"
               type="text"
@@ -119,9 +121,14 @@ export default function SolanaQRGenerator() {
               onChange={(e) => setRecipient(e.target.value)}
               disabled={isLoading}
               aria-label="Recipient's Solana address"
+              className="bg-background border-input"
             />
           </div>
-          <Button onClick={generateQR} disabled={isLoading} className="w-full">
+          <Button 
+            onClick={generateQR} 
+            disabled={isLoading} 
+            className="w-full bg-[#D0BFB4] text-white hover:bg-[#D0BFB4]/90 transition-colors"
+          >
             {isLoading ? (
               <>
                 <Loader2 className="mr-2 h-4 w-4 animate-spin" />
@@ -134,7 +141,12 @@ export default function SolanaQRGenerator() {
               </>
             )}
           </Button>
-          <div ref={qrRef} className="mt-4 flex justify-center" aria-live="polite" aria-atomic="true"></div>
+          <div 
+            ref={qrRef} 
+            className="mt-4 flex justify-center" 
+            aria-live="polite" 
+            aria-atomic="true"
+          ></div>
         </div>
       </CardContent>
     </Card>

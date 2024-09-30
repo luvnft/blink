@@ -74,20 +74,20 @@ export const GiftBlink: React.FC = () => {
   }
 
   return (
-    <div className="max-w-2xl mx-auto bg-white shadow-xl rounded-2xl p-8">
+    <div className="max-w-2xl mx-auto bg-card shadow-xl rounded-2xl p-8">
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5 }}
       >
-        <h2 className="text-3xl font-bold text-gray-900 mb-6 flex items-center">
-          <Gift className="mr-2 h-8 w-8" style={{ color: '#D0BFB4' }} />
+        <h2 className="text-3xl font-bold text-foreground mb-6 flex items-center">
+          <Gift className="mr-2 h-8 w-8 text-[#D0BFB4]" />
           Create a Gift Blink
         </h2>
         <form onSubmit={handleCreateGiftBlink} className="space-y-6">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div>
-              <label htmlFor="recipientName" className="block text-sm font-medium text-gray-700 mb-1">
+              <label htmlFor="recipientName" className="block text-sm font-medium text-muted-foreground mb-1">
                 Recipient's Name
               </label>
               <Input
@@ -97,11 +97,11 @@ export const GiftBlink: React.FC = () => {
                 onChange={(e) => setRecipientName(e.target.value)}
                 required
                 placeholder="Enter recipient's name"
-                className="w-full px-3 py-2 border border-sand-300 rounded-md focus:ring-sand-500 focus:border-sand-500"
+                className="w-full"
               />
             </div>
             <div>
-              <label htmlFor="recipientAddress" className="block text-sm font-medium text-gray-700 mb-1">
+              <label htmlFor="recipientAddress" className="block text-sm font-medium text-muted-foreground mb-1">
                 Recipient's Solana Address
               </label>
               <Input
@@ -111,12 +111,12 @@ export const GiftBlink: React.FC = () => {
                 onChange={(e) => setRecipientAddress(e.target.value)}
                 required
                 placeholder="Enter recipient's Solana address"
-                className="w-full px-3 py-2 border border-sand-300 rounded-md focus:ring-sand-500 focus:border-sand-500"
+                className="w-full"
               />
             </div>
           </div>
           <div>
-            <label htmlFor="message" className="block text-sm font-medium text-gray-700 mb-1">
+            <label htmlFor="message" className="block text-sm font-medium text-muted-foreground mb-1">
               Gift Message
             </label>
             <Textarea
@@ -124,17 +124,17 @@ export const GiftBlink: React.FC = () => {
               value={message}
               onChange={(e) => setMessage(e.target.value)}
               placeholder="Write a personal message for your gift"
-              className="w-full px-3 py-2 border border-sand-300 rounded-md focus:ring-sand-500 focus:border-sand-500"
+              className="w-full"
               rows={4}
             />
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div>
-              <label htmlFor="occasion" className="block text-sm font-medium text-gray-700 mb-1">
+              <label htmlFor="occasion" className="block text-sm font-medium text-muted-foreground mb-1">
                 Occasion
               </label>
               <Select value={occasion} onValueChange={setOccasion}>
-                <SelectTrigger className="w-full px-3 py-2 border border-sand-300 rounded-md focus:ring-sand-500 focus:border-sand-500">
+                <SelectTrigger className="w-full">
                   <SelectValue placeholder="Select an occasion" />
                 </SelectTrigger>
                 <SelectContent>
@@ -147,11 +147,11 @@ export const GiftBlink: React.FC = () => {
               </Select>
             </div>
             <div>
-              <label htmlFor="blinkType" className="block text-sm font-medium text-gray-700 mb-1">
+              <label htmlFor="blinkType" className="block text-sm font-medium text-muted-foreground mb-1">
                 Blink Type
               </label>
               <Select value={blinkType} onValueChange={setBlinkType}>
-                <SelectTrigger className="w-full px-3 py-2 border border-sand-300 rounded-md focus:ring-sand-500 focus:border-sand-500">
+                <SelectTrigger className="w-full">
                   <SelectValue placeholder="Select Blink type" />
                 </SelectTrigger>
                 <SelectContent>
@@ -164,32 +164,32 @@ export const GiftBlink: React.FC = () => {
             </div>
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="block text-sm font-medium text-muted-foreground mb-1">
               Gift Image (optional)
             </label>
             <div
               {...getRootProps()}
-              className={`mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-sand-300 border-dashed rounded-md transition-colors duration-200 ease-in-out ${
-                isDragActive ? 'border-sand-500 bg-sand-50' : 'hover:border-sand-400 hover:bg-sand-50'
+              className={`mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-dashed rounded-md transition-colors duration-200 ease-in-out ${
+                isDragActive ? 'border-[#D0BFB4] bg-[#D0BFB4]/10' : 'border-input hover:border-[#D0BFB4] hover:bg-[#D0BFB4]/10'
               }`}
             >
               <div className="space-y-1 text-center">
-                <Upload className="mx-auto h-12 w-12" style={{ color: '#D0BFB4' }} />
-                <div className="flex text-sm text-gray-600">
+                <Upload className="mx-auto h-12 w-12 text-[#D0BFB4]" />
+                <div className="flex text-sm text-muted-foreground">
                   <label
                     htmlFor="file-upload"
-                    className="relative cursor-pointer bg-white rounded-md font-medium text-sand-600 hover:text-sand-500 focus-within:outline-none focus-within:ring-2 focus-within:ring-offset-2 focus-within:ring-sand-500"
+                    className="relative cursor-pointer rounded-md font-medium text-[#D0BFB4] hover:text-[#D0BFB4]/80 focus-within:outline-none focus-within:ring-2 focus-within:ring-offset-2 focus-within:ring-[#D0BFB4]"
                   >
                     <span>Upload an image</span>
                     <input {...getInputProps()} />
                   </label>
                   <p className="pl-1">or drag and drop</p>
                 </div>
-                <p className="text-xs text-gray-500">PNG, JPG, GIF up to 10MB</p>
+                <p className="text-xs text-muted-foreground">PNG, JPG, GIF up to 10MB</p>
               </div>
             </div>
             {image && (
-              <p className="mt-2 text-sm text-gray-500">
+              <p className="mt-2 text-sm text-muted-foreground">
                 Selected file: {image.name}
               </p>
             )}
@@ -200,7 +200,7 @@ export const GiftBlink: React.FC = () => {
           >
             <Button 
               type="submit"
-              className="w-full bg-sand-400 text-white transition-all text-lg px-6 py-3 rounded-full shadow-lg hover:shadow-xl disabled:opacity-50 disabled:cursor-not-allowed"
+              className="w-full bg-[#D0BFB4] text-white hover:bg-[#D0BFB4]/90 transition-all text-lg px-6 py-3 rounded-full shadow-lg hover:shadow-xl disabled:opacity-50 disabled:cursor-not-allowed"
               disabled={isCreating || !connected}
             >
               {isCreating ? (

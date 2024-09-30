@@ -43,6 +43,9 @@ const poppins = Poppins({
 export const metadata: Metadata = {
   title: "BARK BLINKS",
   description: "Solana Actions & Blinks dApp",
+  icons: {
+    icon: '/favicon.ico',
+  },
 };
 
 export default function RootLayout({
@@ -51,12 +54,12 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
       <body
-        className={`${geistSans.variable} ${geistMono.variable} ${inter.variable} ${syne.variable} ${poppins.variable} antialiased font-sans bg-gradient-to-b from-sand-50 to-white min-h-screen`}
+        className={`${geistSans.variable} ${geistMono.variable} ${inter.variable} ${syne.variable} ${poppins.variable} antialiased font-sans bg-gradient-to-b from-sand-50 to-white dark:from-gray-900 dark:to-gray-800 min-h-screen`}
       >
-        <ThemeProvider attribute="class" defaultTheme="light"> {/* Add ThemeProvider */}
-          <div className="bg-white bg-opacity-80 backdrop-blur-sm min-h-screen flex flex-col">
+        <ThemeProvider attribute="class" defaultTheme="light" enableSystem>
+          <div className="bg-white dark:bg-gray-900 bg-opacity-80 dark:bg-opacity-90 backdrop-blur-sm min-h-screen flex flex-col">
             <SolanaWalletProvider>
               <ToastProvider>
                 <InfoBar />

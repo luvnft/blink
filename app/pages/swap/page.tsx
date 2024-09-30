@@ -7,15 +7,15 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { ArrowRightLeft, Loader2, RefreshCw, AlertTriangle, ArrowUpDown } from 'lucide-react'
-import { toast } from "@/components/ui/use-toast"
+import { useToast } from "@/components/ui/use-toast"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from "@/components/ui/card"
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
 import { Skeleton } from "@/components/ui/skeleton"
 import { Slider } from "@/components/ui/slider"
 import { Switch } from "@/components/ui/switch"
 import { Label } from "@/components/ui/label"
-import Image from "next/legacy/image"
-import { constants } from 'buffer'
+import Image from "next/image"
+import { motion, AnimatePresence } from "framer-motion"
 
 interface TokenSwapProps {
   onError: (error: string) => void
@@ -30,6 +30,7 @@ const tokenList = [
 export function TokenSwap({ onError }: TokenSwapProps) {
   const { connection } = useConnection()
   const { publicKey, signTransaction } = useWallet()
+  const { toast } = useToast()
   const [fromToken, setFromToken] = useState('')
   const [toToken, setToToken] = useState('')
   const [amount, setAmount] = useState('')
@@ -140,7 +141,7 @@ export function TokenSwap({ onError }: TokenSwapProps) {
       setSwapRoute(null)
     } catch (error) {
       console.error('Error swapping tokens:', error)
-      const errorMessage = error.message || 'An error occurred while swapping tokens'
+      const errorMessage = error instanceof Error ? error.message : 'An error occurred while swapping tokens'
       onError(errorMessage)
       toast({
         title: "Swap failed",
@@ -163,14 +164,14 @@ export function TokenSwap({ onError }: TokenSwapProps) {
   return (
     <Card className="w-full max-w-md mx-auto">
       <CardHeader>
-        <CardTitle>Swap Tokens</CardTitle>
+        <CardTitle className="text-2xl font-bold">Swap Tokens</CardTitle>
         <CardDescription>Exchange your tokens quickly and easily using Jupiter aggregator.</CardDescription>
       </CardHeader>
       <CardContent>
-        <div className="space-y-4">
+        <motion.div className="space-y-4" layout>
           <div className="flex items-center space-x-2">
             <div className="flex-1">
-              <label htmlFor="fromToken" className="block text-sm font-medium text-gray-700 mb-1">From Token</label>
+              <Label htmlFor="fromToken" className="block text-sm font-medium mb-1">From Token</Label>
               <Select onValueChange={setFromToken} value={fromToken}>
                 <SelectTrigger id="fromToken" aria-label="Select from token">
                   <SelectValue placeholder="Select token" />
@@ -182,7 +183,7 @@ export function TokenSwap({ onError }: TokenSwapProps) {
                         <Image src={token.icon} alt={token.symbol} width={24} height={24} className="mr-2" />
                         {token.symbol}
                         {tokenPrices[token.symbol] && (
-                          <span className="ml-2 text-sm text-gray-500">${tokenPrices[token.symbol].toFixed(2)}</span>
+                          <span className="ml-2 text-sm text-muted-foreground">${tokenPrices[token.symbol].toFixed(2)}</span>
                         )}
                       </div>
                     </SelectItem>
@@ -200,7 +201,7 @@ export function TokenSwap({ onError }: TokenSwapProps) {
               <ArrowUpDown className="h-4 w-4" />
             </Button>
             <div className="flex-1">
-              <label htmlFor="toToken" className="block text-sm font-medium text-gray-700 mb-1">To Token</label>
+              <Label htmlFor="toToken" className="block text-sm font-medium mb-1">To Token</Label>
               <Select onValueChange={setToToken} value={toToken}>
                 <SelectTrigger id="toToken" aria-label="Select to token">
                   <SelectValue placeholder="Select token" />
@@ -212,7 +213,7 @@ export function TokenSwap({ onError }: TokenSwapProps) {
                         <Image src={token.icon} alt={token.symbol} width={24} height={24} className="mr-2" />
                         {token.symbol}
                         {tokenPrices[token.symbol] && (
-                          <span className="ml-2 text-sm text-gray-500">${tokenPrices[token.symbol].toFixed(2)}</span>
+                          <span className="ml-2 text-sm text-muted-foreground">${tokenPrices[token.symbol].toFixed(2)}</span>
                         )}
                       </div>
                     </SelectItem>
@@ -222,7 +223,7 @@ export function TokenSwap({ onError }: TokenSwapProps) {
             </div>
           </div>
           <div>
-            <label htmlFor="amount" className="block text-sm font-medium text-gray-700 mb-1">Amount</label>
+            <Label htmlFor="amount" className="block text-sm font-medium mb-1">Amount</Label>
             <Input
               id="amount"
               type="number"
@@ -232,35 +233,58 @@ export function TokenSwap({ onError }: TokenSwapProps) {
               aria-label="Enter amount to swap"
             />
           </div>
-          {isPriceFetching ? (
-            <Skeleton className="h-4 w-full" />
-          ) : price !== null && swapRoute ? (
-            <div className="flex items-center justify-between text-sm text-gray-600">
-              <span>Price: 1 {fromToken} = {price.toFixed(6)} {toToken}</span>
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={fetchSwapRoute}
-                disabled={isPriceFetching}
-                aria-label="Refresh price"
+          <AnimatePresence mode="wait">
+            {isPriceFetching ? (
+              <motion.div
+                key="skeleton"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
               >
-                <RefreshCw className={`h-4 w-4 ${isPriceFetching ? 'animate-spin' : ''}`} />
-              </Button>
-            </div>
-          ) : null}
-          {swapRoute && (
-            <Alert>
-              <AlertTriangle className="h-4 w-4" />
-              <AlertTitle>Swap Details</AlertTitle>
-              <AlertDescription>
-                You will receive approximately {(swapRoute.outAmount / 1e9).toFixed(6)} {toToken}
-                <br />
-                Slippage: {slippage}%
-                <br />
-                Route: {swapRoute.marketInfos.map((info: any) => info.label).join(' → ')}
-              </AlertDescription>
-            </Alert>
-          )}
+                <Skeleton className="h-4 w-full" />
+              </motion.div>
+            ) : price !== null && swapRoute ? (
+              <motion.div
+                key="price"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                className="flex items-center justify-between text-sm text-muted-foreground"
+              >
+                <span>Price: 1 {fromToken} = {price.toFixed(6)} {toToken}</span>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={fetchSwapRoute}
+                  disabled={isPriceFetching}
+                  aria-label="Refresh price"
+                >
+                  <RefreshCw className={`h-4 w-4 ${isPriceFetching ? 'animate-spin' : ''}`} />
+                </Button>
+              </motion.div>
+            ) : null}
+          </AnimatePresence>
+          <AnimatePresence>
+            {swapRoute && (
+              <motion.div
+                initial={{ opacity: 0, height: 0 }}
+                animate={{ opacity: 1, height: 'auto' }}
+                exit={{ opacity: 0, height: 0 }}
+              >
+                <Alert>
+                  <AlertTriangle className="h-4 w-4" />
+                  <AlertTitle>Swap Details</AlertTitle>
+                  <AlertDescription>
+                    You will receive approximately {(swapRoute.outAmount / 1e9).toFixed(6)} {toToken}
+                    <br />
+                    Slippage: {slippage}%
+                    <br />
+                    Route: {swapRoute.marketInfos.map((info: any) => info.label).join(' → ')}
+                  </AlertDescription>
+                </Alert>
+              </motion.div>
+            )}
+          </AnimatePresence>
           <div className="flex items-center space-x-2">
             <Switch
               id="advanced-mode"
@@ -269,20 +293,27 @@ export function TokenSwap({ onError }: TokenSwapProps) {
             />
             <Label htmlFor="advanced-mode">Advanced Mode</Label>
           </div>
-          {isAdvancedMode && (
-            <div className="space-y-2">
-              <Label htmlFor="slippage">Slippage Tolerance: {slippage}%</Label>
-              <Slider
-                id="slippage"
-                min={0.1}
-                max={5}
-                step={0.1}
-                value={[slippage]}
-                onValueChange={(value) => setSlippage(value[0])}
-              />
-            </div>
-          )}
-        </div>
+          <AnimatePresence>
+            {isAdvancedMode && (
+              <motion.div
+                initial={{ opacity: 0, height: 0 }}
+                animate={{ opacity: 1, height: 'auto' }}
+                exit={{ opacity: 0, height: 0 }}
+                className="space-y-2"
+              >
+                <Label htmlFor="slippage">Slippage Tolerance: {slippage}%</Label>
+                <Slider
+                  id="slippage"
+                  min={0.1}
+                  max={5}
+                  step={0.1}
+                  value={[slippage]}
+                  onValueChange={(value) => setSlippage(value[0])}
+                />
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </motion.div>
       </CardContent>
       <CardFooter>
         <Button
