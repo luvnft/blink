@@ -2,7 +2,7 @@
   "name": "blink-as-a-service-platform",
   "description": "BARK Blink is a comprehensive decentralized application (dApp) for managing token interactions on the Solana blockchain. This service enables users to easily create, transfer, and manage SPL tokens, NFTs, CNFTs, airdrops, and on-chain transactions with a simple, user-friendly interface. Built for seamless interaction with Solana's infrastructure, BARK Blink simplifies the process of sending digital assets, performing airdrops, managing wallet-to-wallet transactions, and participating in DeFi activities.",
   "author": "BARK Protocol",
-  "version": "0.2.0",
+  "version": "0.1.2",
   "type": "module",
   "private": true,
   "engines": {
@@ -14,7 +14,7 @@
     "start": "next start",
     "lint": "next lint",
     "format": "prettier --write .",
-    "generate": "prisma generate",
+    "generate": "npx prisma generate",
     "migrate": "prisma migrate dev --name bark_blink_platform_update",
     "deploy": "prisma migrate deploy",
     "test": "jest",
