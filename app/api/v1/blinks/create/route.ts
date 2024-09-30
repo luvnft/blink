@@ -1,109 +1,98 @@
 import { NextResponse } from 'next/server';
-import { z } from 'zod';
-import { prisma } from '@/lib/prisma';
-import { validateNFTInput } from '@/lib/validators';
-import { getServerSession } from 'next-auth/next';
-import { authOptions } from '@/lib/auth';
-import { PublicKey } from '@solana/web3.js';
-import { createBlink } from '@/lib/solana';
+import { createClient } from '@supabase/supabase-js';
+import { Connection, Keypair, PublicKey } from '@solana/web3.js';
+import { rateLimit } from '@/lib/rate-limit';
+import { createBlink } from '@/lib/solana/blink-creation';
 
-// Define the input schema for creating a Blink
-const createBlinkSchema = z.object({
-  name: z.string().min(1).max(100),
-  description: z.string().min(1).max(1000),
-  image: z.string().url(),
-  attributes: z.array(
-    z.object({
-      trait_type: z.string(),
-      value: z.union([z.string(), z.number()]),
-    })
-  ),
-  rarity: z.enum(['COMMON', 'UNCOMMON', 'RARE', 'EPIC', 'LEGENDARY', 'MYTHIC', 'UNIQUE']),
-  royaltyPercentage: z.number().min(0).max(100),
-  collectionId: z.string().optional(),
-});
+const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
+const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY!;
+const supabase = createClient(supabaseUrl, supabaseKey);
 
-export async function POST(req: Request) {
+export async function POST(request: Request) {
   try {
-    // Check authentication
-    const session = await getServerSession(authOptions);
-    if (!session || !session.user) {
+    // Apply rate limiting
+    const identifier = request.headers.get('x-forwarded-for') || 'anonymous';
+    const { success } = await rateLimit(identifier);
+    if (!success) {
+      return NextResponse.json({ error: 'Rate limit exceeded' }, { status: 429 });
+    }
+
+    // Validate authentication (assuming JWT token in Authorization header)
+    const authHeader = request.headers.get('Authorization');
+    if (!authHeader || !authHeader.startsWith('Bearer ')) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+    const token = authHeader.split(' ')[1];
+    const { data: { user }, error: authError } = await supabase.auth.getUser(token);
+    if (authError || !user) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    // Parse and validate the request body
-    const body = await req.json();
-    const validatedData = createBlinkSchema.parse(body);
+    // Parse request body
+    const { name, description, blinkType, isNFT, isDonation, isGift, isPayment, isPoll } = await request.json();
 
-    // Validate NFT input
-    const { isValid, errors } = validateNFTInput({
-      metadata: {
-        name: validatedData.name,
-        description: validatedData.description,
-        image: validatedData.image,
-        attributes: validatedData.attributes,
-      },
-      rarity: validatedData.rarity,
-      creatorAddress: session.user.id,
-    });
-
-    if (!isValid) {
-      return NextResponse.json({ errors }, { status: 400 });
+    // Validate input
+    if (!name || !description || !blinkType) {
+      return NextResponse.json({ error: 'Missing required fields' }, { status: 400 });
     }
 
-    // Generate a new Solana public key for the Blink
-    const mintAddress = new PublicKey(PublicKey.unique()).toString();
-
-    // Create the Blink on the Solana blockchain
-    const { signature } = await createBlink(
-      mintAddress,
-      session.user.id,
-      validatedData.name,
-      validatedData.description,
-      validatedData.image,
-      validatedData.attributes,
-      validatedData.royaltyPercentage
-    );
-
-    // Create the Blink in the database
-    const newBlink = await prisma.blink.create({
-      data: {
-        name: validatedData.name,
-        description: validatedData.description,
-        ownerId: session.user.id,
-        mintAddress: mintAddress,
-        metadata: {
-          name: validatedData.name,
-          description: validatedData.description,
-          image: validatedData.image,
-          attributes: validatedData.attributes,
-        },
-        rarity: validatedData.rarity,
-        royaltyPercentage: validatedData.royaltyPercentage,
-        collectionId: validatedData.collectionId,
-      },
+    // Create Blink on Solana blockchain
+    const ownerPublicKey = new PublicKey(user.id);
+    const blinkMintAddress = await createBlink({
+      owner: ownerPublicKey,
+      name,
+      description,
+      blinkType,
+      isNFT: isNFT || false,
+      isDonation: isDonation || false,
+      isGift: isGift || false,
+      isPayment: isPayment || false,
+      isPoll: isPoll || false
     });
 
-    // Create a transaction record
-    await prisma.transaction.create({
-      data: {
-        type: 'MINT',
-        fromId: session.user.id,
-        toId: session.user.id,
-        blinkId: newBlink.id,
-        amount: 1,
-        currency: 'BLINK',
-        status: 'COMPLETED',
-        txHash: signature,
-      },
-    });
+    // Store Blink metadata in Supabase
+    const { data: blinkData, error: dbError } = await supabase
+      .from('blinks')
+      .insert({
+        mint_address: blinkMintAddress,
+        owner_id: user.id,
+        name,
+        description,
+        blink_type: blinkType,
+        is_nft: isNFT,
+        is_donation: isDonation,
+        is_gift: isGift,
+        is_payment: isPayment,
+        is_poll: isPoll
+      })
+      .select()
+      .single();
 
-    return NextResponse.json(newBlink, { status: 201 });
+    if (dbError) {
+      console.error('Error storing Blink metadata:', dbError);
+      return NextResponse.json({ error: 'Failed to store Blink metadata' }, { status: 500 });
+    }
+
+    return NextResponse.json({
+      success: true,
+      blink: {
+        id: blinkData.id,
+        mintAddress: blinkMintAddress,
+        name: blinkData.name,
+        description: blinkData.description,
+        blinkType: blinkData.blink_type,
+        isNFT: blinkData.is_nft,
+        isDonation: blinkData.is_donation,
+        isGift: blinkData.is_gift,
+        isPayment: blinkData.is_payment,
+        isPoll: blinkData.is_poll,
+        createdAt: blinkData.created_at
+      }
+    });
   } catch (error) {
-    console.error('Error creating Blink:', error);
-    if (error instanceof z.ZodError) {
-      return NextResponse.json({ error: error.errors }, { status: 400 });
-    }
-    return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
+    console.error('Unexpected error:', error);
+    return NextResponse.json({ error: 'An unexpected error occurred' }, { status: 500 });
   }
 }
+
+export const runtime = "edge";

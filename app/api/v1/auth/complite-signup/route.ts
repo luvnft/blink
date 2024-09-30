@@ -1,6 +1,6 @@
-import { NextApiRequest, NextApiResponse } from 'next'
+import { NextRequest, NextResponse } from 'next/server'
 import { getServerSession } from 'next-auth/next'
-import { authOptions } from '../auth/[...nextauth]'
+import { authOptions } from '@/app/api/auth/[...nextauth]/route'
 import { PrismaClient } from '@prisma/client'
 import { z } from 'zod'
 
@@ -12,22 +12,22 @@ const completeSignupSchema = z.object({
   }),
 })
 
-export default async function handler(req: NextApiRequest, res: NextApiResponse) {
-  if (req.method !== 'POST') {
-    return res.status(405).json({ message: 'Method Not Allowed' })
-  }
-
+export async function POST(req: NextRequest) {
   try {
-    const session = await getServerSession(req, res, authOptions)
+    const session = await getServerSession(authOptions)
 
     if (!session || !session.user) {
-      return res.status(401).json({ message: 'Unauthorized' })
+      return NextResponse.json({ message: 'Unauthorized' }, { status: 401 })
     }
 
-    const validationResult = completeSignupSchema.safeParse(req.body)
+    const body = await req.json()
+    const validationResult = completeSignupSchema.safeParse(body)
 
     if (!validationResult.success) {
-      return res.status(400).json({ message: 'Invalid input', errors: validationResult.error.flatten().fieldErrors })
+      return NextResponse.json(
+        { message: 'Invalid input', errors: validationResult.error.flatten().fieldErrors },
+        { status: 400 }
+      )
     }
 
     const { username } = validationResult.data
@@ -37,7 +37,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     })
 
     if (existingUser) {
-      return res.status(400).json({ message: 'Username already taken' })
+      return NextResponse.json({ message: 'Username already taken' }, { status: 400 })
     }
 
     const updatedUser = await prisma.user.update({
@@ -48,17 +48,17 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       },
     })
 
-    return res.status(200).json({
+    return NextResponse.json({
       message: 'Signup completed successfully',
       user: {
         id: updatedUser.id,
         username: updatedUser.username,
         email: updatedUser.email,
       },
-    })
+    }, { status: 200 })
   } catch (error) {
     console.error('Complete signup error:', error)
-    return res.status(500).json({ message: 'Internal Server Error' })
+    return NextResponse.json({ message: 'Internal Server Error' }, { status: 500 })
   } finally {
     await prisma.$disconnect()
   }

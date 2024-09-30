@@ -1,12 +1,18 @@
-// app/api/v1/blinks/get-blink/route.ts
-
-import { NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { getServerSession } from 'next-auth/next';
 import { authOptions } from '@/lib/auth';
+import { rateLimit } from '@/lib/rate-limit';
 
-export async function GET(req: Request) {
+export async function GET(req: NextRequest) {
   try {
+    // Apply rate limiting
+    const ip = req.ip ?? 'anonymous';
+    const { success } = await rateLimit(ip);
+    if (!success) {
+      return NextResponse.json({ error: 'Rate limit exceeded' }, { status: 429 });
+    }
+
     // Check authentication
     const session = await getServerSession(authOptions);
     if (!session || !session.user) {
@@ -48,15 +54,43 @@ export async function GET(req: Request) {
     // Check if the user is the owner of the Blink
     const isOwner = blink.ownerId === session.user.id;
 
-    // If the user is not the owner, remove sensitive information
-    if (!isOwner) {
-      delete blink.owner.email;
-      blink.transactions = [];
-    }
+    // Prepare the response data
+    const responseData = {
+      id: blink.id,
+      name: blink.name,
+      description: blink.description,
+      imageUrl: blink.imageUrl,
+      mintAddress: blink.mintAddress,
+      createdAt: blink.createdAt,
+      updatedAt: blink.updatedAt,
+      owner: {
+        id: blink.owner.id,
+        name: blink.owner.name,
+        email: isOwner ? blink.owner.email : undefined,
+      },
+      collection: blink.collection ? {
+        id: blink.collection.id,
+        name: blink.collection.name,
+      } : null,
+      attributes: blink.attributes.map(attr => ({
+        trait_type: attr.traitType,
+        value: attr.value,
+      })),
+      transactions: isOwner ? blink.transactions.map(tx => ({
+        id: tx.id,
+        type: tx.type,
+        amount: tx.amount,
+        createdAt: tx.createdAt,
+      })) : [],
+    };
 
-    return NextResponse.json(blink);
+    return NextResponse.json(responseData);
   } catch (error) {
     console.error('Error fetching Blink:', error);
     return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
   }
 }
+
+export const config = {
+  runtime: 'edge',
+};

@@ -31,12 +31,19 @@ const nextConfig = {
   },
 
   images: {
-    domains: [
-      'uploadcare.com',
-      'ucarecdn.com',
-      'unsplash.com',
-    ],
     remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: 'uploadcare.com',
+      },
+      {
+        protocol: 'https',
+        hostname: 'ucarecdn.com',
+      },
+      {
+        protocol: 'https',
+        hostname: 'unsplash.com',
+      },
       {
         protocol: 'https',
         hostname: '**.public.blob.vercel-storage.com',
@@ -44,25 +51,15 @@ const nextConfig = {
     ],
   },
 
-  // Improved error handling and logging
-  onError: (error, req, res) => {
-    console.error('Next.js Error:', error);
-    res.statusCode = 500;
-    res.end('Internal Server Error');
-  },
-
-  // Enable source maps in production for better error tracking
   productionBrowserSourceMaps: true,
 
-  // Optimize loading of ES modules
   experimental: {
     optimizeCss: true,
     optimizePackageImports: ['@mui/material', '@mui/icons-material', 'lodash'],
+    serverComponentsExternalPackages: ['@prisma/client'],
   },
 
-  // Configure webpack for better performance
   webpack: (config, { dev, isServer }) => {
-    // Optimize CSS
     if (!dev && !isServer) {
       config.optimization.splitChunks.cacheGroups.styles = {
         name: 'styles',
@@ -72,10 +69,54 @@ const nextConfig = {
       };
     }
 
-    // Add any other custom webpack configurations here
+    config.experiments = { ...config.experiments, asyncWebAssembly: true };
+
+    config.module.rules.push({
+      test: /\.(png|jpe?g|gif|svg|webp)$/i,
+      use: [
+        {
+          loader: 'image-webpack-loader',
+          options: {
+            mozjpeg: { progressive: true, quality: 65 },
+            optipng: { enabled: !dev },
+            pngquant: { quality: [0.65, 0.90], speed: 4 },
+            gifsicle: { interlaced: false },
+            webp: { quality: 75 },
+          },
+        },
+      ],
+    });
 
     return config;
   },
+
+  headers: async () => [
+    {
+      source: '/(.*)',
+      headers: [
+        { key: 'X-Content-Type-Options', value: 'nosniff' },
+        { key: 'X-Frame-Options', value: 'DENY' },
+        { key: 'X-XSS-Protection', value: '1; mode=block' },
+        { key: 'Referrer-Policy', value: 'strict-origin-when-cross-origin' },
+        { key: 'Permissions-Policy', value: 'camera=(), microphone=(), geolocation=()' },
+      ],
+    },
+  ],
+
+  redirects: async () => [
+    {
+      source: '/home',
+      destination: '/',
+      permanent: true,
+    },
+  ],
+
+  rewrites: async () => [
+    {
+      source: '/api/v1/:path*',
+      destination: 'https://api.barkprotocol.com/:path*',
+    },
+  ],
 };
 
 export default nextConfig;

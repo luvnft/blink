@@ -19,8 +19,11 @@ export function useToast(): UseToastReturn {
   const [toasts, setToasts] = useState<Toast[]>([])
 
   const toast = useCallback(({ title, description, variant = 'default' }: Omit<Toast, 'id'>) => {
-    const id = Math.random().toString(36).substr(2, 9)
+    const id = crypto.randomUUID() // Using a more robust method for generating unique IDs
     setToasts((prevToasts) => [...prevToasts, { id, title, description, variant }])
+
+    // Automatically dismiss the toast after 5 seconds
+    setTimeout(() => dismissToast(id), 5000)
   }, [])
 
   const dismissToast = useCallback((id: string) => {

@@ -1,59 +1,90 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { StakingInfo, StakeRequest, StakeResponse, UnstakeRequest, UnstakeResponse } from '@/types/staking';
+import { PrismaClient } from '@prisma/client';
+import { getServerSession } from 'next-auth/next';
+import { authOptions } from '@/lib/auth';
+import { rateLimit } from '@/lib/rate-limit';
+import { z } from 'zod';
+import { stakeTokens, unstakeTokens, getStakingInfo } from '@/lib/solana/staking';
 
-// Mock staking data
-let stakingInfo: StakingInfo = {
-  totalStaked: 1000000,
-  apr: 5.5,
-  minimumStake: 100,
-  lockupPeriod: 7 * 24 * 60 * 60 // 7 days in seconds
-};
+const prisma = new PrismaClient();
 
-let userStakes: Record<string, number> = {};
+const stakeSchema = z.object({
+  amount: z.number().positive(),
+});
 
-export async function GET() {
-  return NextResponse.json(stakingInfo);
+export async function GET(request: NextRequest) {
+  try {
+    const { success } = await rateLimit(request.ip ?? 'anonymous');
+    if (!success) {
+      return NextResponse.json({ error: 'Rate limit exceeded' }, { status: 429 });
+    }
+
+    const session = await getServerSession(authOptions);
+    if (!session || !session.user) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+
+    const stakingInfo = await getStakingInfo(session.user.id);
+
+    return NextResponse.json(stakingInfo);
+  } catch (error) {
+    console.error('Error fetching staking info:', error);
+    return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
+  } finally {
+    await prisma.$disconnect();
+  }
 }
 
 export async function POST(request: NextRequest) {
-  const body: StakeRequest = await request.json();
-  const userId = 'user_1'; // In a real app, get this from the authenticated user
+  try {
+    const { success } = await rateLimit(request.ip ?? 'anonymous');
+    if (!success) {
+      return NextResponse.json({ error: 'Rate limit exceeded' }, { status: 429 });
+    }
 
-  if (body.amount < stakingInfo.minimumStake) {
-    return NextResponse.json({ error: 'Amount is below minimum stake' }, { status: 400 });
+    const session = await getServerSession(authOptions);
+    if (!session || !session.user) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+
+    const body = await request.json();
+    const { searchParams } = new URL(request.url);
+    const action = searchParams.get('action');
+
+    const validationResult = stakeSchema.safeParse(body);
+    if (!validationResult.success) {
+      return NextResponse.json({ error: 'Invalid input', details: validationResult.error.errors }, { status: 400 });
+    }
+
+    const { amount } = validationResult.data;
+
+    let result;
+    if (action === 'stake') {
+      result = await stakeTokens(session.user.id, amount);
+    } else if (action === 'unstake') {
+      result = await unstakeTokens(session.user.id, amount);
+    } else {
+      return NextResponse.json({ error: 'Invalid action' }, { status: 400 });
+    }
+
+    const stakingRecord = await prisma.stakingTransaction.create({
+      data: {
+        userId: session.user.id,
+        amount,
+        type: action.toUpperCase(),
+        transactionSignature: result.signature,
+      },
+    });
+
+    return NextResponse.json(stakingRecord, { status: 201 });
+  } catch (error) {
+    console.error('Error in staking operation:', error);
+    return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
+  } finally {
+    await prisma.$disconnect();
   }
-
-  // In a real app, you would interact with the blockchain here
-  userStakes[userId] = (userStakes[userId] || 0) + body.amount;
-  stakingInfo.totalStaked += body.amount;
-
-  const response: StakeResponse = {
-    transactionId: `tx_${Date.now()}`,
-    amount: body.amount,
-    startDate: new Date().toISOString(),
-    endDate: new Date(Date.now() + stakingInfo.lockupPeriod * 1000).toISOString()
-  };
-
-  return NextResponse.json(response);
 }
 
-export async function PUT(request: NextRequest) {
-  const body: UnstakeRequest = await request.json();
-  const userId = 'user_1'; // In a real app, get this from the authenticated user
-
-  if (!userStakes[userId] || userStakes[userId] < body.amount) {
-    return NextResponse.json({ error: 'Insufficient staked amount' }, { status: 400 });
-  }
-
-  // In a real app, you would interact with the blockchain here
-  userStakes[userId] -= body.amount;
-  stakingInfo.totalStaked -= body.amount;
-
-  const response: UnstakeResponse = {
-    transactionId: `tx_${Date.now()}`,
-    amount: body.amount,
-    unstakedAt: new Date().toISOString()
-  };
-
-  return NextResponse.json(response);
-}
+export const config = {
+  runtime: 'edge',
+};

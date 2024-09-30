@@ -1,9 +1,10 @@
-import { NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
 import { prisma } from '@/lib/prisma';
 import { getServerSession } from 'next-auth/next';
 import { authOptions } from '@/lib/auth';
 import { transferBlink } from '@/lib/solana';
+import { rateLimit } from '@/lib/rate-limit';
 
 // Define the input schema for sending a Blink
 const sendBlinkSchema = z.object({
@@ -11,8 +12,15 @@ const sendBlinkSchema = z.object({
   recipientId: z.string().uuid(),
 });
 
-export async function POST(req: Request) {
+export async function POST(req: NextRequest) {
   try {
+    // Apply rate limiting
+    const ip = req.ip ?? 'anonymous';
+    const { success } = await rateLimit(ip);
+    if (!success) {
+      return NextResponse.json({ error: 'Rate limit exceeded' }, { status: 429 });
+    }
+
     // Check authentication
     const session = await getServerSession(authOptions);
     if (!session || !session.user) {
@@ -26,6 +34,7 @@ export async function POST(req: Request) {
     // Fetch the Blink from the database
     const blink = await prisma.blink.findUnique({
       where: { id: blinkId },
+      include: { owner: true },
     });
 
     if (!blink) {
@@ -53,10 +62,21 @@ export async function POST(req: Request) {
     const updatedBlink = await prisma.blink.update({
       where: { id: blinkId },
       data: { ownerId: recipientId },
+      include: {
+        owner: {
+          select: {
+            id: true,
+            name: true,
+            email: true,
+          },
+        },
+        collection: true,
+        attributes: true,
+      },
     });
 
     // Create a transaction record
-    await prisma.transaction.create({
+    const transaction = await prisma.transaction.create({
       data: {
         type: 'TRANSFER',
         fromId: session.user.id,
@@ -69,12 +89,50 @@ export async function POST(req: Request) {
       },
     });
 
-    return NextResponse.json(updatedBlink);
+    // Prepare the response data
+    const responseData = {
+      blink: {
+        id: updatedBlink.id,
+        name: updatedBlink.name,
+        description: updatedBlink.description,
+        imageUrl: updatedBlink.imageUrl,
+        mintAddress: updatedBlink.mintAddress,
+        createdAt: updatedBlink.createdAt,
+        updatedAt: updatedBlink.updatedAt,
+        owner: {
+          id: updatedBlink.owner.id,
+          name: updatedBlink.owner.name,
+        },
+        collection: updatedBlink.collection ? {
+          id: updatedBlink.collection.id,
+          name: updatedBlink.collection.name,
+        } : null,
+        attributes: updatedBlink.attributes.map(attr => ({
+          trait_type: attr.traitType,
+          value: attr.value,
+        })),
+      },
+      transaction: {
+        id: transaction.id,
+        type: transaction.type,
+        amount: transaction.amount,
+        currency: transaction.currency,
+        status: transaction.status,
+        txHash: transaction.txHash,
+        createdAt: transaction.createdAt,
+      },
+    };
+
+    return NextResponse.json(responseData);
   } catch (error) {
     console.error('Error sending Blink:', error);
     if (error instanceof z.ZodError) {
-      return NextResponse.json({ error: error.errors }, { status: 400 });
+      return NextResponse.json({ error: 'Invalid input', details: error.errors }, { status: 400 });
     }
     return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
   }
 }
+
+export const config = {
+  runtime: 'edge',
+};

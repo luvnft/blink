@@ -7,6 +7,7 @@ import { ThemeProvider } from 'next-themes';
 import { SolanaWalletProvider } from '@/components/providers/solana-wallet-provider';
 import { InfoBar } from '@/components/ui/layout/info-bar';
 import "./styles/globals.css";
+import './styles/fonts.css'
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",

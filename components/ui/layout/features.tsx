@@ -52,7 +52,7 @@ export const Features: React.FC = () => {
       description: "Instantly mint and customize Solana Blinks, representing unique digital assets or memorable moments on the blockchain.", 
       icon: <Zap className="h-5 w-5 text-[#D0BFB4]" />,
       action: "Start Creating",
-      link: "/blinks/create-blinks"
+      link: "/blinks/create/"
     },
     { 
       title: "Send Blinks",
