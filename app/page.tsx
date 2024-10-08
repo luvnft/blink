@@ -4,7 +4,7 @@ import React, { useState, useEffect } from 'react'
 import { useWallet } from '@solana/wallet-adapter-react'
 import { Header } from '@/components/ui/layout/header'
 import { Hero } from '@/components/ui/layout/hero'
-import { Features } from '@/components/ui/layout/features'
+import Features from '@/components/ui/layout/features'  // Changed to default import
 import { Actions } from "@/components/ui/layout/actions"
 import { HowItWorks } from '@/components/ui/layout/how-it-works'
 import { CTA } from '@/components/ui/layout/cta'
@@ -17,7 +17,7 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { useToast } from "@/components/ui/use-toast"
 
-export default function Blinkboard() {
+export default function HomePage() {
   const { connected, publicKey } = useWallet()
   const [username, setUsername] = useState('')
   const [isDialogOpen, setIsDialogOpen] = useState(false)

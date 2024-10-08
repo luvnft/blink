@@ -77,6 +77,27 @@ const config: Config = {
           '4': 'hsl(var(--chart-4))',
           '5': 'hsl(var(--chart-5))',
         },
+        brand: {
+          light: 'hsl(var(--brand-light))',
+          DEFAULT: 'hsl(var(--brand-default))',
+          dark: 'hsl(var(--brand-dark))',
+        },
+        action: {
+          primary: 'hsl(var(--action-primary))',
+          secondary: 'hsl(var(--action-secondary))',
+        },
+        success: {
+          DEFAULT: 'hsl(var(--success))',
+          foreground: 'hsl(var(--success-foreground))',
+        },
+        warning: {
+          DEFAULT: 'hsl(var(--warning))',
+          foreground: 'hsl(var(--warning-foreground))',
+        },
+        info: {
+          DEFAULT: 'hsl(var(--info))',
+          foreground: 'hsl(var(--info-foreground))',
+        },
       },
       borderRadius: {
         lg: 'var(--radius)',
@@ -89,6 +110,27 @@ const config: Config = {
         inter: ['var(--font-inter)'],
         syne: ['var(--font-syne)'],
         poppins: ['var(--font-poppins)'],
+      },
+      fontSize: {
+        '2xs': '0.625rem',
+        '3xl': '1.875rem',
+        '4xl': '2.25rem',
+        '5xl': '3rem',
+        '6xl': '3.75rem',
+        '7xl': '4.5rem',
+        '8xl': '6rem',
+        '9xl': '8rem',
+      },
+      lineHeight: {
+        'tight': '1.1',
+        'relaxed': '1.625',
+        'loose': '2',
+      },
+      spacing: {
+        '18': '4.5rem',
+        '112': '28rem',
+        '128': '32rem',
+        '144': '36rem',
       },
       keyframes: {
         'accordion-down': {
@@ -103,18 +145,46 @@ const config: Config = {
           '0%, 100%': { opacity: '1' },
           '50%': { opacity: '0' },
         },
+        'fade-in': {
+          '0%': { opacity: '0' },
+          '100%': { opacity: '1' },
+        },
+        'slide-in': {
+          '0%': { transform: 'translateY(100%)' },
+          '100%': { transform: 'translateY(0)' },
+        },
       },
       animation: {
         'accordion-down': 'accordion-down 0.2s ease-out',
         'accordion-up': 'accordion-up 0.2s ease-out',
         blink: 'blink 1s linear infinite',
+        'fade-in': 'fade-in 0.5s ease-out',
+        'slide-in': 'slide-in 0.5s ease-out',
       },
       boxShadow: {
         elevated: '0 10px 30px -5px rgba(0, 0, 0, 0.2)',
+        'inner-glow': 'inset 0 2px 4px 0 rgba(255, 255, 255, 0.06)',
+        'outer-glow': '0 0 10px rgba(255, 255, 255, 0.5)',
+      },
+      transitionProperty: {
+        'height': 'height',
+        'spacing': 'margin, padding',
+      },
+      zIndex: {
+        '60': '60',
+        '70': '70',
+        '80': '80',
+        '90': '90',
+        '100': '100',
       },
     },
   },
-  plugins: [require("tailwindcss-animate")],
+  plugins: [
+    require("tailwindcss-animate"),
+    require('@tailwindcss/forms'),
+    require('@tailwindcss/typography'),
+    require('@tailwindcss/aspect-ratio'),
+  ],
 }
 
 export default config;

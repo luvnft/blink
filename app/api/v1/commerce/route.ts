@@ -1,146 +1,155 @@
-import { NextRequest, NextResponse } from 'next/server';
-import { PrismaClient } from '@prisma/client';
-import { getServerSession } from 'next-auth/next';
-import { authOptions } from '@/lib/auth';
-import { rateLimit } from '@/lib/rate-limit';
-import { z } from 'zod';
-import { processPayment } from '@/lib/solana/commerce';
+import { NextRequest, NextResponse } from 'next/server'
+import { z } from 'zod'
+import { PrismaClient } from '@prisma/client'
+import { getServerSession } from 'next-auth/next'
+import { authOptions } from '@/lib/auth'
 
-const prisma = new PrismaClient();
+const prisma = new PrismaClient()
 
-const createProductSchema = z.object({
+const productSchema = z.object({
   name: z.string().min(1).max(100),
-  description: z.string().max(1000),
+  description: z.string().min(1).max(500),
   price: z.number().positive(),
-  imageUrl: z.string().url().optional(),
-});
+  blinkId: z.string().min(1),
+  ownerAddress: z.string().min(1),
+})
 
-const createOrderSchema = z.object({
-  productId: z.string().uuid(),
-  quantity: z.number().int().positive(),
-});
-
-export async function GET(request: NextRequest) {
+export async function GET(req: NextRequest) {
   try {
-    const { success } = await rateLimit(request.ip ?? 'anonymous');
-    if (!success) {
-      return NextResponse.json({ error: 'Rate limit exceeded' }, { status: 429 });
+    const session = await getServerSession(authOptions)
+    if (!session) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
-
-    const session = await getServerSession(authOptions);
-    if (!session || !session.user) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-    }
-
-    const { searchParams } = new URL(request.url);
-    const limit = parseInt(searchParams.get('limit') ?? '10', 10);
-    const offset = parseInt(searchParams.get('offset') ?? '0', 10);
 
     const products = await prisma.product.findMany({
-      take: limit,
-      skip: offset,
-      orderBy: { createdAt: 'desc' },
-    });
+      where: { ownerAddress: session.user.address },
+      include: { blink: true },
+    })
 
-    const totalCount = await prisma.product.count();
-
-    const responseData = {
-      products,
-      pagination: {
-        total: totalCount,
-        limit,
-        offset,
-      },
-    };
-
-    return NextResponse.json(responseData);
+    return NextResponse.json({ products })
   } catch (error) {
-    console.error('Error fetching products:', error);
-    return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
-  } finally {
-    await prisma.$disconnect();
+    console.error('Error fetching products:', error)
+    return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 })
   }
 }
 
-export async function POST(request: NextRequest) {
+export async function POST(req: NextRequest) {
   try {
-    const { success } = await rateLimit(request.ip ?? 'anonymous');
-    if (!success) {
-      return NextResponse.json({ error: 'Rate limit exceeded' }, { status: 429 });
+    const session = await getServerSession(authOptions)
+    if (!session) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
-    const session = await getServerSession(authOptions);
-    if (!session || !session.user) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    const body = await req.json()
+    const validatedData = productSchema.parse(body)
+
+    if (validatedData.ownerAddress !== session.user.address) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
-    const body = await request.json();
-    const { searchParams } = new URL(request.url);
-    const action = searchParams.get('action');
+    // Verify blink ownership
+    const blink = await prisma.blink.findUnique({
+      where: { id: validatedData.blinkId }
+    })
 
-    if (action === 'create_product') {
-      const validationResult = createProductSchema.safeParse(body);
-      if (!validationResult.success) {
-        return NextResponse.json({ error: 'Invalid input', details: validationResult.error.errors }, { status: 400 });
-      }
-
-      const { name, description, price, imageUrl } = validationResult.data;
-
-      const newProduct = await prisma.product.create({
-        data: {
-          name,
-          description,
-          price,
-          imageUrl,
-          sellerId: session.user.id,
-        },
-      });
-
-      return NextResponse.json(newProduct, { status: 201 });
-    } else if (action === 'create_order') {
-      const validationResult = createOrderSchema.safeParse(body);
-      if (!validationResult.success) {
-        return NextResponse.json({ error: 'Invalid input', details: validationResult.error.errors }, { status: 400 });
-      }
-
-      const { productId, quantity } = validationResult.data;
-
-      const product = await prisma.product.findUnique({
-        where: { id: productId },
-      });
-
-      if (!product) {
-        return NextResponse.json({ error: 'Product not found' }, { status: 404 });
-      }
-
-      const totalAmount = product.price * quantity;
-
-      const paymentResult = await processPayment(session.user.id, product.sellerId, totalAmount);
-
-      const newOrder = await prisma.order.create({
-        data: {
-          buyerId: session.user.id,
-          sellerId: product.sellerId,
-          productId,
-          quantity,
-          totalAmount,
-          status: 'COMPLETED',
-          transactionSignature: paymentResult.signature,
-        },
-      });
-
-      return NextResponse.json(newOrder, { status: 201 });
-    } else {
-      return NextResponse.json({ error: 'Invalid action' }, { status: 400 });
+    if (!blink || blink.ownerAddress !== validatedData.ownerAddress) {
+      return NextResponse.json({ error: 'Unauthorized: You do not own this Blink' }, { status: 401 })
     }
+
+    const product = await prisma.product.create({
+      data: validatedData,
+      include: { blink: true },
+    })
+
+    return NextResponse.json({ product }, { status: 201 })
   } catch (error) {
-    console.error('Error in commerce operation:', error);
-    return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
-  } finally {
-    await prisma.$disconnect();
+    if (error instanceof z.ZodError) {
+      return NextResponse.json({ error: error.errors }, { status: 400 })
+    }
+    console.error('Error creating product:', error)
+    return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 })
   }
 }
 
-export const config = {
-  runtime: 'edge',
-};
+export async function PUT(req: NextRequest) {
+  try {
+    const session = await getServerSession(authOptions)
+    if (!session) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    }
+
+    const { searchParams } = new URL(req.url)
+    const id = searchParams.get('id')
+
+    if (!id) {
+      return NextResponse.json({ error: 'Product ID is required' }, { status: 400 })
+    }
+
+    const body = await req.json()
+    const validatedData = productSchema.partial().parse(body)
+
+    const existingProduct = await prisma.product.findUnique({
+      where: { id },
+      include: { blink: true },
+    })
+
+    if (!existingProduct) {
+      return NextResponse.json({ error: 'Product not found' }, { status: 404 })
+    }
+
+    if (existingProduct.ownerAddress !== session.user.address) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    }
+
+    const updatedProduct = await prisma.product.update({
+      where: { id },
+      data: validatedData,
+      include: { blink: true },
+    })
+
+    return NextResponse.json({ product: updatedProduct })
+  } catch (error) {
+    if (error instanceof z.ZodError) {
+      return NextResponse.json({ error: error.errors }, { status: 400 })
+    }
+    console.error('Error updating product:', error)
+    return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 })
+  }
+}
+
+export async function DELETE(req: NextRequest) {
+  try {
+    const session = await getServerSession(authOptions)
+    if (!session) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    }
+
+    const { searchParams } = new URL(req.url)
+    const id = searchParams.get('id')
+
+    if (!id) {
+      return NextResponse.json({ error: 'Product ID is required' }, { status: 400 })
+    }
+
+    const existingProduct = await prisma.product.findUnique({
+      where: { id },
+    })
+
+    if (!existingProduct) {
+      return NextResponse.json({ error: 'Product not found' }, { status: 404 })
+    }
+
+    if (existingProduct.ownerAddress !== session.user.address) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    }
+
+    await prisma.product.delete({
+      where: { id },
+    })
+
+    return NextResponse.json({ message: 'Product deleted successfully' })
+  } catch (error) {
+    console.error('Error deleting product:', error)
+    return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 })
+  }
+}

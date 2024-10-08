@@ -5,7 +5,7 @@
 /* Base Layer with Color Palette */
 @layer base {
   :root {
-    --background: 0 0% 98%; /* Light gray background */
+    --background: 0 0% 98%;
     --foreground: 0 0% 3.9%;
     
     --card: 0 0% 100%;
@@ -35,12 +35,10 @@
     
     --radius: 0.5rem;
 
-    /* Custom properties for transitions */
     --transition-duration: 300ms;
     --transition-timing: ease-in-out;
   }
 
-  /* Dark Mode Adjustments */
   .dark {
     --background: 0 0% 3.9%;
     --foreground: 0 0% 98%;
@@ -71,7 +69,6 @@
     --ring: 0 0% 83.1%;
   }
 
-  /* Global Styles */
   * {
     @apply border-border;
   }
@@ -83,7 +80,8 @@
 /* Font Face Declarations */
 @font-face {
   font-family: 'Poppins';
-  src: url('/fonts/Poppins-Regular.woff2') format('woff2'),
+  src: local('Poppins Regular'), local('Poppins-Regular'),
+       url('/fonts/Poppins-Regular.woff2') format('woff2'),
        url('/fonts/Poppins-Regular.woff') format('woff');
   font-weight: 400;
   font-style: normal;
@@ -99,15 +97,15 @@
 
 /* Custom Font Classes */
 .font-inter {
-  font-family: var(--font-inter), sans-serif;
+  font-family: var(--font-inter), ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
 }
 
 .font-syne {
-  font-family: var(--font-syne), 'Oswald', sans-serif;
+  font-family: var(--font-syne), 'Oswald', ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
 }
 
 .font-poppins {
-  font-family: var(--font-poppins), 'Poppins', sans-serif;
+  font-family: 'Poppins', var(--font-poppins), ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
 }
 
 /* Typography Improvements */
@@ -225,4 +223,19 @@
 /* Dark Mode Toggle Styles */
 .dark-mode-toggle {
   @apply p-2 rounded-full bg-secondary text-secondary-foreground hover:bg-secondary/80 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2;
+}
+
+/* Loading State */
+.loading {
+  @apply opacity-50 pointer-events-none;
+}
+
+/* Error State */
+.error {
+  @apply border-destructive text-destructive;
+}
+
+/* Success State */
+.success {
+  @apply border-green-500 text-green-500;
 }

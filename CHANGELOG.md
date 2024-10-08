@@ -10,7 +10,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - Initial project setup with Next.js and React
 - Tailwind CSS integration for styling
-- Basic component structure (Header, Footer, Hero, Features, How It Works, FAQ, CTA)
+- Basic component structure:
+  - Header
+  - Footer
+  - Hero
+  - Features
+  - How It Works
+  - FAQ
+  - CTA
 - Responsive design implementation
 - Framer Motion animations for enhanced user experience
 - Integration with Lucide React for icons
@@ -51,3 +58,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Initial commit
 - Basic project structure
 - Placeholder components for main sections
+
+[Unreleased]: https://github.com/yourusername/bark-blinks-web-ui/compare/v0.1.0...HEAD
+[0.1.0]: https://github.com/yourusername/bark-blinks-web-ui/releases/tag/v0.1.0

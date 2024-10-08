@@ -53,7 +53,7 @@ export function Hero({ onLaunchApp }: HeroProps) {
             onClick={onLaunchApp}
             className="w-full sm:w-auto bg-primary text-primary-foreground hover:bg-primary/90 transition-colors text-base sm:text-lg px-6 sm:px-8 py-3 sm:py-4 rounded-full shadow-lg hover:shadow-xl transform hover:-translate-y-1"
           >
-            Launch Blinkboard
+            Launch Application
             <ArrowRight className="ml-2 h-4 w-4 sm:h-5 sm:w-5" aria-hidden="true" />
           </Button>
           <Button 

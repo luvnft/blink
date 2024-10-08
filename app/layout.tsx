@@ -54,12 +54,12 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" suppressHydrationWarning>
+    <html lang="en" suppressHydrationWarning className="h-full">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} ${inter.variable} ${syne.variable} ${poppins.variable} antialiased font-sans bg-gradient-to-b from-sand-50 to-white dark:from-gray-900 dark:to-gray-800 min-h-screen`}
+        className={`${geistSans.variable} ${geistMono.variable} ${inter.variable} ${syne.variable} ${poppins.variable} antialiased font-sans bg-gray-100 dark:bg-gray-900 min-h-screen flex flex-col`}
       >
         <ThemeProvider attribute="class" defaultTheme="light" enableSystem>
-          <div className="bg-white dark:bg-gray-900 bg-opacity-80 dark:bg-opacity-90 backdrop-blur-sm min-h-screen flex flex-col">
+          <div className="flex flex-col min-h-screen">
             <SolanaWalletProvider>
               <ToastProvider>
                 <InfoBar />

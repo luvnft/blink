@@ -3,7 +3,13 @@ import Link from 'next/link'
 import { motion } from 'framer-motion'
 import { Plus, Send, Gift, Sparkles } from 'lucide-react'
 
-const NavItem: React.FC<{ href: string; icon: React.ReactNode; text: string }> = ({ href, icon, text }) => (
+interface NavItemProps {
+  href: string
+  icon: React.ReactNode
+  text: string
+}
+
+const NavItem: React.FC<NavItemProps> = ({ href, icon, text }) => (
   <Link href={href} passHref>
     <motion.a
       className="flex flex-col items-center p-4 bg-white rounded-lg shadow-md hover:shadow-lg transition-all duration-300"
@@ -19,10 +25,10 @@ const NavItem: React.FC<{ href: string; icon: React.ReactNode; text: string }> =
 export const BlinkActionNav: React.FC = () => {
   return (
     <nav className="grid grid-cols-2 md:grid-cols-4 gap-4 max-w-4xl mx-auto mb-8">
-      <NavItem href="/pages/blinks/create" icon={<Plus className="h-6 w-6" style={{ color: '#D0BFB4' }} />} text="Create Blink" />
-      <NavItem href="/pages/blinks/send" icon={<Send className="h-6 w-6" style={{ color: '#D0BFB4' }} />} text="Send Blink" />
-      <NavItem href="/pages/blinks/gifts" icon={<Gift className="h-6 w-6" style={{ color: '#D0BFB4' }} />} text="Gift Blink" />
-      <NavItem href="/pages/blinks/mint" icon={<Sparkles className="h-6 w-6" style={{ color: '#D0BFB4' }} />} text="Mint NFT Blink" />
+      <NavItem href="/blinks/create" icon={<Plus className="h-6 w-6" style={{ color: '#D0BFB4' }} />} text="Create Blink" />
+      <NavItem href="/blinks/send" icon={<Send className="h-6 w-6" style={{ color: '#D0BFB4' }} />} text="Send Blink" />
+      <NavItem href="/blinks/gifts" icon={<Gift className="h-6 w-6" style={{ color: '#D0BFB4' }} />} text="Gift Blink" />
+      <NavItem href="/blinks/mint" icon={<Sparkles className="h-6 w-6" style={{ color: '#D0BFB4' }} />} text="Mint NFT Blink" />
     </nav>
   )
 }

@@ -1,6 +1,6 @@
 # BARK - BLINK As A Service Application
 
-Welcome to the BARK - BLINKS project! This repository contains the frontend code for the BARK Protocol's Blinks As A Service platform, built using Next.js, React, and Tailwind CSS.
+Welcome to the **BARK - BLINKS** project! This repository hosts the frontend code for the BARK Protocol’s **Blinks As A Service** platform, built with Next.js, React, and Tailwind CSS. It provides an intuitive web interface for creating, managing, and trading digital assets—Blinks—on the Solana blockchain.
 
 ## Table of Contents
 
@@ -18,55 +18,53 @@ Welcome to the BARK - BLINKS project! This repository contains the frontend code
 
 ## Overview
 
-BARK Blink is a streamlined decentralized application (dApp) for managing token interactions on the Solana blockchain to create, manage, and trade digital assets called Blinks. This web interface provides users with an intuitive and seamless experience to interact with the BARK Protocol. Blink As A Service platform enables users to easily create, transfer, and manage SPL tokens, NFTs, airdrops, and on-chain transactions with a simple, user-friendly interface. Built for seamless interaction with Solana's infrastructure, BARK Blink simplifies the process of sending digital assets, performing airdrops, enabling them to participate in the future of digital interactions and asset management, and managing wallet-to-wallet transactions.
+BARK Blink is a decentralized application (dApp) designed for the seamless management of digital assets (Blinks) on Solana. It simplifies the creation, transfer, and trade of these assets, allowing users to effortlessly manage NFTs, SPL tokens, airdrops, and wallet-to-wallet transactions. Built on Solana's scalable infrastructure, BARK Blink offers a streamlined experience for users to participate in the evolving landscape of digital asset management.
 
 ## Features
 
-- Create and customize Solana Blinks with unique attributes
-- Manage your Blink collection in a user-friendly dashboard
-- Trade Blinks on supported marketplaces
-- Integrated token swapping for efficient asset management
-- Secure wallet connection for safe transactions
-- Real-time updates and notifications
-- Comprehensive analytics and portfolio tracking
-- Social sharing capabilities for Blinks
+- **Blink Generator**: Easily create and customize Blinks with unique attributes.
+- **Blink Management**: Organize your Blink collection with a user-friendly dashboard.
+- **Market Integration**: Trade Blinks on supported marketplaces.
+- **Token Swapping**: Manage assets efficiently with integrated swapping.
+- **Secure Wallet Connection**: Supports Phantom, Solflare, and Backpack wallets for secure transactions.
+- **Real-Time Notifications**: Stay updated on transactions and activity.
+- **Analytics and Portfolio Tracking**: Monitor your Blink portfolio with comprehensive insights.
+- **Social Sharing**: Showcase and share your Blinks across platforms.
 
 ## Blinkboard (Dashboard)
 
-Blinkboard is the central hub of the BARK - BLINKS platform. It provides users with a comprehensive overview and management interface for their Blinks and related activities.
+The **Blinkboard** serves as the central hub of the BARK - BLINKS application, providing a comprehensive interface to manage your Blinks and related activities.
 
-Key features of Blinkboard include:
+**Key features include:**
 
-- Real-time portfolio tracking and valuation of Blinks
-- Blink creation and customization tools for unique NFTs
-- Detailed transaction history and comprehensive analytics
-- Integrated marketplace support for trading Blinks
-- Staking and reward management for maximizing value
-- Personalized user profile and settings customization
-- Real-time activity feed and social interactions
-- Notification center for important updates and changes
+- Real-time portfolio tracking and Blink valuation.
+- Creation and customization of unique NFTs.
+- Detailed transaction history and analytics.
+- Marketplace integration for seamless Blink trading.
+- Staking and reward management to maximize asset value.
+- Personalized user profiles with settings customization.
+- Social interactions and notifications for important updates.
 
-The Blinkboard dashboard https://github.com/barkprotocol/blinkboard is designed to be intuitive and easy to use, offering both casual users and advanced traders a seamless experience with their digital assets.
+Explore the **Blinkboard** at [Blinkboard GitHub](https://github.com/barkprotocol/blinkboard) for a streamlined asset management experience, whether you're a casual user or an advanced trader.
 
-## Web Interface
+## Web Interface and Logic
 
-The Web Interface of BARK - BLINKS is built using Next.js and React for dynamic and responsive user interactions. Tailwind CSS powers the design for rapid and modern UI development. Key logic and functionalities include:
+The BARK - BLINKS web interface is built using **Next.js** and **React**, designed for responsive user interactions. **Tailwind CSS** powers the UI for rapid, modern development. Here are some of the key components:
 
-- **Wallet Integration:** Supports various Solana wallets (Phantom, Solflare, Backpack) through `@solana/wallet-adapter-react` for secure and fast transactions.
-- **API Communication:** The web interface communicates with BARK's backend via REST APIs for Blink creation, transfer, and marketplace interactions.
-- **On-Chain Operations:** The frontend interacts with Solana programs via `@solana/web3.js` to create SPL tokens, mint NFTs, perform transfers, and swap tokens.
-- **State Management:** Utilizes React hooks and context to manage wallet connections, user sessions, and real-time updates across the Blinkboard.
-- **Analytics & Notifications:** Provides real-time updates on portfolio value, staking rewards, and a history of all transactions in the system.
-
-The interface also includes integrated support for **Prisma** to handle database interactions, which makes tracking Blink metadata and user portfolios efficient and secure.
+- **Wallet Integration**: Securely connect via Solana wallets (Phantom, Solflare, Backpack) using `@solana/wallet-adapter-react`.
+- **API Communication**: The interface interacts with the backend through REST APIs for Blink creation, transfer, and marketplace activities.
+- **On-Chain Operations**: Utilize `@solana/web3.js` to create SPL tokens, mint NFTs, and perform transactions.
+- **State Management**: Leverages React hooks and context for wallet connections, session management, and real-time updates across Blinkboard.
+- **Analytics and Notifications**: Track portfolio performance and stay updated on transactions.
 
 ## Screenshots
 
-### Hero Section
-![Hero Section](.github/assets/hero.png)
+### Landing Page & Hero Section
+![Light Theme](.github/assets/landing-page-light.png)  
+![Dark Theme](.github/assets/landing-page-dark.png)
 
 ### Features
-![Features Section](.github/assets/features.png)
+![Features Section](.github/assets/services.png)
 
 ### How It Works
 ![How It Works Section](.github/assets/how-it-works.png)
@@ -82,7 +80,7 @@ The interface also includes integrated support for **Prisma** to handle database
 
 ## Getting Started
 
-To get started with the BARK - BLINKS Web UI, follow these steps:
+To get started with the BARK - BLINKS web app, follow these steps:
 
 ### Prerequisites
 
@@ -90,118 +88,76 @@ To get started with the BARK - BLINKS Web UI, follow these steps:
 - pnpm or yarn
 - Solana CLI (for local development)
 
-### Web DApp Installation
+### Installation
 
 1. Clone the repository:
    ```bash
    git clone https://github.com/barkprotocol/blinks-as-a-service-dapp.git
-```
+   ```
 
 2. Install dependencies:
+   ```bash
+   pnpm install
+   ```
+   or
+   ```bash
+   yarn install
+   ```
 
-```shellscript
-pnpm install
-```
-
-or
-
-```shellscript
-yarn install
-```
-
-3. Set up environment variables:
-Create a `.env.local` file in the root directory and add the following variables:
-
-```shellscript
-NEXT_PUBLIC_RPC_ENDPOINT=your_solana_rpc_endpoint
-NEXT_PUBLIC_NETWORK=mainnet-beta
-```
+3. Configure environment variables:  
+   Create a `.env.local` file in the root directory and add the necessary variables:
+   ```bash
+   NEXT_PUBLIC_RPC_ENDPOINT=your_solana_rpc_endpoint
+   NEXT_PUBLIC_NETWORK=mainnet-beta
+   ```
 
 4. Run the development server:
+   ```bash
+   pnpm run dev
+   ```
+   or
+   ```bash
+   yarn dev
+   ```
 
-```shellscript
-pnpm run dev
-```
-
-or
-
-```shellscript
-yarn dev
-```
-
-5. Open [http://localhost:3000](http://localhost:3000) in your browser to see the application.
-
+5. Open [http://localhost:3000](http://localhost:3000) in your browser.
 
 ## Usage
 
-1. Connect your Solana wallet to BARK BLINKS.
-2. Use the intuitive interface to create and customize your Solana Blinks.
-3. Send your Blinks to friends or trade them on supported marketplaces.
-4. Track and manage your Blinks in your personal Blinkboard.
-5. Create SPL tokens and manage your token portfolio.
-6. Swap tokens using the integrated decentralized exchange functionality.
-
+1. Connect your Solana wallet.
+2. Create and customize your Blinks through the intuitive UI.
+3. Send Blinks to others or trade them on supported marketplaces.
+4. Manage and track your Blinks via Blinkboard.
+5. Swap tokens using the decentralized exchange functionality.
 
 ## Prisma
 
-To use this updated schema:
-
-1. Replace the contents of your `schema.prisma` file with the latest schema.
-2. Run `npx prisma generate` to update the Prisma client.
-3. Run `npx prisma db push` to apply these changes to your development database (or use migrations for production environments).
-
+1. Update your `schema.prisma` file with the latest schema.
+2. Run `npx prisma generate` to refresh the Prisma client.
+3. Run `npx prisma db push` to apply the schema changes.
 
 ## API Routes (under construction)
 
-The application includes several API routes for interacting with the Solana blockchain:
+- `/api/v1/create-blink`: Create a new Solana Blink.
+- `/api/v1/send-blink`: Transfer a Blink to another user.
+- `/api/v1/get-user-blinks`: Retrieve a user's Blink collection.
+- `/api/v1/create-spl-token`: Create a new SPL token.
+- `/api/v1/swap-tokens`: Swap tokens on Solana.
 
-- `/api/v1/create-blink`: Create a new Solana Blink
-- `/api/v1/send-blink`: Transfer a Blink to another user
-- `/api/v1/get-user-blinks`: Retrieve a user's Blink collection
-- `/api/v1/create-spl-token`: Create a new SPL token
-- `/api/v1/swap-tokens`: Perform a token swap
-
-
-For detailed information on how to use these API routes, please refer to the API documentation.
+Check the API documentation for more details.
 
 ## Contributing
 
-We welcome contributions to BARK BLINK! Please follow these steps to contribute:
+We welcome contributions to BARK Blink! To contribute:
 
-1. Fork the repository
-2. Create a new branch (`git checkout -b feature/NewFeature`)
-3. Make your changes
-4. Commit your changes (`git commit -m 'Add some NewFeature'`)
-5. Push to the branch (`git push origin feature/NewFeature`)
-6. Open a Pull Request
+1. Fork the repository.
+2. Create a new branch (`git checkout -b feature/NewFeature`).
+3. Make your changes.
+4. Commit your changes (`git commit -m 'Add NewFeature'`).
+5. Push to your branch (`git push origin feature/NewFeature`).
+6. Open a Pull Request.
 
-Please make sure to update tests as appropriate and adhere to the [Contributor Covenant](https://www.contributor-covenant.org/) code of conduct.
-
-
-## To-Do List
-
-### 1. **Implement Blinkboard Functions and Integrations**
-   - Integrate **Blinkboard** features across dApps, plugins, widgets, and websites for seamless interactions.
-   - Add **launch buttons** to open the app or navigate to the website efficiently.
-
-### 2. **Create Modular Applications**
-   - Design and build **modular applications** that support scalability and easy maintenance.
-   - Organize project structure by creating separate **frontend**, **API**, and **backend** folders.
-   - Ensure **code reusability** to streamline development across different modules.
-
-### 3. **API Development**
-   - Develop **secure and efficient APIs** for Blinkboard and other external integrations.
-   - Optimize API logic with a focus on **performance** and **scalability**.
-
-### 4. **Remove Unnecessary Files and Folders**
-   - Audit the project directory and **remove redundant files** and **folders** that are no longer needed.
-   - Ensure the project is lean and maintainable by eliminating obsolete resources.
-
-### 5. **Create API and Platform Documentation**
-   - Write clear and comprehensive **API documentation** for developers, including endpoints, request/response structures, and authentication details.
-   - Create detailed **platform documentation** covering the architecture, modules, and user workflows to help onboard new team members or partners.
-   - Include examples, code snippets, and integration guides for ease of use.
-
+Please ensure tests are updated as needed and follow the [Contributor Covenant](https://www.contributor-covenant.org/) code of conduct.
 
 ## License
 
@@ -213,8 +169,5 @@ This project is licensed under the MIT License. See the [LICENSE](LICENSE) file 
 - [Next.js](https://nextjs.org/)
 - [React](https://reactjs.org/)
 - [Tailwind CSS](https://tailwindcss.com/)
-- [shadcn/ui](https://ui.shadcn.com/)
 - [@solana/web3.js](https://github.com/solana-labs/solana-web3.js)
-- [@solana/spl-token](https://github.com/solana-labs/solana-program-library/tree/master/token)
 - [Anchor Framework](https://www.anchor-lang.com/)
-```

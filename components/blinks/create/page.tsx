@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useState } from 'react'
+import React, { useState, useCallback } from 'react'
 import { useRouter } from 'next/navigation'
 import { useWallet } from '@solana/wallet-adapter-react'
 import { Button } from "@/components/ui/button"
@@ -16,30 +16,57 @@ import { Label } from "@/components/ui/label"
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 
-export const CreateBlinkTool: React.FC = () => {
-  const [name, setName] = useState('')
-  const [description, setDescription] = useState('')
-  const [blinkType, setBlinkType] = useState('standard')
-  const [image, setImage] = useState<File | null>(null)
-  const [isNFT, setIsNFT] = useState(false)
-  const [isDonation, setIsDonation] = useState(false)
-  const [isGift, setIsGift] = useState(false)
-  const [isPayment, setIsPayment] = useState(false)
-  const [isPoll, setIsPoll] = useState(false)
+interface BlinkFormData {
+  name: string
+  description: string
+  blinkType: string
+  image: File | null
+  isNFT: boolean
+  isDonation: boolean
+  isGift: boolean
+  isPayment: boolean
+  isPoll: boolean
+}
+
+export default function CreateBlinkPage() {
+  const [formData, setFormData] = useState<BlinkFormData>({
+    name: '',
+    description: '',
+    blinkType: 'standard',
+    image: null,
+    isNFT: false,
+    isDonation: false,
+    isGift: false,
+    isPayment: false,
+    isPoll: false,
+  })
   const [isCreating, setIsCreating] = useState(false)
   const router = useRouter()
   const { connected, publicKey } = useWallet()
   const { toast } = useToast()
 
-  const onDrop = (acceptedFiles: File[]) => {
-    setImage(acceptedFiles[0])
-  }
+  const onDrop = useCallback((acceptedFiles: File[]) => {
+    setFormData(prev => ({ ...prev, image: acceptedFiles[0] }))
+  }, [])
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
     onDrop,
     accept: {'image/*': []},
     maxFiles: 1
   })
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    const { name, value } = e.target
+    setFormData(prev => ({ ...prev, [name]: value }))
+  }
+
+  const handleSelectChange = (value: string) => {
+    setFormData(prev => ({ ...prev, blinkType: value }))
+  }
+
+  const handleSwitchChange = (name: keyof BlinkFormData) => (checked: boolean) => {
+    setFormData(prev => ({ ...prev, [name]: checked }))
+  }
 
   const handleCreateBlink = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -54,23 +81,21 @@ export const CreateBlinkTool: React.FC = () => {
 
     setIsCreating(true)
     try {
-      const formData = new FormData()
-      formData.append('name', name)
-      formData.append('description', description)
-      formData.append('blinkType', blinkType)
-      formData.append('isNFT', isNFT.toString())
-      formData.append('isDonation', isDonation.toString())
-      formData.append('isGift', isGift.toString())
-      formData.append('isPayment', isPayment.toString())
-      formData.append('isPoll', isPoll.toString())
-      formData.append('ownerAddress', publicKey.toBase58())
-      if (image) {
-        formData.append('image', image)
-      }
+      const formDataToSend = new FormData()
+      Object.entries(formData).forEach(([key, value]) => {
+        if (key === 'image' && value instanceof File) {
+          formDataToSend.append(key, value)
+        } else if (typeof value === 'boolean') {
+          formDataToSend.append(key, value.toString())
+        } else if (value !== null) {
+          formDataToSend.append(key, value)
+        }
+      })
+      formDataToSend.append('ownerAddress', publicKey.toBase58())
 
       const response = await fetch('/api/v1/blinks', {
         method: 'POST',
-        body: formData,
+        body: formDataToSend,
       })
 
       if (!response.ok) {
@@ -120,8 +145,9 @@ export const CreateBlinkTool: React.FC = () => {
                   <Label htmlFor="name">Blink Name</Label>
                   <Input
                     id="name"
-                    value={name}
-                    onChange={(e) => setName(e.target.value)}
+                    name="name"
+                    value={formData.name}
+                    onChange={handleInputChange}
                     required
                     placeholder="Enter a name for your Blink"
                     className="bg-background"
@@ -131,8 +157,9 @@ export const CreateBlinkTool: React.FC = () => {
                   <Label htmlFor="description">Description</Label>
                   <Textarea
                     id="description"
-                    value={description}
-                    onChange={(e) => setDescription(e.target.value)}
+                    name="description"
+                    value={formData.description}
+                    onChange={handleInputChange}
                     required
                     placeholder="Describe your Blink"
                     rows={4}
@@ -141,7 +168,7 @@ export const CreateBlinkTool: React.FC = () => {
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="blinkType">Blink Type</Label>
-                  <Select value={blinkType} onValueChange={setBlinkType}>
+                  <Select value={formData.blinkType} onValueChange={handleSelectChange}>
                     <SelectTrigger id="blinkType" className="bg-background">
                       <SelectValue placeholder="Select Blink type" />
                     </SelectTrigger>
@@ -177,14 +204,14 @@ export const CreateBlinkTool: React.FC = () => {
                     </div>
                   </div>
                   <AnimatePresence>
-                    {image && (
+                    {formData.image && (
                       <motion.p
                         initial={{ opacity: 0, y: -10 }}
                         animate={{ opacity: 1, y: 0 }}
                         exit={{ opacity: 0, y: -10 }}
                         className="mt-2 text-sm text-muted-foreground"
                       >
-                        Selected file: {image.name}
+                        Selected file: {formData.image.name}
                       </motion.p>
                     )}
                   </AnimatePresence>
@@ -199,8 +226,8 @@ export const CreateBlinkTool: React.FC = () => {
                     </div>
                     <Switch
                       id="isNFT"
-                      checked={isNFT}
-                      onCheckedChange={setIsNFT}
+                      checked={formData.isNFT}
+                      onCheckedChange={handleSwitchChange('isNFT')}
                     />
                   </div>
                   <div className="flex items-center justify-between">
@@ -210,8 +237,8 @@ export const CreateBlinkTool: React.FC = () => {
                     </div>
                     <Switch
                       id="isDonation"
-                      checked={isDonation}
-                      onCheckedChange={setIsDonation}
+                      checked={formData.isDonation}
+                      onCheckedChange={handleSwitchChange('isDonation')}
                     />
                   </div>
                   <div className="flex items-center justify-between">
@@ -221,8 +248,8 @@ export const CreateBlinkTool: React.FC = () => {
                     </div>
                     <Switch
                       id="isGift"
-                      checked={isGift}
-                      onCheckedChange={setIsGift}
+                      checked={formData.isGift}
+                      onCheckedChange={handleSwitchChange('isGift')}
                     />
                   </div>
                   <div className="flex items-center justify-between">
@@ -232,8 +259,8 @@ export const CreateBlinkTool: React.FC = () => {
                     </div>
                     <Switch
                       id="isPayment"
-                      checked={isPayment}
-                      onCheckedChange={setIsPayment}
+                      checked={formData.isPayment}
+                      onCheckedChange={handleSwitchChange('isPayment')}
                     />
                   </div>
                   <div className="flex items-center justify-between">
@@ -243,8 +270,8 @@ export const CreateBlinkTool: React.FC = () => {
                     </div>
                     <Switch
                       id="isPoll"
-                      checked={isPoll}
-                      onCheckedChange={setIsPoll}
+                      checked={formData.isPoll}
+                      onCheckedChange={handleSwitchChange('isPoll')}
                     />
                   </div>
                 </div>
