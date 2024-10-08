@@ -1,41 +1,4 @@
 {
-    "version": 2,
-    "builds": [
-      {
-        "src": "package.json",
-        "use": "@vercel/next"
-      }
-    ],
-    "routes": [
-      {
-        "src": "/(.*)",
-        "dest": "/$1"
-      }
-    ],
-    "env": {
-      "NEXT_PUBLIC_SUPABASE_URL": "@next-public-supabase-url",
-      "NEXT_PUBLIC_SUPABASE_ANON_KEY": "@next-public-supabase-anon-key",
-      "POSTGRES_URL": "@postgres-url",
-      "BASE_URL": "https://bark-blinks.vercel.app",
-      "AUTH_SECRET": "@auth-secret",
-      "SOLANA_NETWORK": "devnet",
-      "SOLANA_MAINNET_RPC": "https://api.mainnet-beta.solana.com",
-      "TOKEN_PROGRAM_ID": "@token-program-id",
-      "TOKEN_METADATA_PROGRAM_ID": "@token-metadata-program-id",
-      "HELIUS_API_URL": "@helius-api-url",
-      "HELIUS_API_KEY": "@helius-api-key",
-      "SHYFT_API_URL": "@shyft-api-url",
-      "SHYFT_API_KEY": "@shyft-api-key",
-      "STRIPE_SECRET_KEY": "@stripe-secret-key",
-      "STRIPE_WEBHOOK_SECRET": "@stripe-webhook-secret",
-      "BARK_BLINK_POSTGRES_URL": "@bark-blink-postgres-url",
-      "BARK_BLINK_STRIPE_SECRET_KEY": "@bark-blink-stripe-secret-key",
-      "BARK_BLINK_STRIPE_WEBHOOK_SECRET": "@bark-blink-stripe-webhook-secret",
-      "BARK_BLINK_BASE_URL": "https://payments.barkblinks.vercel.app/",
-      "BARK_BLINK_AUTH_SECRET": "@bark-blink-auth-secret",
-      "NEXT_PUBLIC_MAILCHIMP_API_KEY": "@next-public-mailchimp-api-key",
-      "NEXT_PUBLIC_MAILCHIMP_AUDIENCE_ID": "@next-public-mailchimp-audience-id",
-      "NEXT_PUBLIC_MAILCHIMP_DATA_CENTER": "@next-public-mailchimp-data-center"
-    }
-  }
-  
+  "buildCommand": "npm run build",
+  "outputDirectory": "dist/web/.next"
+}
