@@ -4,7 +4,8 @@ import React, { useState, useEffect, useMemo } from 'react'
 import { useRouter } from 'next/navigation'
 import { useWallet, useConnection } from '@solana/wallet-adapter-react'
 import { PublicKey } from '@solana/web3.js'
-import { Jupiter, RouteInfo, TOKEN_LIST_URL } from '@jup-ag/core'
+import { Jupiter, RouteInfo } from '@jup-ag/core'
+import { TOKEN_LIST_URL } from '@jup-ag/core'
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -25,11 +26,11 @@ interface Token {
 }
 
 const BARK_TOKEN: Token = {
-  address: 'BARKoQCkzAFfVVLpCVDG8ydZu1pjHVtcLgGtBqAg1e1s', // Replace with actual BARK token address
+  address: '2NTvEssJ2i998V2cMGT4Fy3JhyFnAzHFonDo9dbAkVrg',
   symbol: 'BARK',
-  name: 'BARK Token',
+  name: 'BARK',
   decimals: 9,
-  logoURI: '/bark-logo.png', // Replace with actual BARK logo URL
+  logoURI: 'https://ucarecdn.com/8aa0180d-1112-4aea-8210-55b266c3fb44/bark.png',
 }
 
 export default function SwapPage() {

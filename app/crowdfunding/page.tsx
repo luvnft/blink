@@ -8,8 +8,9 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
 import { Progress } from "@/components/ui/progress"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { useToast } from "@/components/ui/use-toast"
-import { Loader2, ArrowLeft, Plus, DollarSign } from 'lucide-react'
+import { Loader2, ArrowLeft, Plus, DollarSign, Leaf, Users, AlertTriangle } from 'lucide-react'
 import Link from 'next/link'
 import { ConnectWalletButton } from '@/components/ui/connect-wallet-button'
 import { motion } from 'framer-motion'
@@ -22,12 +23,15 @@ interface Campaign {
   raised: number
   creator: string
   endDate: Date
+  category: 'Community' | 'Ecology' | 'Social' | 'Disaster Relief'
+  impact: string
 }
 
 export default function CrowdfundingPage() {
   const [campaigns, setCampaigns] = useState<Campaign[]>([])
-  const [newCampaign, setNewCampaign] = useState({ title: '', description: '', goal: '' })
+  const [newCampaign, setNewCampaign] = useState({ title: '', description: '', goal: '', category: '', impact: '' })
   const [isLoading, setIsLoading] = useState(false)
+  const [filter, setFilter] = useState('All')
   const { connected, publicKey } = useWallet()
   const { toast } = useToast()
 
@@ -50,16 +54,42 @@ export default function CrowdfundingPage() {
           goal: 5000,
           raised: 3500,
           creator: '5CreatorAddressHere...',
-          endDate: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000), // 7 days from now
+          endDate: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
+          category: 'Community',
+          impact: 'Strengthen community bonds and increase adoption of BARK Blink'
         },
         {
           id: '2',
-          title: 'BARK Blink NFT Art Contest',
-          description: 'Fund prizes for our upcoming NFT art contest featuring BARK Blink themes.',
-          goal: 2000,
-          raised: 1200,
-          creator: '5AnotherCreatorAddressHere...',
-          endDate: new Date(Date.now() + 14 * 24 * 60 * 60 * 1000), // 14 days from now
+          title: 'Reforestation Project',
+          description: 'Plant 10,000 trees to combat deforestation and climate change.',
+          goal: 20000,
+          raised: 15000,
+          creator: '5EcoWarriorAddressHere...',
+          endDate: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000),
+          category: 'Ecology',
+          impact: 'Reduce CO2 emissions and restore natural habitats'
+        },
+        {
+          id: '3',
+          title: 'Education for Underprivileged Children',
+          description: 'Provide educational resources and support for 100 underprivileged children.',
+          goal: 10000,
+          raised: 7500,
+          creator: '5EducatorAddressHere...',
+          endDate: new Date(Date.now() + 60 * 24 * 60 * 60 * 1000),
+          category: 'Social',
+          impact: 'Improve literacy rates and future opportunities for underprivileged children'
+        },
+        {
+          id: '4',
+          title: 'Emergency Relief for Natural Disaster Victims',
+          description: 'Provide immediate aid and support to victims of recent natural disasters.',
+          goal: 50000,
+          raised: 30000,
+          creator: '5DisasterReliefOrgAddressHere...',
+          endDate: new Date(Date.now() + 14 * 24 * 60 * 60 * 1000),
+          category: 'Disaster Relief',
+          impact: 'Provide food, shelter, and medical assistance to affected communities'
         },
       ]
       setCampaigns(mockCampaigns)
@@ -98,9 +128,11 @@ export default function CrowdfundingPage() {
         raised: 0,
         creator: publicKey.toBase58(),
         endDate: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000), // 30 days from now
+        category: newCampaign.category as Campaign['category'],
+        impact: newCampaign.impact,
       }
       setCampaigns([...campaigns, newCampaignData])
-      setNewCampaign({ title: '', description: '', goal: '' })
+      setNewCampaign({ title: '', description: '', goal: '', category: '', impact: '' })
       toast({
         title: "Campaign Created",
         description: "Your crowdfunding campaign has been successfully created.",
@@ -154,6 +186,21 @@ export default function CrowdfundingPage() {
     }
   }
 
+  const filteredCampaigns = filter === 'All' ? campaigns : campaigns.filter(campaign => campaign.category === filter)
+
+  const getCategoryIcon = (category: Campaign['category']) => {
+    switch (category) {
+      case 'Ecology':
+        return <Leaf className="h-5 w-5 text-green-500" />
+      case 'Social':
+        return <Users className="h-5 w-5 text-blue-500" />
+      case 'Disaster Relief':
+        return <AlertTriangle className="h-5 w-5 text-red-500" />
+      default:
+        return <DollarSign className="h-5 w-5 text-yellow-500" />
+    }
+  }
+
   return (
     <div className="container mx-auto px-4 py-8 max-w-6xl">
       <Link href="/" passHref>
@@ -169,7 +216,7 @@ export default function CrowdfundingPage() {
         <Card className="bg-white shadow-lg mb-8">
           <CardHeader>
             <CardTitle className="text-3xl font-bold">BARK Blink Crowdfunding</CardTitle>
-            <CardDescription>Support community projects or create your own campaign</CardDescription>
+            <CardDescription>Support community projects, ecological initiatives, social causes, and disaster relief efforts</CardDescription>
           </CardHeader>
           <CardContent>
             {connected ? (
@@ -214,6 +261,31 @@ export default function CrowdfundingPage() {
                           step="0.01"
                         />
                       </div>
+                      <div className="space-y-2">
+                        <Label htmlFor="category">Category</Label>
+                        <Select onValueChange={(value) => setNewCampaign({ ...newCampaign, category: value })}>
+                          <SelectTrigger>
+                            <SelectValue placeholder="Select a category" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="Community">Community</SelectItem>
+                            <SelectItem value="Ecology">Ecology</SelectItem>
+                            <SelectItem value="Social">Social</SelectItem>
+                            <SelectItem value="Disaster Relief">Disaster Relief</SelectItem>
+                          </SelectContent>
+                        </Select>
+                      </div>
+                      <div className="space-y-2">
+                        <Label htmlFor="impact">Expected Impact</Label>
+                        <Textarea
+                          id="impact"
+                          value={newCampaign.impact}
+                          onChange={(e) => setNewCampaign({ ...newCampaign, impact: e.target.value })}
+                          required
+                          placeholder="Describe the expected impact of your campaign"
+                          rows={3}
+                        />
+                      </div>
                       <Button type="submit" disabled={isLoading}>
                         {isLoading ? (
                           <>
@@ -230,11 +302,29 @@ export default function CrowdfundingPage() {
                     </form>
                   </CardContent>
                 </Card>
+                <div className="mb-6">
+                  <Label htmlFor="filter">Filter Campaigns</Label>
+                  <Select value={filter} onValueChange={setFilter}>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Filter campaigns" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="All">All Campaigns</SelectItem>
+                      <SelectItem value="Community">Community</SelectItem>
+                      <SelectItem value="Ecology">Ecology</SelectItem>
+                      <SelectItem value="Social">Social</SelectItem>
+                      <SelectItem value="Disaster Relief">Disaster Relief</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
                 <div className="space-y-6">
-                  {campaigns.map((campaign) => (
+                  {filteredCampaigns.map((campaign) => (
                     <Card key={campaign.id}>
                       <CardHeader>
-                        <CardTitle>{campaign.title}</CardTitle>
+                        <div className="flex items-center justify-between">
+                          <CardTitle>{campaign.title}</CardTitle>
+                          {getCategoryIcon(campaign.category)}
+                        </div>
                         <CardDescription>Created by: {campaign.creator}</CardDescription>
                       </CardHeader>
                       <CardContent>
@@ -249,6 +339,8 @@ export default function CrowdfundingPage() {
                         <p className="mt-4 text-sm text-muted-foreground">
                           Ends on: {campaign.endDate.toLocaleDateString()}
                         </p>
+                        <p className="mt-2 text-sm font-semibold">Expected Impact:</p>
+                        <p className="text-sm">{campaign.impact}</p>
                       </CardContent>
                       <CardFooter>
                         <form onSubmit={(e) => {
@@ -266,7 +358,7 @@ export default function CrowdfundingPage() {
                           />
                           <Button type="submit" disabled={isLoading}>
                             {isLoading ? (
-                              <Loader2 className="h-4 w-4 animate-spin" />
+                              <Loader2 className="h-4 w-4  animate-spin" />
                             ) : (
                               <DollarSign className="h-4 w-4" />
                             )}

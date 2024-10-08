@@ -26,6 +26,7 @@
     "@coral-xyz/anchor": "^0.30.1",
     "@hookform/resolvers": "^3.9.0",
     "@jup-ag/api": "^6.0.29",
+    "@jup-ag/core": "4.0.0-beta.21",
     "@metaplex-foundation/js": "^0.20.1",
     "@metaplex-foundation/mpl-bubblegum": "^4.2.1",
     "@metaplex-foundation/mpl-token-metadata": "^2.13.0",

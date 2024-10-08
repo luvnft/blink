@@ -60,7 +60,7 @@ export function Actions() {
       description: "Mint new compressed NFT on the Solana blockchain.", 
       icon: <PlusCircle className="h-5 w-5 text-primary" />,
       action: "Start Minting",
-      link: "/bark/create",
+      link: "/create-cnft",
       category: "Creation"
     },
     { 
@@ -68,7 +68,7 @@ export function Actions() {
       description: "Earn rewards by staking your BARK tokens. Participate in the network's security and governance.", 
       icon: <Landmark className="h-5 w-5 text-primary" />,
       action: "Stake Now",
-      link: "/bark/stake",
+      link: "/stake",
       category: "Finance"
     },
     { 
@@ -76,7 +76,7 @@ export function Actions() {
       description: "Participate in BARK DAO governance. Vote on proposals and shape the future of the BARK Protocol.", 
       icon: <Vote className="h-5 w-5 text-primary" />,
       action: "View Proposals",
-      link: "/bark/governance",
+      link: "/governance",
       category: "Community"
     },
     { 
@@ -84,7 +84,7 @@ export function Actions() {
       description: "Easily swap BARK tokens with other tokens, cryptocurrencies using Jupiter API and DEX.", 
       icon: <Repeat className="h-5 w-5 text-primary" />,
       action: "Start Swapping",
-      link: "/bark/swap",
+      link: "/swap",
       category: "Finance"
     },
     { 

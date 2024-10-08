@@ -7,14 +7,15 @@ import { PaymentHistory } from '@/components/payments/payment-history'
 import { Button } from "@/components/ui/button"
 import { useToast } from "@/components/ui/use-toast"
 import { motion } from 'framer-motion'
-import { CreditCard, ArrowLeft } from 'lucide-react'
+import { CreditCard, ArrowLeft, Wallet } from 'lucide-react'
 import { Connection, PublicKey, Transaction, SystemProgram, LAMPORTS_PER_SOL } from '@solana/web3.js'
 import Link from 'next/link'
 import Image from 'next/image'
 import { ConnectWalletButton } from '@/components/ui/connect-wallet-button'
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
 import { Label } from "@/components/ui/label"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 
 // This would typically come from an environment variable
 const SOLANA_RPC_URL = 'https://api.devnet.solana.com'
@@ -123,81 +124,97 @@ export default function PaymentsPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <div className="container mx-auto px-4 py-8 max-w-6xl">
+    <div className="min-h-screen bg-gradient-to-b from-gray-50 to-gray-100">
+      <div className="container mx-auto px-4 py-12 max-w-6xl">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}
-          className="mb-8"
+          className="mb-12"
         >
           <Link href="/" passHref>
-            <Button variant="ghost" className="mb-4 hover:bg-primary/10">
+            <Button variant="ghost" className="mb-6 hover:bg-primary/10">
               <ArrowLeft className="mr-2 h-4 w-4" /> Back to Main
             </Button>
           </Link>
-          <Card className="bg-white shadow-md">
+          <Card className="bg-white shadow-lg border-none">
             <CardHeader className="text-center">
-              <CreditCard className="w-16 h-16 mx-auto mb-4 text-primary" />
-              <CardTitle className="text-4xl font-bold mb-2">Payments</CardTitle>
-              <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-                Send quick and secure transactions on the Solana blockchain.
-              </p>
+              <div className="w-20 h-20 mx-auto mb-4 bg-primary/10 rounded-full flex items-center justify-center">
+                <CreditCard className="w-10 h-10 text-primary" />
+              </div>
+              <CardTitle className="text-4xl font-bold mb-2">BARK Blink Payments</CardTitle>
+              <CardDescription className="text-lg max-w-2xl mx-auto">
+                Send quick and secure transactions on the Solana blockchain using BARK, SOL, or USDC.
+              </CardDescription>
             </CardHeader>
-            <CardContent className="flex justify-center">
-              <ConnectWalletButton />
-            </CardContent>
+            {!connected && (
+              <CardContent className="flex justify-center pt-6">
+                <ConnectWalletButton />
+              </CardContent>
+            )}
           </Card>
         </motion.div>
         {connected ? (
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-            <motion.div
-              initial={{ opacity: 0, x: -20 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.5, delay: 0.2 }}
-            >
-              <Card className="bg-white shadow-md">
-                <CardHeader>
-                  <CardTitle>Send Payment</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="mb-6">
-                    <h2 className="text-lg font-semibold mb-2">Select Payment Method</h2>
-                    <RadioGroup
-                      value={selectedPaymentMethod}
-                      onValueChange={setSelectedPaymentMethod}
-                      className="flex flex-wrap gap-4"
-                    >
-                      {paymentMethods.map((method) => (
-                        <div key={method.id} className="flex items-center space-x-2">
-                          <RadioGroupItem value={method.id} id={method.id} />
-                          <Label htmlFor={method.id} className="flex items-center space-x-2 cursor-pointer">
-                            <Image src={method.icon} alt={method.name} width={24} height={24} />
-                            <span>{method.name}</span>
-                          </Label>
-                        </div>
-                      ))}
-                    </RadioGroup>
-                  </div>
-                  <PaymentForm onSubmit={handlePayment} isLoading={isLoading} selectedPaymentMethod={selectedPaymentMethod} />
-                </CardContent>
-              </Card>
-            </motion.div>
-            <motion.div
-              initial={{ opacity: 0, x: 20 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.5, delay: 0.4 }}
-            >
-              <Card className="bg-white shadow-md">
-                <CardHeader>
-                  <CardTitle>Transaction History</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <PaymentHistory transactions={transactions} isLoading={isLoading} />
-                </CardContent>
-              </Card>
-            </motion.div>
-          </div>
+          <Tabs defaultValue="send" className="space-y-8">
+            <TabsList className="grid w-full grid-cols-2 mb-8">
+              <TabsTrigger value="send">Send Payment</TabsTrigger>
+              <TabsTrigger value="history">Transaction History</TabsTrigger>
+            </TabsList>
+            <TabsContent value="send">
+              <motion.div
+                initial={{ opacity: 0, x: -20 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ duration: 0.5 }}
+              >
+                <Card className="bg-white shadow-lg border-none">
+                  <CardHeader>
+                    <CardTitle className="text-2xl font-semibold">Send Payment</CardTitle>
+                    <CardDescription>Choose your payment method and enter the recipient details</CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="mb-8">
+                      <h3 className="text-lg font-semibold mb-4">Select Payment Method</h3>
+                      <RadioGroup
+                        value={selectedPaymentMethod}
+                        onValueChange={setSelectedPaymentMethod}
+                        className="flex flex-wrap gap-6"
+                      >
+                        {paymentMethods.map((method) => (
+                          <div key={method.id} className="flex items-center space-x-3">
+                            <RadioGroupItem value={method.id} id={method.id} />
+                            <Label htmlFor={method.id} className="flex items-center space-x-3 cursor-pointer">
+                              <div className="w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center">
+                                <Image src={method.icon} alt={method.name} width={24} height={24} />
+                              </div>
+                              <span className="font-medium">{method.name}</span>
+                            </Label>
+                          </div>
+                        ))}
+                      </RadioGroup>
+                    </div>
+                    <PaymentForm onSubmit={handlePayment} isLoading={isLoading} selectedPaymentMethod={selectedPaymentMethod} />
+                  </CardContent>
+                </Card>
+              </motion.div>
+            </TabsContent>
+            <TabsContent value="history">
+              <motion.div
+                initial={{ opacity: 0, x: 20 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ duration: 0.5 }}
+              >
+                <Card className="bg-white shadow-lg border-none">
+                  <CardHeader>
+                    <CardTitle className="text-2xl font-semibold">Transaction History</CardTitle>
+                    <CardDescription>View your recent payment activities</CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <PaymentHistory transactions={transactions} isLoading={isLoading} />
+                  </CardContent>
+                </Card>
+              </motion.div>
+            </TabsContent>
+          </Tabs>
         ) : (
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -205,11 +222,14 @@ export default function PaymentsPage() {
             transition={{ duration: 0.5 }}
             className="text-center"
           >
-            <Card className="bg-white shadow-md">
-              <CardContent className="pt-6">
-                <p className="text-lg text-muted-foreground mb-4">
-                  Please connect your wallet to access Solana Payments.
+            <Card className="bg-white shadow-lg border-none">
+              <CardContent className="pt-10 pb-12">
+                <Wallet className="w-16 h-16 mx-auto mb-6 text-primary/60" />
+                <h3 className="text-2xl font-semibold mb-4">Connect Your Wallet</h3>
+                <p className="text-lg text-muted-foreground mb-6 max-w-md mx-auto">
+                  Please connect your wallet to access BARK Blink Payments and start making secure transactions.
                 </p>
+                <ConnectWalletButton />
               </CardContent>
             </Card>
           </motion.div>
