@@ -5,7 +5,7 @@
 /* Base Layer with Color Palette */
 @layer base {
   :root {
-    --background: 0 0% 100%;
+    --background: 0 0% 98%; /* Light gray background */
     --foreground: 0 0% 3.9%;
     
     --card: 0 0% 100%;
@@ -34,6 +34,10 @@
     --ring: 0 0% 3.9%;
     
     --radius: 0.5rem;
+
+    /* Custom properties for transitions */
+    --transition-duration: 300ms;
+    --transition-timing: ease-in-out;
   }
 
   /* Dark Mode Adjustments */
@@ -76,23 +80,21 @@
   }
 }
 
+/* Font Face Declarations */
 @font-face {
   font-family: 'Poppins';
   src: url('/fonts/Poppins-Regular.woff2') format('woff2'),
        url('/fonts/Poppins-Regular.woff') format('woff');
   font-weight: 400;
   font-style: normal;
+  font-display: swap;
 }
 
-/* New Keyframe Animations */
+/* Keyframe Animations */
 @keyframes pulse {
   0% { opacity: 1; transform: scale(1); }
   50% { opacity: 0.6; transform: scale(0.95); }
   100% { opacity: 1; transform: scale(1); }
-}
-
-.pulse {
-  animation: pulse 2s infinite;
 }
 
 /* Custom Font Classes */
@@ -109,28 +111,29 @@
 }
 
 /* Typography Improvements */
-h1, h2, h3, h4, h5, h6 {
-  @apply font-inter font-bold;
+@layer components {
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-inter font-bold;
+  }
+
+  h1 { @apply text-3xl sm:text-4xl md:text-5xl lg:text-6xl; }
+  h2 { @apply text-2xl sm:text-3xl md:text-4xl lg:text-5xl; }
+  h3 { @apply text-xl sm:text-2xl md:text-3xl lg:text-4xl; }
+  h4 { @apply text-lg sm:text-xl md:text-2xl lg:text-3xl; }
+  h5 { @apply text-base sm:text-lg md:text-xl lg:text-2xl; }
+  h6 { @apply text-sm sm:text-base md:text-lg lg:text-xl; }
+
+  p {
+    @apply text-sm sm:text-base md:text-lg leading-relaxed text-muted-foreground;
+  }
 }
 
-h1 { @apply text-3xl sm:text-4xl md:text-5xl lg:text-6xl; }
-h2 { @apply text-2xl sm:text-3xl md:text-4xl lg:text-5xl; }
-h3 { @apply text-xl sm:text-2xl md:text-3xl lg:text-4xl; }
-h4 { @apply text-lg sm:text-xl md:text-2xl lg:text-3xl; }
-h5 { @apply text-base sm:text-lg md:text-xl lg:text-2xl; }
-h6 { @apply text-sm sm:text-base md:text-lg lg:text-xl; }
-
-/* Paragraphs */
-p {
-  @apply text-sm sm:text-base md:text-lg leading-relaxed text-muted-foreground;
-}
-
-/* New Container Styles for Layout Control */
+/* Layout Control */
 .container {
   @apply mx-auto px-4 sm:px-6 md:px-8 lg:px-10 max-w-screen-xl;
 }
 
-/* New Shadow Utilities for Soft and Elevated Shadow Effects */
+/* Shadow Utilities */
 .shadow-soft {
   box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
 }
@@ -139,18 +142,22 @@ p {
   box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
 }
 
-/* New Card Styling for Reusable Card Components */
+/* Card Styling */
 .card {
-  @apply bg-card text-card-foreground rounded-lg border shadow-soft p-4 transition-transform duration-300 ease-in-out;
+  @apply bg-card text-card-foreground rounded-lg border shadow-soft p-4;
+  transition: transform var(--transition-duration) var(--transition-timing);
 }
 
 .card-hover {
-  @apply transition-all duration-300 ease-in-out hover:shadow-elevated hover:-translate-y-1;
+  @apply hover:shadow-elevated hover:-translate-y-1;
+  transition: all var(--transition-duration) var(--transition-timing);
 }
 
-/* Button Styles with Various Intentions */
+/* Button Styles */
 .btn {
   @apply inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:opacity-50 disabled:pointer-events-none ring-offset-background;
+  transition-duration: var(--transition-duration);
+  transition-timing-function: var(--transition-timing);
 }
 
 .btn-primary {
@@ -175,31 +182,47 @@ p {
 
 /* Form Inputs Styling */
 .input {
-  @apply w-full px-3 py-2 border border-sand-300 rounded-md focus:outline-none focus:ring-2 focus:ring-sand-400 focus:border-transparent;
+  @apply w-full px-3 py-2 border border-input rounded-md focus:outline-none focus:ring-2 focus:ring-ring focus:border-transparent;
 }
 
 /* Labels for Form Elements */
 .label {
-  @apply block text-sm font-medium text-gray-700 mb-1;
+  @apply block text-sm font-medium text-foreground mb-1;
 }
 
-/* Hover Animation for Interactive Elements */
+/* Hover and Focus Utilities */
 .hover-grow {
   @apply transform transition-transform duration-200 ease-in-out hover:scale-105;
 }
 
-/* Animations for Button Pulsing Effect */
-.btn-pulse {
-  @apply inline-flex items-center justify-center bg-primary text-primary-foreground rounded-md transition-all duration-150 ease-in-out;
-  animation: pulse 1s infinite;
+.focus-visible-ring {
+  @apply focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2;
 }
 
-/* Card Hover Effects */
-.card-hover {
-  @apply transition-all duration-300 ease-in-out hover:shadow-elevated hover:-translate-y-1;
+/* Animations */
+.btn-pulse {
+  @apply inline-flex items-center justify-center bg-primary text-primary-foreground rounded-md;
+  animation: pulse 1s infinite;
 }
 
 /* Hover Effects for Links */
 .link-hover {
-  @apply underline hover:text-primary-foreground transition-colors duration-200;
+  @apply underline hover:text-primary transition-colors duration-200;
+}
+
+/* Responsive Utilities */
+@responsive {
+  .text-balance {
+    text-wrap: balance;
+  }
+}
+
+/* Accessibility Improvements */
+.sr-only {
+  @apply absolute w-px h-px p-0 -m-px overflow-hidden whitespace-nowrap border-0;
+}
+
+/* Dark Mode Toggle Styles */
+.dark-mode-toggle {
+  @apply p-2 rounded-full bg-secondary text-secondary-foreground hover:bg-secondary/80 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2;
 }

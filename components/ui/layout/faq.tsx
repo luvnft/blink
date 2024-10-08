@@ -11,11 +11,11 @@ interface FAQItemProps {
   onToggle: () => void;
 }
 
-const FAQItem: React.FC<FAQItemProps> = ({ question, answer, isOpen, onToggle }) => {
+function FAQItem({ question, answer, isOpen, onToggle }: FAQItemProps) {
   return (
     <div className="border-b border-border last:border-b-0">
       <button
-        className="flex justify-between items-center w-full py-4 text-left focus:outline-none focus:ring-2 focus:ring-[#D0BFB4] focus:ring-opacity-50 rounded-lg transition-all duration-200 ease-in-out text-foreground"
+        className="flex justify-between items-center w-full py-4 text-left focus:outline-none focus:ring-2 focus:ring-primary focus:ring-opacity-50 rounded-lg transition-all duration-200 ease-in-out text-foreground"
         onClick={onToggle}
       >
         <span className="font-medium text-base sm:text-lg pr-4 text-foreground">{question}</span>
@@ -26,9 +26,9 @@ const FAQItem: React.FC<FAQItemProps> = ({ question, answer, isOpen, onToggle })
           className="flex-shrink-0"
         >
           {isOpen ? (
-            <Minus className="h-5 w-5 text-[#D0BFB4]" />
+            <Minus className="h-5 w-5 text-primary" />
           ) : (
-            <Plus className="h-5 w-5 text-[#D0BFB4]" />
+            <Plus className="h-5 w-5 text-primary" />
           )}
         </motion.div>
       </button>
@@ -52,9 +52,9 @@ const FAQItem: React.FC<FAQItemProps> = ({ question, answer, isOpen, onToggle })
       </AnimatePresence>
     </div>
   );
-};
+}
 
-export const FAQ: React.FC = () => {
+export function FAQ() {
   const [openIndex, setOpenIndex] = useState<number | null>(null);
 
   const faqItems = [
@@ -105,4 +105,4 @@ export const FAQ: React.FC = () => {
       </div>
     </section>
   );
-};
+}

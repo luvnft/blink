@@ -10,7 +10,7 @@ import { ConnectWalletButton } from '@/components/ui/connect-wallet-button'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useTheme } from 'next-themes'
 
-const BlinkingText: React.FC = () => {
+function BlinkingText() {
   const [isVisible, setIsVisible] = useState(true)
 
   useEffect(() => {
@@ -24,7 +24,7 @@ const BlinkingText: React.FC = () => {
     <AnimatePresence>
       {isVisible && (
         <motion.span 
-          className="font-medium text-[#D0BFB4] dark:text-[#E0CFC4]"
+          className="font-medium text-primary"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
@@ -38,13 +38,15 @@ const BlinkingText: React.FC = () => {
   )
 }
 
-const NavLink: React.FC<{ href: string; children: React.ReactNode }> = ({ href, children }) => (
-  <Link href={href} className="text-muted-foreground hover:text-[#D0BFB4] transition-colors duration-300 ease-in-out">
-    {children}
-  </Link>
-)
+function NavLink({ href, children }: { href: string; children: React.ReactNode }) {
+  return (
+    <Link href={href} className="text-muted-foreground hover:text-primary transition-colors duration-300 ease-in-out">
+      {children}
+    </Link>
+  )
+}
 
-const MobileMenu: React.FC = () => {
+function MobileMenu() {
   const [isOpen, setIsOpen] = useState(false)
 
   return (
@@ -73,7 +75,7 @@ const MobileMenu: React.FC = () => {
   )
 }
 
-const ThemeToggle: React.FC = () => {
+function ThemeToggle() {
   const { theme, setTheme } = useTheme()
 
   return (
@@ -89,7 +91,7 @@ const ThemeToggle: React.FC = () => {
   )
 }
 
-export const Header: React.FC = () => {
+export function Header() {
   const [isScrolled, setIsScrolled] = useState(false)
 
   useEffect(() => {

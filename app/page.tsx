@@ -1,4 +1,4 @@
-'use client';
+'use client'
 
 import React, { useState, useEffect } from 'react'
 import { useWallet } from '@solana/wallet-adapter-react'
@@ -10,16 +10,18 @@ import { HowItWorks } from '@/components/ui/layout/how-it-works'
 import { CTA } from '@/components/ui/layout/cta'
 import { FAQ } from '@/components/ui/layout/faq'
 import { Newsletter } from '@/components/ui/layout/newsletter'
-import Footer from "@/components/ui/layout/footer"
+import { Footer } from "@/components/ui/layout/footer"
 import { Button } from "@/components/ui/button"
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
+import { useToast } from "@/components/ui/use-toast"
 
-const Blinkboard: React.FC = () => {
+export default function Blinkboard() {
   const { connected, publicKey } = useWallet()
   const [username, setUsername] = useState('')
   const [isDialogOpen, setIsDialogOpen] = useState(false)
+  const { toast } = useToast()
 
   useEffect(() => {
     const storedUsername = localStorage.getItem('barkBlinkUsername')
@@ -32,7 +34,11 @@ const Blinkboard: React.FC = () => {
     if (connected && publicKey) {
       setIsDialogOpen(true)
     } else {
-      alert("Please connect your wallet to launch the app.")
+      toast({
+        title: "Wallet not connected",
+        description: "Please connect your wallet to launch the app.",
+        variant: "destructive",
+      })
     }
   }
 
@@ -41,14 +47,21 @@ const Blinkboard: React.FC = () => {
     if (username.trim()) {
       localStorage.setItem('barkBlinkUsername', username)
       setIsDialogOpen(false)
-      alert('User setup complete!')
+      toast({
+        title: "User setup complete",
+        description: "You're all set to start using BARK BLINK!",
+      })
     } else {
-      alert("Please enter a valid username.")
+      toast({
+        title: "Invalid username",
+        description: "Please enter a valid username.",
+        variant: "destructive",
+      })
     }
   }
 
   return (
-    <div className="min-h-screen font-poppins bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-gray-100">
+    <div className="min-h-screen font-sans bg-background text-foreground">
       <Header />
       <main className="container mx-auto px-4 py-8">
         <Hero onLaunchApp={handleLaunchApp} />
@@ -96,5 +109,3 @@ const Blinkboard: React.FC = () => {
     </div>
   )
 }
-
-export default Blinkboard

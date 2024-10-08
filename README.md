@@ -1,4 +1,4 @@
-# BARK - BLINK As A Service Monorepo
+# BARK - BLINK As A Service Application
 
 Welcome to the BARK - BLINKS project! This repository contains the frontend code for the BARK Protocol's Blinks As A Service platform, built using Next.js, React, and Tailwind CSS.
 

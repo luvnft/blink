@@ -12,7 +12,7 @@ interface HowItWorksStepProps {
   icon: React.ReactNode;
 }
 
-const HowItWorksStep: React.FC<HowItWorksStepProps> = ({ number, title, description, icon }) => {
+function HowItWorksStep({ number, title, description, icon }: HowItWorksStepProps) {
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
@@ -25,23 +25,23 @@ const HowItWorksStep: React.FC<HowItWorksStepProps> = ({ number, title, descript
           {React.cloneElement(icon as React.ReactElement, { className: "w-full h-full" })}
         </div>
         <CardHeader className="text-center pb-2 relative z-10">
-          <div className="mx-auto w-14 h-14 rounded-full flex items-center justify-center font-bold mb-4 transform transition-transform group-hover:scale-110 duration-300 bg-[#D0BFB4] text-foreground">
+          <div className="mx-auto w-14 h-14 rounded-full flex items-center justify-center font-bold mb-4 transform transition-transform group-hover:scale-110 duration-300 bg-primary text-primary-foreground">
             <span className="text-2xl">{number}</span>
           </div>
           <CardTitle className="font-inter text-xl font-semibold mb-2 text-foreground">{title}</CardTitle>
         </CardHeader>
         <CardContent className="text-center flex-grow relative z-10">
           <div className="mb-6">
-            {React.cloneElement(icon as React.ReactElement, { className: "w-12 h-12 mx-auto transform transition-transform group-hover:scale-110 duration-300 text-[#D0BFB4]" })}
+            {React.cloneElement(icon as React.ReactElement, { className: "w-12 h-12 mx-auto transform transition-transform group-hover:scale-110 duration-300 text-primary" })}
           </div>
           <p className="font-poppins font-light text-base text-muted-foreground">{description}</p>
         </CardContent>
       </Card>
     </motion.div>
   );
-};
+}
 
-export const HowItWorks: React.FC = () => {
+export function HowItWorks() {
   const howItWorksSteps: HowItWorksStepProps[] = [
     {
       number: 1,
@@ -84,4 +84,4 @@ export const HowItWorks: React.FC = () => {
       </div>
     </section>
   );
-};
+}

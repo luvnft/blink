@@ -110,7 +110,7 @@ const config: Config = {
         blink: 'blink 1s linear infinite',
       },
       boxShadow: {
-        elevated: '0 10px 30px -5px rgba(0, 0, 0, 0.2)', // Custom shadow definition
+        elevated: '0 10px 30px -5px rgba(0, 0, 0, 0.2)',
       },
     },
   },

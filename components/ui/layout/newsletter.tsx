@@ -7,7 +7,7 @@ import { Loader2, Mail } from 'lucide-react'
 import { useToast } from "@/components/ui/use-toast"
 import { motion } from 'framer-motion'
 
-export const Newsletter: React.FC = () => {
+export function Newsletter() {
   const [email, setEmail] = useState('')
   const [isSubscribing, setIsSubscribing] = useState(false)
   const { toast } = useToast()
@@ -66,12 +66,12 @@ export const Newsletter: React.FC = () => {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
-                className="w-full bg-background border-2 border-input focus:border-[#D0BFB4] focus:ring-2 focus:ring-[#D0BFB4] rounded-full py-3 px-4 text-foreground placeholder-muted-foreground"
+                className="w-full rounded-full py-3 px-4"
               />
             </div>
             <Button 
               type="submit" 
-              className="bg-[#D0BFB4] text-foreground hover:bg-[#D0BFB4]/90 transition-colors rounded-full py-3 px-6 font-medium text-base"
+              className="bg-primary text-primary-foreground hover:bg-primary/90 transition-colors rounded-full py-3 px-6 font-medium text-base"
               disabled={isSubscribing}
             >
               {isSubscribing ? (

@@ -10,9 +10,9 @@ interface CTAProps {
   onLaunchApp: () => void;
 }
 
-export const CTA: React.FC<CTAProps> = ({ onLaunchApp }) => {
+export function CTA({ onLaunchApp }: CTAProps) {
   return (
-    <section id="cta" className="mt-8 mb-20 py-16 sm:py-20 bg-gradient-to-r from-[#D0BFB4] to-[#E0CFC4] rounded-lg shadow-lg">
+    <section id="cta" className="mt-8 mb-20 py-16 sm:py-20 bg-gradient-to-br from-background to-secondary rounded-lg shadow-lg">
       <motion.div 
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
@@ -38,7 +38,7 @@ export const CTA: React.FC<CTAProps> = ({ onLaunchApp }) => {
           whileTap={{ scale: 0.95 }}
         >
           <Button 
-            className="bg-[#C0AFA4] text-foreground hover:bg-[#C0AFA5] transition-all text-base px-6 py-3 rounded-full shadow-md hover:shadow-lg"
+            className="bg-primary text-primary-foreground hover:bg-primary/90 transition-all text-base px-6 py-3 rounded-full shadow-md hover:shadow-lg"
             onClick={onLaunchApp}
           >
             Create Now

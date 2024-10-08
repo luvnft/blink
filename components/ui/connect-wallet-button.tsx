@@ -6,7 +6,7 @@ import { useWalletModal } from '@solana/wallet-adapter-react-ui'
 import { Button } from "@/components/ui/button"
 import { Wallet } from 'lucide-react'
 
-export const ConnectWalletButton: React.FC = () => {
+export function ConnectWalletButton() {
   const { wallet, connect, disconnect, connecting, connected } = useWallet()
   const { setVisible } = useWalletModal()
 
@@ -27,7 +27,7 @@ export const ConnectWalletButton: React.FC = () => {
   return (
     <Button 
       onClick={handleClick}
-      className="bg-[#D0BFB4] text-gray-900 hover:bg-[#C0AFA4] transition-colors flex items-center space-x-2 px-4 py-2 rounded-full"
+      className="bg-primary text-primary-foreground hover:bg-primary/90 transition-colors flex items-center space-x-2 px-4 py-2 rounded-full"
       disabled={connecting}
     >
       <Wallet className="h-5 w-5" />
