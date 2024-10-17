@@ -90,6 +90,6 @@ export async function OPTIONS(request: NextRequest) {
   });
 }
 
-export const config = {
+export const runtime = {
   runtime: 'edge',
 };
